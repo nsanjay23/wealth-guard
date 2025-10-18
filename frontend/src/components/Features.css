@@ -1,0 +1,117 @@
+.features-main-section {
+  background-color: var(--color-bg-features);
+  padding: 6rem 2rem;
+  color: var(--color-text-primary);
+}
+
+.features-section-category {
+  max-width: 1200px;
+  margin: 0 auto 5rem auto;
+  padding-bottom: 5rem;
+  border-bottom: 1px solid var(--color-border-card);
+}
+
+.features-section-category:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.category-header {
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.category-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.feature-card-new {
+  background-color: var(--color-bg-card);
+  border-radius: 12px;
+  border: 1px solid var(--color-border-card);
+  box-shadow: 0 4px 15px var(--color-card-shadow);
+  padding: 2rem;
+  text-align: center; /* Keep the card's general text alignment centered */
+  display: flex;
+  flex-direction: column;
+  /* Removed: align-items: center; */ /* This isn't needed here now */
+  transition: all 0.3s ease;
+  min-height: 220px;
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-card-new:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px var(--color-card-shadow-hover);
+  background-color: #2a2a2a;
+}
+
+.feature-icon-wrapper {
+  font-size: 2.2rem;
+  margin-bottom: 1.5rem;
+  transition: color 0.3s ease;
+  /* --- ADD THESE FOR CENTERING THE ICON ITSELF --- */
+  display: flex;
+  justify-content: center;
+  /* ----------------------------------------------- */
+}
+
+/* --- Icon Color Rules --- */
+.feature-icon-wrapper.insurance-management {
+  color: #007bff; /* Blue color for Insurance */
+}
+
+.feature-icon-wrapper.stock-analysis {
+  color: #20c997; /* Teal/Green color for Stocks */
+}
+
+.feature-card-new:hover .feature-icon-wrapper {
+  color: var(--color-text-primary); /* Bright white on hover for both */
+}
+/* ---------------------------------- */
+
+.feature-card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--color-text-primary);
+  text-align: left; /* Explicitly left-align the title */
+}
+
+.feature-card-description {
+  font-size: 0.95rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  text-align: left; /* Explicitly left-align the description */
+}
+
+/* --- Media Queries --- */
+@media (max-width: 768px) {
+  .features-main-section {
+    padding: 4rem 1rem;
+  }
+  .features-section-category {
+    padding-bottom: 3rem;
+    margin-bottom: 3rem;
+  }
+  .category-title {
+    font-size: 2rem;
+  }
+  .category-header {
+    margin-bottom: 2rem;
+  }
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+}

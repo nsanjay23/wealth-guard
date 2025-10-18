@@ -1,0 +1,25 @@
+/* DELETE the line below. It is causing the error. */
+/* @import url('./assets/hero-bg.jpeg'); */
+
+body {
+  margin: 0;
+  /* --- THIS IS THE LINE TO CHANGE --- */
+  font-family: 'Ubuntu', sans-serif;
+  /* ---------------------------------- */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  
+  /* This is the correct way to reference the image */
+  background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('./assets/hero-bg.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+* {
+  box-sizing: border-box;
+}

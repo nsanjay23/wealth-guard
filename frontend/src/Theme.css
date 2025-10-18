@@ -1,0 +1,18 @@
+body.dark {
+  --color-bg-features: #121212;
+  --color-bg-card: #1e1e1e;
+  --color-text-primary: #f1f1f1;
+  --color-text-secondary: #aaaaaa;
+  --color-card-shadow: rgba(255, 255, 255, 0.05);
+  --color-border-card: rgba(255, 255, 255, 0.1);
+}
+
+/* --- ADD THIS NEW LIGHT THEME --- */
+body.light {
+  --color-bg-features: #f8f9fa;
+  --color-bg-card: #ffffff;
+  --color-text-primary: #212529;
+  --color-text-secondary: #6c757d;
+  --color-card-shadow: rgba(0, 0, 0, 0.08);
+  --color-border-card: rgba(0, 0, 0, 0.1);
+}
