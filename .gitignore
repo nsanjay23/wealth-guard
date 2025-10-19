@@ -1,0 +1,48 @@
+# ## General ##############################
+.DS_Store
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ## Node.js #############################
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Build directory
+build/
+dist/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# dotenv environment variables file
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ## Frontend Specific (React) ###########
+# Create React App build output
+/frontend/build
+
+# Optional tooling folders
+/frontend/.idea
+/frontend/.vscode
+
+# ## Backend Specific ####################
+# Optional tooling folders
+/backend/.idea
+/backend/.vscode
+
+# ## Database Specific ###################
+# You might add database dump files or logs here if needed later
+
+# ## Operating System Files ##############
+Thumbs.db
+ehthumbs.db

@@ -1,0 +1,107 @@
+.signup-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 72px); /* Adjust based on navbar height */
+  padding: 4rem 2rem; /* Add more top/bottom padding */
+  box-sizing: border-box;
+  color: var(--color-text-primary);
+}
+
+.signup-form {
+  background-color: var(--color-bg-card);
+  padding: 2.5rem 3rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--color-border-card);
+  width: 100%;
+  max-width: 450px;
+  text-align: center;
+}
+
+.signup-form h2 {
+  margin-top: 0;
+  margin-bottom: 2rem; /* More space below heading */
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.6rem; /* Slightly more space */
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--color-border-card);
+  border-radius: 8px;
+  background-color: var(--color-bg-features); /* Match features bg */
+  color: var(--color-text-primary);
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+ .form-group input:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2); /* Add focus ring */
+ }
+
+.signup-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.9rem 2rem; /* Slightly larger button */
+  border-radius: 8px; /* Match input radius */
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 1rem; /* Add space above button */
+  transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.signup-button:hover:not(:disabled) {
+  background-color: #0056b3;
+  transform: translateY(-1px);
+}
+.signup-button:active:not(:disabled) {
+  transform: translateY(0px);
+}
+ .signup-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+ }
+
+.error-message {
+  color: #ff4d4f; /* Brighter Red */
+  background-color: rgba(255, 77, 79, 0.1);
+  border: 1px solid rgba(255, 77, 79, 0.2);
+  padding: 0.8rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  text-align: center;
+}
+ .login-link {
+    margin-top: 2rem; /* More space */
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+ }
+ .login-link a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+ }
+  .login-link a:hover {
+     text-decoration: underline;
+  }
