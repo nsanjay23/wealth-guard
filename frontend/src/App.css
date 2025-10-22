@@ -1,4 +1,37 @@
+/* src/App.css */
+
+/* Main App container should take full height */
 .App {
-  /* All the background styles have been removed from here */
-  min-height: 100vh;
+   height: 100%;
+   /* Apply global font if not set on body */
+   /* font-family: 'Ubuntu', sans-serif; */
+}
+
+/* --- WRAPPER FOR AUTHENTICATION PAGES (like Signup/Login) --- */
+.auth-page-wrapper {
+  min-height: 100%; /* Use 100% to fill parent height */
+  width: 100%;
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  padding: 2rem; /* Padding around the centered box */
+  box-sizing: border-box;
+  /* Background applied globally via index.css */
+  position: relative;
+  overflow: hidden; /* Hide overflow from background effects */
+}
+
+/* Optional: Background orb effect */
+.auth-page-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 900px; /* Adjust size as needed */
+  height: 900px;
+  background: radial-gradient(circle, rgba(0, 123, 255, 0.1) 0%, transparent 70%); /* Example glow */
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 0; /* Behind content */
+  pointer-events: none;
 }

@@ -1,25 +1,70 @@
-/* DELETE the line below. It is causing the error. */
-/* @import url('./assets/hero-bg.jpeg'); */
+/* src/index.css */
+
+/* --- GLOBAL RESETS AND SIZING --- */
+html, body {
+  margin: 0; /* Remove default browser margin */
+  padding: 0; /* Remove default browser padding */
+  height: 100%; /* Ensure they take full height */
+  width: 100%; /* Ensure they take full width */
+  box-sizing: border-box; /* Apply box-sizing globally */
+  overflow-x: hidden; /* Prevent horizontal scroll */
+  overscroll-behavior: none; /* Prevents scroll chaining and bounce effects */
+}
+
+*, *::before, *::after {
+  box-sizing: inherit; /* Ensure all elements use border-box */
+}
 
 body {
-  margin: 0;
-  /* --- THIS IS THE LINE TO CHANGE --- */
-  font-family: 'Ubuntu', sans-serif;
-  /* ---------------------------------- */
+  font-family: 'Ubuntu', sans-serif; /* Set your chosen font */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  
-  /* This is the correct way to reference the image */
-  background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('./assets/hero-bg.jpeg');
+
+  /* --- Full Page Background --- */
+  background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('./assets/hero-bg.jpeg'); /* Check image path */
   background-size: cover;
   background-position: center;
-  background-attachment: fixed;
+  background-attachment: fixed; /* Keep background fixed during scroll */
+  background-color: #0d0d0d; /* Dark fallback color */
+}
+
+/* Ensure React root div takes full height */
+#root {
+  height: 100%;
 }
 
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: smooth; /* Enable smooth scrolling */
 }
 
-* {
-  box-sizing: border-box;
+/* --- Custom Scrollbar Styles (WebKit - Chrome, Safari, Edge) --- */
+::-webkit-scrollbar {
+  width: 8px; /* Width of the vertical scrollbar */
+  height: 8px; /* Height of the horizontal scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a1a; /* Dark background for the track */
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #4a4a4a; /* Dark grey color for the scrollbar handle */
+  border-radius: 4px;
+  border: 2px solid #1a1a1a; /* Creates padding around thumb */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #6a6a6a; /* Lighter grey on hover */
+}
+
+::-webkit-scrollbar-corner {
+  background: #1a1a1a; /* Background for the corner */
+}
+
+/* --- Custom Scrollbar Styles (Firefox) --- */
+html {
+  /* Note: Firefox support is more limited */
+  scrollbar-width: thin; /* Options: 'auto', 'thin', 'none' */
+  scrollbar-color: #4a4a4a #1a1a1a; /* thumb track */
 }
