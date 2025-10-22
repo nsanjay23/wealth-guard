@@ -14,7 +14,6 @@ require('dotenv').config(); // Load environment variables
 // --- Helper Function: Convert String to Title Case ---
 const toTitleCase = (str) => {
   if (!str) return str;
-  // Converts to lowercase first, then capitalizes the first letter of each word
   return str.toLowerCase().replace(/\b(\w)/g, s => s.toUpperCase());
 };
 
@@ -23,7 +22,7 @@ async function checkEmailWithVerifyKit(emailToCheck) {
   const apiKey = process.env.VERIFYKIT_API_KEY;
 
   if (!apiKey) {
-    console.warn('VerifyKit.io API key missing. Skipping email validation in function.');
+    console.warn('VerifyKit.io API key missing. Skipping email validation.');
     return { valid: true, reason: 'api_key_missing' }; // Allow signup if key missing
   }
 
@@ -136,7 +135,6 @@ passport.deserializeUser(async (id, done) => {
     try {
         const userResult = await db.query('SELECT * FROM users WHERE user_id = $1', [id]);
         if (userResult.rows.length === 0) {
-             console.error(`User with ID ${id} not found during deserialization.`);
              return done(new Error(`User not found with ID ${id}`), null);
         }
         // Exclude password hash from the user object attached to req.user
@@ -189,7 +187,7 @@ app.get('/api/auth/google',
 app.get('/api/auth/google/callback',
   passport.authenticate('google', {
     // Redirect back to frontend signup page on failure
-    failureRedirect: 'http://localhost:3000/login?error=google_auth_failed' // Redirect to login on failure
+    failureRedirect: 'http://localhost:3000/signup?error=google_auth_failed'
   }),
   (req, res) => {
     // Successful authentication! Redirect to the frontend dashboard.
@@ -263,11 +261,8 @@ app.post('/api/signup', async (req, res) => {
     const shouldVerifyEmail = process.env.ENABLE_EMAIL_VERIFICATION === 'true';
     if (shouldVerifyEmail) {
       const verificationResult = await checkEmailWithVerifyKit(email);
-      // Assuming 'valid' is the only acceptable status for signup
       if (verificationResult.valid !== true) {
-        // Use a more specific message if available from VerifyKit, otherwise generic
-        let reason = verificationResult.reason || 'validation failed';
-        return res.status(400).json({ message: `Email validation failed (${reason}). Please try another email.` });
+        return res.status(400).json({ message: 'Email validation failed. Please try another.' });
       }
     } else {
         console.log("Email verification disabled. Skipping VerifyKit.")

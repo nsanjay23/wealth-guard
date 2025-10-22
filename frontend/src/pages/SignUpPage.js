@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import './SignUpPage.css';
-// Import your Google icon and Logo images
+import { FiEye, FiEyeOff } from 'react-icons/fi';
 import GoogleIcon from '../assets/google-icon.svg'; // Check path
 import logo from '../assets/logo.png'; // Check path
-import illustration from '../assets/illus-.png';
-// Import the eye icons
-import { FiEye, FiEyeOff } from 'react-icons/fi';
+import Illustration from '../assets/illustration.png'; // Check path
+
 
 const SignUpPage = () => {
   const [formData, setFormData] = useState({
@@ -14,7 +13,7 @@ const SignUpPage = () => {
     lastName: '',
     email: '',
     password: '',
-    confirmPassword: '', // Keep this
+    confirmPassword: '',
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false); // State for confirm password visibility
@@ -35,21 +34,20 @@ const SignUpPage = () => {
     e.preventDefault();
     setError('');
 
-    // Password matching check
+    // 0. Frontend Validation Checks
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       return;
     }
 
-    // Updated validation: removed lastName requirement
     if (!formData.email || !formData.password || !formData.firstName) {
       setError('Please fill in First name, Email, and Password');
       return;
     }
-    // You might want to add password complexity checks here in the frontend too
 
     setLoading(true);
     try {
+      // 1. Send data to the backend for signup and server-side validation
       const response = await fetch('http://localhost:5001/api/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -57,22 +55,25 @@ const SignUpPage = () => {
           email: formData.email,
           password: formData.password,
           firstName: formData.firstName,
-          lastName: formData.lastName, // Send lastName even if empty
+          lastName: formData.lastName, // Last name is sent even if empty
         }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
+        // If status is 4xx or 5xx, use the backend's error message
         throw new Error(data.message || `HTTP error! status: ${response.status}`);
       }
 
+      // 2. Handle successful sign-up
       console.log('Signup successful:', data);
-      // alert('Signup successful! Please log in.'); // Removed alert
-      navigate('/login'); // Redirect to login page on success
+      // Navigate to the login page (or dashboard)
+      navigate('/login');
 
     } catch (err) {
       console.error("Signup fetch error:", err);
+      // Display error message from backend or generic failure message
       setError(err.message || 'Failed to sign up. Please try again.');
     } finally {
       setLoading(false);
@@ -80,22 +81,21 @@ const SignUpPage = () => {
   };
 
   return (
-    <div className="signup-page"> {/* This is the main centered box */}
+    <div className="signup-page">
       <div className="signup-form-container">
         <form className="signup-form" onSubmit={handleSubmit}>
-
-          {/* ----- LOGO ----- */}
-          <img src={logo} alt="Wealth Guard Logo" className="signup-logo" />
-          {/* ---------------- */}
-
-          {/* ----- HEADING ----- */}
+          
+          {/* ----- LOGO & HEADING ----- */}
+          <Link to="/">
+            <img src={logo} alt="Wealth Guard Logo" className="signup-logo" />
+          </Link>
           <h2>Create Account</h2>
-          {/* ------------------- */}
 
           <p className="login-link">
             Already have an account? <Link to="/login">Log In</Link>
           </p>
 
+          {/* Google Sign-up Button */}
           <button type="button" className="google-signup-button" onClick={handleGoogleSignup} disabled={loading}>
             <img src={GoogleIcon} alt="Google logo" /> Sign up with Google
           </button>
@@ -114,19 +114,18 @@ const SignUpPage = () => {
                 name="firstName"
                 value={formData.firstName}
                 onChange={handleChange}
-                required // First name is required
+                required
                 autoComplete="given-name"
               />
             </div>
             <div className="form-group">
-              <label htmlFor="lastName">Last name (Optional)</label> {/* Label updated */}
+              <label htmlFor="lastName">Last name (Optional)</label>
               <input
                 type="text"
                 id="lastName"
                 name="lastName"
                 value={formData.lastName}
                 onChange={handleChange}
-                // 'required' attribute removed
                 autoComplete="family-name"
               />
             </div>
@@ -165,7 +164,7 @@ const SignUpPage = () => {
                 role="button"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
-                {/* Use react-icons */}
+                {/* Independent Toggle Icon */}
                 {showPassword ? <FiEyeOff /> : <FiEye />}
               </span>
             </div>
@@ -174,9 +173,9 @@ const SignUpPage = () => {
           {/* Confirm Password Field */}
           <div className="form-group">
             <label htmlFor="confirmPassword">Confirm Password</label>
-            <div className="password-input-group"> {/* Added wrapper */}
+            <div className="password-input-group">
               <input
-                type={showConfirmPassword ? 'text' : 'password'} // Use showConfirmPassword state
+                type={showConfirmPassword ? 'text' : 'password'}
                 id="confirmPassword"
                 name="confirmPassword"
                 value={formData.confirmPassword}
@@ -186,11 +185,11 @@ const SignUpPage = () => {
               />
               <span
                 className="password-toggle-icon"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)} // Controls showConfirmPassword
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 role="button"
                 aria-label={showConfirmPassword ? "Hide confirmation password" : "Show confirmation password"}
               >
-                {/* Use react-icons */}
+                {/* Independent Toggle Icon */}
                 {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
               </span>
             </div>
@@ -209,8 +208,7 @@ const SignUpPage = () => {
 
         {/* Image Side */}
         <div className="signup-image-side">
-          {/* Replace with your actual illustration image */}
-          <img src={illustration} alt="Financial Planning Illustration" />
+          <img src={Illustration} alt="Financial Planning Illustration" />
         </div>
       </div>
     </div>

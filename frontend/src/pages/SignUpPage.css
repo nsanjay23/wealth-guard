@@ -1,4 +1,3 @@
-/* src/pages/SignUpPage.css */
 
 .signup-page {
   width: 85%; /* Slightly smaller box width */
@@ -172,12 +171,7 @@
     cursor: pointer;
     color: var(--color-text-secondary);
     user-select: none;
-    font-size: 1.1rem; /* Adjust size if needed */
-    display: flex; /* Helps vertically align SVG icons */
-    align-items: center; /* Helps vertically align SVG icons */
-}
-.password-toggle-icon:hover {
-    color: var(--color-text-primary);
+    font-size: 0.8rem; /* DECREASED */
 }
 
 
@@ -199,7 +193,7 @@
 
 
 .signup-button {
-  background-color: #ff4d4f;
+  background-color: #007bff;
   color: white;
   border: none;
   padding: 0.8rem 1.8rem; /* Reduced padding */
@@ -253,6 +247,24 @@
   height: auto;
   display: block;
   opacity: 0.8;
+}
+
+.password-toggle-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: var(--color-text-secondary);
+    user-select: none;
+    font-size: 1.1rem; /* Adjust size if needed */
+    display: flex; /* Helps vertically align SVG icons */
+    align-items: center; /* Helps vertically align SVG icons */
+}
+
+/* Add a hover effect */
+.password-toggle-icon:hover {
+    color: var(--color-text-primary);
 }
 
 /* --- Responsive Adjustments --- */

@@ -6,9 +6,9 @@ html, body {
   padding: 0; /* Remove default browser padding */
   height: 100%; /* Ensure they take full height */
   width: 100%; /* Ensure they take full width */
-  box-sizing: border-box; /* Apply box-sizing globally */
   overflow-x: hidden; /* Prevent horizontal scroll */
-  overscroll-behavior: none; /* Prevents scroll chaining and bounce effects */
+  box-sizing: border-box; /* Apply box-sizing globally */
+  overscroll-behavior: none; /* Prevent scroll chaining on touch devices */
 }
 
 *, *::before, *::after {
@@ -21,11 +21,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 
   /* --- Full Page Background --- */
-  background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('./assets/hero-bg.jpeg'); /* Check image path */
+  background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('./assets/hero-bg.jpeg');
   background-size: cover;
   background-position: center;
   background-attachment: fixed; /* Keep background fixed during scroll */
   background-color: #0d0d0d; /* Dark fallback color */
+  /* ------------------------------------------------------------------ */
 }
 
 /* Ensure React root div takes full height */
