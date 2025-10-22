@@ -43,22 +43,28 @@
 }
 
 .btn-cta {
-background-color: black;
+  /* Use your preferred button style (black or blue) */
+  background-color: black;
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 1.2rem 2.5rem;
+  padding: 1.2rem 2.5rem; /* Larger padding */
   border-radius: 8px;
   font-size: 1.1rem;
-  font-weight: 500;
-  text-decoration: none;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  font-weight: 500; /* Adjusted from bold */
   cursor: pointer;
-  margin-top: 3rem; /* Increased from 2.5rem */
+  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.1s ease;
+  margin-top: 3.5rem; /* Lowered position */
+
+  /* --- Add/Ensure these for Link styling --- */
+  display: inline-block; /* Crucial for padding/margin on <a> */
+  text-decoration: none; /* Remove underline */
+  text-align: center; /* Center text within the link */
 }
 
 .btn-cta:hover {
-background-color: #333;
+  background-color: #333;
   border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px); /* Keep hover effect */
 }
 
 /* --- NEW: Styles for the UI Cards Visual --- */

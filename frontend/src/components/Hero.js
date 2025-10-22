@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom'; // Import Link
 import './Hero.css';
 
 const Hero = () => {
@@ -10,7 +11,11 @@ const Hero = () => {
         <div className="hero-text-group">
           <h1 className="hero-heading">Wealth Guard</h1>
           <p className="hero-subtext">Simplify your Insurance and Stock Investments</p>
-          <button className="btn-cta">Get Started</button>
+          {/* --- CHANGE THIS TO A LINK --- */}
+          <Link to="/signup" className="btn-cta">
+            Get Started
+          </Link>
+          {/* --------------------------- */}
         </div>
 
         {/* --- The overlapping UI cards visual --- */}
@@ -23,8 +28,7 @@ const Hero = () => {
             </div>
             <div className="card-body">
               <h3 className="card-metric">+12.75%</h3>
-              {/* This line has been changed to INR */}
-              <p className="card-metric-label">₹17,25,000</p>
+              <p className="card-metric-label">₹1,07,25,000</p>
             </div>
             <div className="card-graph">
               <svg viewBox="0 0 100 40" preserveAspectRatio="none">
