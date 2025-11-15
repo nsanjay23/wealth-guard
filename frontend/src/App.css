@@ -1,29 +1,27 @@
 /* src/App.css */
 
-/* Main App container */
+/* Main App container should take full height */
 .App {
    height: 100%;
+   /* Apply global font if not set on body */
+   /* font-family: 'Ubuntu', sans-serif; */
 }
 
-/* --- WRAPPER FOR AUTHENTICATION PAGES (like Signup) --- */
+/* --- WRAPPER FOR AUTHENTICATION PAGES (like Signup/Login) --- */
 .auth-page-wrapper {
-  min-height: 100%; /* Use 100% to fill the parent height */
+  min-height: 100%; /* Use 100% to fill parent height */
   width: 100%;
   display: flex;
   justify-content: center; /* Center horizontally */
   align-items: center; /* Center vertically */
   padding: 2rem; /* Padding around the centered box */
   box-sizing: border-box;
-  /* Your background image and gradient */
-  background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('./assets/hero-bg.jpeg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+  /* Background applied globally via index.css */
   position: relative;
-  overflow: hidden;
+  overflow: hidden; /* Hide overflow from background effects */
 }
 
-/* Optional: Background orb effect from hero section */
+/* Optional: Background orb effect for auth pages */
 .auth-page-wrapper::before {
   content: '';
   position: absolute;
@@ -34,6 +32,67 @@
   background: radial-gradient(circle, rgba(0, 123, 255, 0.1) 0%, transparent 70%);
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  z-index: 0;
+  z-index: 0; /* Behind content */
   pointer-events: none;
 }
+/* ----------------------------------------------------------------- */
+
+
+/* --- DASHBOARD LAYOUT STRUCTURE --- */
+.dashboard-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column; /* Stack Navbar on top */
+}
+
+/* Container below the navbar */
+.dashboard-body {
+  display: flex;
+  flex-grow: 1; /* Takes remaining height */
+}
+
+/* Main area to the right of the sidebar */
+.dashboard-content-area {
+  flex-grow: 1;
+  /* Add padding-left equal to sidebar width */
+  padding-left: 240px; /* Sidebar width */
+  /* Background color set in DashboardPage.css */
+  box-sizing: border-box;
+  /* Add padding-top to account for fixed navbar height */
+  padding-top: 60px;
+  /* Ensure background covers the area (set in DashboardPage.css or here) */
+  background-color: #ffffff; /* Default light theme background */
+  color: #212529; /* Default light theme text */
+  min-height: calc(100vh - 60px); /* Ensure it fills height below navbar */
+}
+
+/* Dark mode override for dashboard content area */
+body.dark .dashboard-content-area {
+  background-color: var(--color-bg-dashboard-main-dark); /* Dark grey */
+  color: var(--color-text-dashboard-primary-dark); /* Light text */
+}
+
+/* Loading state styling (global) */
+.loading-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-size: 1.5rem;
+  /* Use theme variable */
+  background-color: var(--color-bg-features); /* Default dark background */
+  color: var(--color-text-secondary); /* Default dark theme text */
+}
+body.light .loading-state {
+  background-color: var(--color-bg-dashboard-main); /* Light background */
+  color: var(--color-text-dashboard-secondary); /* Light theme text */
+}
+
+
+/* --- Responsive adjustments for Dashboard --- */
+@media (max-width: 768px) {
+  .dashboard-content-area {
+    padding-left: 0; /* No padding when sidebar is hidden/overlay */
+  }
+}
+/* ------------------------------------------ */

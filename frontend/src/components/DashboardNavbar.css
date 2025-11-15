@@ -1,0 +1,126 @@
+/* src/components/DashboardNavbar.css */
+
+.dashboard-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 2rem;
+  background-color: var(--color-primary-blue); /* Blue background */
+  border-bottom: 1px solid var(--color-primary-blue-dark); /* Darker blue border */
+  height: 60px; /* Fixed height */
+  box-sizing: border-box;
+  position: sticky; /* Keep it sticky */
+  top: 0;
+  z-index: 1000;
+  color: var(--color-primary-blue-text); /* White text */
+}
+
+.dashboard-navbar-left, .dashboard-navbar-right {
+  display: flex;
+  align-items: center;
+}
+
+.dashboard-logo {
+  height: 35px;
+  display: block;
+  /* Uncomment or adjust filter if your logo needs contrast on blue */
+  /* filter: brightness(0) invert(1); */ /* Makes black logo white */
+}
+
+.dashboard-navbar-right {
+  gap: 1rem;
+}
+
+.navbar-icon-button {
+  background: none;
+  border: none;
+  color: var(--color-primary-blue-text); /* White icons */
+  opacity: 0.8; /* Slightly faded icons */
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.navbar-icon-button:hover {
+  background-color: rgba(255, 255, 255, 0.1); /* Subtle white hover */
+  opacity: 1.0;
+  color: var(--color-primary-blue-text);
+}
+
+.profile-menu {
+  position: relative;
+}
+
+.profile-dropdown {
+  position: absolute;
+  top: calc(100% + 10px); /* Position below the icon */
+  right: 0;
+  /* Dropdown uses dark theme variables for contrast */
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border-card);
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  width: 220px;
+  z-index: 1100;
+  overflow: hidden; /* Ensures border-radius applies to items */
+  animation: fadeInDropdown 0.2s ease-out;
+}
+
+@keyframes fadeInDropdown {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown-header {
+  padding: 1rem;
+  border-bottom: 1px solid var(--color-border-card);
+  font-size: 0.9rem;
+  color: var(--color-text-secondary); /* Dark theme secondary text */
+  line-height: 1.4;
+}
+.dropdown-header strong {
+  color: var(--color-text-primary); /* Dark theme primary text */
+  display: block;
+  margin-top: 0.2rem;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.8rem 1rem;
+  font-size: 0.95rem;
+  color: var(--color-text-primary); /* Dark theme primary text */
+  text-decoration: none;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(255, 255, 255, 0.05); /* Subtle hover for dark dropdown */
+}
+
+.dropdown-icon {
+  color: var(--color-text-secondary); /* Dark theme secondary text */
+  font-size: 1.1rem;
+}
+
+.logout-button {
+  color: #ff4d4f; /* Red for logout */
+  border-top: 1px solid var(--color-border-card);
+  margin-top: 0.5rem;
+}
+.logout-button:hover {
+    background-color: rgba(255, 77, 79, 0.1); /* Subtle red hover */
+}
+.logout-button .dropdown-icon {
+  color: #ff4d4f;
+}

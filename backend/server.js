@@ -9,6 +9,8 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy; // Google OA
 const LocalStrategy = require('passport-local').Strategy; // Email/Password strategy
 const session = require('express-session'); // Session management
 const db = require('../db/db'); // Database connection module (adjust path if needed)
+const ensureAuthenticated = require('./middleware/auth');
+const yahooFinance = require('yahoo-finance2');
 require('dotenv').config(); // Load environment variables
 
 // --- Helper Function: Convert String to Title Case ---
@@ -299,6 +301,79 @@ app.post('/api/signup', async (req, res) => {
     res.status(500).json({ message: 'Internal server error during signup.' });
   }
 });
+
+app.get('/api/features/stock-trends', ensureAuthenticated, async (req, res) => {
+    const { symbols, startDate, endDate } = req.query;
+    const apiKey = process.env.TWELVE_DATA_API_KEY;
+
+    // --- Twelve Data API Details (VERIFY WITH DOCS) ---
+    const API_BASE_URL = "https://api.twelvedata.com/time_series";
+    const interval = "1day"; // Daily data
+    // --- -------------------------------------------- ---
+
+    if (!symbols || !startDate || !endDate || !apiKey) {
+        return res.status(400).json({ message: 'Missing required parameters or API key.' });
+    }
+
+    const symbolList = symbols.split(',').map(s => s.trim().toUpperCase());
+    const combinedData = {};
+    let hasError = false;
+
+    try {
+        for (const symbol of symbolList) {
+            console.log(`Fetching Twelve Data for ${symbol} from ${startDate} to ${endDate}`);
+            try {
+                const response = await axios.get(API_BASE_URL, {
+                    params: {
+                        symbol: symbol,       // e.g., RELIANCE:NSE
+                        interval: interval,
+                        start_date: startDate, // e.g., 2024-01-01
+                        end_date: endDate,     // e.g., 2024-10-23
+                        apikey: apiKey,
+                        // country: 'India' // Add if needed/supported
+                    }
+                });
+
+                // --- Process Response (VERIFY FORMAT WITH DOCS) ---
+                // Assuming response.data.values is [{ datetime: 'YYYY-MM-DD', close: '123.45' }, ...]
+                if (response.data && response.data.values && Array.isArray(response.data.values)) {
+                    response.data.values.forEach(item => {
+                        const dateStr = item.datetime; // ASSUMED field
+                        const closePrice = parseFloat(item.close); // ASSUMED field
+
+                        if (dateStr && !isNaN(closePrice)) {
+                            if (!combinedData[dateStr]) {
+                                combinedData[dateStr] = { date: dateStr };
+                            }
+                            combinedData[dateStr][symbol] = closePrice;
+                        }
+                    });
+                    console.log(`Processed ${response.data.values.length} records for ${symbol}.`);
+                } else {
+                    console.warn(`No valid 'values' array received for ${symbol}. Status: ${response.data?.status}`);
+                }
+                // ----------------------------------------------------
+
+            } catch (apiError) {
+                console.error(`API Error fetching ${symbol} from Twelve Data:`, apiError.response ? apiError.response.data : apiError.message);
+                hasError = true;
+            }
+            // Optional: Add delay if rate limited
+            // await new Promise(resolve => setTimeout(resolve, 1000)); // 1 sec delay
+        } // End symbol loop
+
+        // Format and respond (same as before)
+        const chartData = Object.values(combinedData).sort((a, b) => new Date(a.date) - new Date(b.date));
+         if (chartData.length === 0 && hasError) { /* ... error handling ... */ }
+         if (chartData.length === 0 && !hasError) { /* ... error handling ... */ }
+        res.status(200).json(chartData);
+
+    } catch (error) {
+        console.error('Stock Trends Error:', error);
+        res.status(500).json({ message: 'Internal server error processing stock trends.' });
+    }
+});
+
 
 // --- Start the Server ---
 app.listen(port, () => {

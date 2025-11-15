@@ -1,0 +1,68 @@
+/* src/pages/DashboardPage.css */
+
+.dashboard-layout { /* This class might not be used if structure is in App.js */
+  display: flex;
+  min-height: 100vh;
+  /* Background applied based on body class (light/dark) */
+  background-color: var(--color-bg-dashboard-main);
+}
+
+.dashboard-main-content {
+  flex-grow: 1;
+  /* margin-left handled by App.css layout */
+  padding-top: 0; /* Navbar height handled by DashboardLayout */
+  /* Default to light theme */
+  background-color: #ffffff; /* Explicitly WHITE */
+  color: var(--color-text-dashboard-primary); /* Dark text */
+  transition: background-color 0.3s ease, color 0.3s ease;
+  min-height: 100%; /* Ensure it fills the area */
+  box-sizing: border-box;
+}
+
+/* --- Dark Mode Styles --- */
+body.dark .dashboard-main-content {
+  background-color: var(--color-bg-dashboard-main-dark); /* Dark grey */
+  color: var(--color-text-dashboard-primary-dark); /* Light text */
+}
+/* ------------------------ */
+
+
+/* --- Verify Email Bar Styles REMOVED --- */
+
+
+.dashboard-page-content {
+  padding: 0rem 2.5rem 2.5rem 2.5rem; /* DECREASED padding-top */
+  /* OR more simply: */
+  /* padding: 1.5rem 2.5rem; */ /* Sets top/bottom to 1.5rem, left/right to 2.5rem */
+}
+
+.dashboard-page-content h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-top: 0; /* Ensure heading respects container padding */
+  margin-bottom: 1.5rem;
+  color: var(--color-text-dashboard-primary); /* Dark text for light mode */
+  transition: color 0.3s ease;
+}
+
+/* Dark Mode Heading */
+body.dark .dashboard-page-content h1 {
+  color: var(--color-text-dashboard-primary-dark); /* Light text */
+}
+
+/* Loading state */
+.loading-state {
+  display: flex; justify-content: center; align-items: center; min-height: 100vh; font-size: 1.5rem; background-color: var(--color-bg-features); color: var(--color-text-secondary);
+}
+body.light .loading-state { /* Adjust loading state for light theme */
+    background-color: var(--color-bg-dashboard-main);
+    color: var(--color-text-dashboard-secondary);
+}
+
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard-page-content {
+    padding: 1.5rem;
+  }
+}

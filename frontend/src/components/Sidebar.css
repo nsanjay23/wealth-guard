@@ -1,0 +1,142 @@
+/* src/components/Sidebar.css */
+
+.sidebar {
+  width: 240px;
+  background-color: var(--color-bg-sidebar); /* Should be white in light theme */
+  border-right: 1px solid var(--color-border-card);
+  height: 100vh; /* Full viewport height */
+  padding: 0; /* Remove default padding */
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 900; /* Below navbar */
+  box-sizing: border-box;
+  color: var(--color-text-dashboard-primary);
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* --- Dark Mode Styles --- */
+body.dark .sidebar {
+  background-color: var(--color-bg-sidebar-dark);
+  border-right-color: var(--color-border-card);
+  color: var(--color-text-dashboard-primary-dark);
+}
+/* ------------------------ */
+
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  padding-top: calc(60px + 1.5rem); /* Navbar height + desired top padding */
+  padding-bottom: 1.5rem; /* Padding at the bottom */
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  padding: 0.8rem 1.5rem;
+  color: var(--color-text-dashboard-secondary);
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  border-left: 3px solid transparent;
+  transition: background-color 0.2s ease, color 0.2s ease, border-left-color 0.2s ease;
+  cursor: pointer; /* Ensure pointer cursor for NavLink and toggle */
+}
+
+/* Light Mode Hover */
+.sidebar-link:hover {
+  background-color: #f8f9fa;
+  color: var(--color-text-dashboard-primary);
+}
+
+/* Dark Mode Hover */
+body.dark .sidebar-link:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--color-text-dashboard-primary-dark);
+}
+
+/* Light Mode Active */
+.sidebar-link.active {
+  color: var(--color-primary-blue);
+  border-left-color: var(--color-primary-blue);
+  background-color: var(--color-primary-blue-light);
+  font-weight: 600;
+}
+
+/* Dark Mode Active */
+body.dark .sidebar-link.active {
+  color: var(--color-text-dashboard-primary-dark);
+  border-left-color: var(--color-primary-blue);
+  background-color: rgba(0, 123, 255, 0.15);
+}
+
+.sidebar-icon {
+  margin-right: 1rem;
+  font-size: 1.2rem;
+  color: var(--color-text-dashboard-secondary); /* Default icon color */
+}
+/* Dark Mode Icon */
+body.dark .sidebar-icon {
+  color: var(--color-text-dashboard-secondary-dark);
+}
+
+/* Light Mode Active Icon */
+.sidebar-link.active .sidebar-icon {
+  color: var(--color-primary-blue);
+}
+
+.dropdown-toggle {
+  justify-content: space-between; /* Pushes arrow to the right */
+}
+
+.dropdown-arrow {
+  font-size: 1rem; /* Smaller arrow */
+  transition: transform 0.2s ease;
+}
+
+/* --- NEW: Submenu Styles --- */
+.sidebar-submenu {
+  padding-left: 1.5rem; /* Indent submenu items slightly */
+  overflow: hidden;
+  max-height: 500px; /* Allow space for items to show */
+  transition: max-height 0.3s ease-out; /* Smooth open/close */
+}
+
+/* Style for links within the submenu */
+.sidebar-submenu .sidebar-link {
+  padding-top: 0.6rem;
+  padding-bottom: 0.6rem;
+  font-size: 0.95rem; /* Slightly smaller font for sub-items */
+}
+
+/* Style for icons within the submenu */
+.sidebar-submenu .sidebar-icon.sub-icon {
+  font-size: 1rem; /* Slightly smaller icon */
+  margin-right: 0.8rem;
+}
+
+/* Remove left border from submenu active links if desired */
+.sidebar-submenu .sidebar-link.active {
+  border-left-color: transparent;
+  /* Keep background and text color for active state */
+}
+
+/* Dark mode specific overrides if needed */
+
+/* Dark Mode Active Icon */
+body.dark .sidebar-link.active .sidebar-icon {
+  color: var(--color-text-dashboard-primary-dark);
+}
+
+
+/* Adjustments for smaller screens */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+  }
+  .sidebar.sidebar-open {
+     transform: translateX(0);
+  }
+}

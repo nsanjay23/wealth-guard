@@ -1,18 +1,42 @@
+:root {
+  /* ... existing variables ... */
+  --color-peach: #FFDAB9; /* Example peach color */
+  --color-peach-dark: #FFC0CB; /* Slightly darker peach for hover/active */
+  --color-peach-text: #333333; /* Darker text for peach backgrounds */
+  --color-peach-border: #FFBF8F; /* Border color */
+  /* ... other variables ... */
+  --color-primary-blue: #007bff; /* Standard primary blue */
+  --color-primary-blue-dark: #0056b3; /* Darker blue for hover */
+  --color-primary-blue-light: #e6f2ff; /* Light blue for active states */
+  --color-primary-blue-text: #ffffff; /* White text for blue background */
+  --color-border-light: #dee2e6; /* Light border color */
+}
+/* --- Dark Theme Variables --- */
 body.dark {
-  --color-bg-features: #121212;
-  --color-bg-card: #1e1e1e;
-  --color-text-primary: #f1f1f1;
-  --color-text-secondary: #aaaaaa;
+  --color-bg-features: #121212; /* Very dark grey */
+  --color-bg-card: #1e1e1e;    /* Slightly lighter dark */
+  --color-text-primary: #f1f1f1; /* Light text */
+  --color-text-secondary: #aaaaaa; /* Grey text */
   --color-card-shadow: rgba(255, 255, 255, 0.05);
   --color-border-card: rgba(255, 255, 255, 0.1);
+  /* Define specific dashboard dark vars if needed, otherwise reuse above */
+  --color-bg-dashboard-main-dark: #121212;
+  --color-bg-sidebar-dark: #1e1e1e;
+  --color-text-dashboard-primary-dark: #f1f1f1;
+  --color-text-dashboard-secondary-dark: #aaaaaa;
 }
 
-/* --- ADD THIS NEW LIGHT THEME --- */
+/* --- Light Theme Variables --- */
 body.light {
-  --color-bg-features: #f8f9fa;
-  --color-bg-card: #ffffff;
-  --color-text-primary: #212529;
-  --color-text-secondary: #6c757d;
+  --color-bg-features: #f8f9fa; /* Light grey */
+  --color-bg-card: #ffffff;    /* White */
+  --color-text-primary: #212529; /* Dark text */
+  --color-text-secondary: #6c757d; /* Grey text */
   --color-card-shadow: rgba(0, 0, 0, 0.08);
-  --color-border-card: rgba(0, 0, 0, 0.1);
+  --color-border-card: #dee2e6; /* Light border */
+  /* Dashboard specific light vars */
+  --color-bg-dashboard-main: #ffffff;
+  --color-bg-sidebar: #ffffff;
+  --color-text-dashboard-primary: #212529;
+  --color-text-dashboard-secondary: #6c757d;
 }

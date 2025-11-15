@@ -1,0 +1,243 @@
+/* src/pages/StockTrendsPage.css */
+
+.stock-trends-page {
+  padding: 2.5rem; /* Match dashboard padding */
+  color: var(--color-text-dashboard-primary); /* Use light theme text */
+  background-color: var(--color-bg-dashboard-main); /* Match dashboard background */
+}
+
+/* Dark mode adjustments */
+body.dark .stock-trends-page {
+    color: var(--color-text-dashboard-primary-dark);
+    background-color: var(--color-bg-dashboard-main-dark);
+}
+
+
+.stock-trends-page h2 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 2rem;
+  color: inherit; /* Inherit color from parent */
+}
+
+.trends-form {
+  margin-bottom: 2.5rem; /* More space below form */
+  padding: 1.5rem;
+  background-color: var(--color-bg-sidebar); /* White background for form */
+  border-radius: 8px;
+  border: 1px solid var(--color-border-card); /* Light border */
+}
+/* Dark mode form background */
+body.dark .trends-form {
+    background-color: var(--color-bg-sidebar-dark);
+    border-color: var(--color-border-card); /* Dark theme border */
+}
+
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+  gap: 1.5rem;
+  align-items: flex-end; /* Align items to bottom (labels, inputs, button) */
+  margin-bottom: 1.5rem;
+}
+.form-row:last-child {
+    margin-bottom: 0;
+}
+
+.form-group {
+  flex: 1; /* Allow flexible sizing */
+  min-width: 200px; /* Minimum width before wrapping */
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--color-text-dashboard-secondary); /* Grey label text */
+}
+/* Dark mode label */
+body.dark .form-group label {
+    color: var(--color-text-dashboard-secondary-dark);
+}
+
+
+/* Common input/select/date styles */
+.form-group input[type="text"],
+.form-group input[type="date"],
+.form-group select {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border: 1px solid var(--color-border-card); /* Light border */
+  border-radius: 6px;
+  background-color: var(--color-bg-dashboard-main); /* White input background */
+  color: var(--color-text-dashboard-primary); /* Dark input text */
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+/* Dark mode input/select styles */
+body.dark .form-group input[type="text"],
+body.dark .form-group input[type="date"],
+body.dark .form-group select {
+    background-color: var(--color-bg-card); /* Darker input */
+    color: var(--color-text-dashboard-primary-dark);
+    border-color: var(--color-border-card);
+}
+
+/* Focus styles for inputs and select */
+.form-group input:focus,
+.form-group select:focus {
+  border-color: var(--color-primary-blue);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+}
+
+/* Select specific styles (arrow) */
+.form-group select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%236c757d%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 0.65em auto;
+  padding-right: 2.5rem; /* Make space for arrow */
+}
+/* Dark mode select arrow */
+body.dark .form-group select {
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23aaaaaa%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+}
+
+.date-range {
+    align-items: flex-end;
+}
+.date-range .form-group {
+    flex-basis: 200px; /* Give date inputs a base size */
+    flex-grow: 1;
+}
+
+.symbol-format-hint {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--color-text-dashboard-secondary);
+    margin-top: 0.3rem;
+}
+body.dark .symbol-format-hint {
+    color: var(--color-text-dashboard-secondary-dark);
+}
+
+.trends-button {
+  background-color: var(--color-primary-blue);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  /* Match input height (adjust padding numbers if input padding changes) */
+  height: calc(0.7rem + 0.7rem + 1rem + 2px); /* top/bottom padding + font-size + border */
+  margin-left: 1.5rem; /* Default space for desktop */
+}
+.trends-button:hover:not(:disabled) {
+  background-color: var(--color-primary-blue-dark);
+}
+.trends-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error-message {
+  color: #dc3545; /* Red */
+  background-color: #f8d7da; /* Light red background */
+  border: 1px solid #f5c2c7; /* Lighter red border */
+  padding: 0.8rem;
+  border-radius: 6px;
+  margin: -1rem 0 1.5rem 0; /* Position between form and chart */
+  font-size: 0.9rem;
+  text-align: center;
+}
+/* Dark mode error message */
+body.dark .error-message {
+    color: #ff758f;
+    background-color: rgba(255, 117, 143, 0.1);
+    border-color: rgba(255, 117, 143, 0.2);
+}
+
+
+.chart-container {
+  margin-top: 2rem;
+  height: 400px; /* Fixed height for the chart area */
+  width: 100%;
+  position: relative; /* For loading spinner positioning */
+}
+
+.loading-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.2rem;
+  color: var(--color-text-dashboard-secondary);
+}
+body.dark .loading-spinner {
+    color: var(--color-text-dashboard-secondary-dark);
+}
+
+.no-data-message {
+  text-align: center;
+  color: var(--color-text-dashboard-secondary);
+  margin-top: 4rem;
+  font-size: 1.1rem;
+}
+body.dark .no-data-message {
+    color: var(--color-text-dashboard-secondary-dark);
+}
+
+/* Recharts class overrides */
+.recharts-tooltip-wrapper {
+  outline: none; /* Remove focus outline */
+}
+/* Style axis ticks */
+.recharts-cartesian-axis-tick-value {
+    font-size: 12px;
+    fill: var(--color-text-dashboard-secondary); /* Ensure ticks use theme color */
+}
+body.dark .recharts-cartesian-axis-tick-value {
+     fill: var(--color-text-dashboard-secondary-dark);
+}
+/* Style legend text */
+.recharts-legend-item-text {
+    font-size: 14px;
+    color: var(--color-text-dashboard-primary) !important; /* Use important if needed */
+}
+body.dark .recharts-legend-item-text {
+     color: var(--color-text-dashboard-primary-dark) !important;
+}
+
+
+/* Responsive */
+@media (max-width: 768px) {
+  .stock-trends-page {
+    padding: 1.5rem;
+  }
+  .trends-form {
+    padding: 1rem;
+  }
+  .form-row {
+      gap: 1rem;
+      margin-bottom: 1rem;
+  }
+  /* Make button full width on mobile and appear below inputs */
+  .trends-button {
+      width: 100%;
+      margin-left: 0;
+      margin-top: 1rem;
+  }
+  .chart-container {
+      height: 300px; /* Smaller chart on mobile */
+  }
+}
