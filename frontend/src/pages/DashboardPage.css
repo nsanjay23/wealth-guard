@@ -1,68 +1,151 @@
 /* src/pages/DashboardPage.css */
 
-.dashboard-layout { /* This class might not be used if structure is in App.js */
-  display: flex;
-  min-height: 100vh;
-  /* Background applied based on body class (light/dark) */
-  background-color: var(--color-bg-dashboard-main);
-}
-
-.dashboard-main-content {
-  flex-grow: 1;
-  /* margin-left handled by App.css layout */
-  padding-top: 0; /* Navbar height handled by DashboardLayout */
-  /* Default to light theme */
-  background-color: #ffffff; /* Explicitly WHITE */
-  color: var(--color-text-dashboard-primary); /* Dark text */
-  transition: background-color 0.3s ease, color 0.3s ease;
-  min-height: 100%; /* Ensure it fills the area */
-  box-sizing: border-box;
-}
-
-/* --- Dark Mode Styles --- */
-body.dark .dashboard-main-content {
-  background-color: var(--color-bg-dashboard-main-dark); /* Dark grey */
-  color: var(--color-text-dashboard-primary-dark); /* Light text */
-}
-/* ------------------------ */
-
-
-/* --- Verify Email Bar Styles REMOVED --- */
-
-
 .dashboard-page-content {
-  padding: 0rem 2.5rem 2.5rem 2.5rem; /* DECREASED padding-top */
-  /* OR more simply: */
-  /* padding: 1.5rem 2.5rem; */ /* Sets top/bottom to 1.5rem, left/right to 2.5rem */
+  /* --- LAYOUT (Inherits positioning from App.css) --- */
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  
+  /* Inner Spacing */
+  padding: 2.5rem;
+
+  /* Force Left Alignment */
+  text-align: left !important;
+  display: block !important;
+
+  /* --- VISUAL THEME --- */
+  /* Deep Dark Background with Subtle Glow (Matches Landing Page) */
+  background-color: #0f1115;
+  background-image: 
+    radial-gradient(circle at 80% 10%, rgba(0, 123, 255, 0.06) 0%, transparent 40%),
+    radial-gradient(circle at 10% 20%, rgba(32, 201, 151, 0.04) 0%, transparent 30%);
+  background-attachment: fixed; /* Keeps glow in place while scrolling */
 }
 
+/* --- HEADER STYLES --- */
 .dashboard-page-content h1 {
   font-size: 2rem;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  color: #ffffff;
+  text-align: left;
+  letter-spacing: -0.5px;
+}
+
+.dashboard-page-content p {
+  color: #8b949e;
+  font-size: 1rem;
+  margin: 0;
+  text-align: left;
+}
+
+/* --- GLASSMORPHISM CARD --- */
+/* Add this class to any widget div */
+.glass-card {
+  /* Semi-transparent dark background */
+  background: rgba(22, 27, 34, 0.6);
+  
+  /* The Blur Effect (Glass) */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  
+  /* Subtle Border */
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px; 
+  
+  /* Spacing */
+  padding: 1.5rem;
+  
+  /* Shadow for depth */
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  
+  /* Transition for hover effect */
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  
+  /* Ensure content inside aligns left */
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Hover Effect: float up slightly and glow border */
+.glass-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* --- CARD TYPOGRAPHY --- */
+.glass-card h3 {
+  margin: 0 0 1rem 0;
+  font-size: 0.85rem;
   font-weight: 600;
-  margin-top: 0; /* Ensure heading respects container padding */
-  margin-bottom: 1.5rem;
-  color: var(--color-text-dashboard-primary); /* Dark text for light mode */
-  transition: color 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #8b949e; /* Muted label text */
 }
 
-/* Dark Mode Heading */
-body.dark .dashboard-page-content h1 {
-  color: var(--color-text-dashboard-primary-dark); /* Light text */
+.glass-card .value {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+  line-height: 1.1;
 }
 
-/* Loading state */
+/* --- TEXT UTILITIES --- */
+/* Green for Stock/Positive */
+.text-green {
+  color: #2ea043; 
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Blue for Insurance/Info */
+.text-blue {
+  color: #3f8cf5;
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Orange/Yellow for Warnings/Risk */
+.text-orange {
+  color: #d29922;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* --- GRID LAYOUT FOR WIDGETS --- */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+}
+
+/* --- LOADING STATE --- */
 .loading-state {
-  display: flex; justify-content: center; align-items: center; min-height: 100vh; font-size: 1.5rem; background-color: var(--color-bg-features); color: var(--color-text-secondary);
-}
-body.light .loading-state { /* Adjust loading state for light theme */
-    background-color: var(--color-bg-dashboard-main);
-    color: var(--color-text-dashboard-secondary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2000;
+  background-color: #0f1115;
+  color: #8b949e;
 }
 
-
-/* Responsive */
-@media (max-width: 768px) {
-  .dashboard-page-content {
-    padding: 1.5rem;
-  }
+/* Dark Mode Overrides (Already consistent, but safety check) */
+body.dark .dashboard-page-content {
+  background-color: #0f1115;
 }

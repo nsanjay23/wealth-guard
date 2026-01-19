@@ -1,19 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './DashboardNavbar.css';
-import logo from '../assets/logo.png'; // Assuming logo.png is in src/assets
+import logo from '../assets/logo.png'; 
 import { FiBell, FiUser, FiLogOut, FiSettings, FiSun, FiMoon, FiGlobe } from 'react-icons/fi';
-import useAuthStatus from '../hooks/useAuthStatus'; // Import the hook
+import useAuthStatus from '../hooks/useAuthStatus'; 
 
 const DashboardNavbar = () => {
-  const { user } = useAuthStatus(); // Get user data from the hook
+  const { user } = useAuthStatus(); 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
-  // Assume dark mode initially based on body class, implement full logic later
+  // Safe check for dark mode
   const [isDarkMode, setIsDarkMode] = useState(document.body.classList.contains('dark'));
 
-  // Close dropdown if clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -26,17 +25,14 @@ const DashboardNavbar = () => {
 
   const handleLogout = async () => {
     try {
-      // Call backend logout endpoint
       const response = await fetch('http://localhost:5001/api/auth/logout', {
         method: 'POST',
-        credentials: 'include' // Important for sending session cookie
+        credentials: 'include' 
       });
       if (response.ok) {
         setIsDropdownOpen(false);
-        // Force reload or redirect to ensure session is cleared client-side too
-        window.location.href = '/'; // Simple full redirect
+        window.location.href = '/'; 
       } else {
-        console.error('Logout failed on server');
         alert('Logout failed. Please try again.');
       }
     } catch (error) {
@@ -46,16 +42,16 @@ const DashboardNavbar = () => {
   };
 
   const toggleDarkMode = () => {
-    // Basic toggle - replace with your actual theme switching logic later
     setIsDarkMode(!isDarkMode);
     document.body.classList.toggle('dark');
-    document.body.classList.toggle('light'); // Assuming you have light theme CSS
+    document.body.classList.toggle('light'); 
   };
 
   return (
     <nav className="dashboard-navbar">
       <div className="dashboard-navbar-left">
-        <Link to="/dashboard">
+        <Link to="/dashboard" className="logo-link">
+          {/* Logo image class prevents explosion */}
           <img src={logo} alt="Wealth Guard Logo" className="dashboard-logo" />
         </Link>
       </div>
@@ -70,7 +66,7 @@ const DashboardNavbar = () => {
           {isDropdownOpen && (
             <div className="profile-dropdown">
               <div className="dropdown-header">
-                Signed in as<br /><strong>{user?.first_name || 'User'}</strong> {/* Display user's first name */}
+                Signed in as<br /><strong>{user?.first_name || 'User'}</strong> 
               </div>
               <Link to="/profile" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
                 <FiUser className="dropdown-icon" /> My Profile
@@ -82,7 +78,7 @@ const DashboardNavbar = () => {
                 {isDarkMode ? <FiSun className="dropdown-icon" /> : <FiMoon className="dropdown-icon" />}
                 {isDarkMode ? 'Light Mode' : 'Dark Mode'}
               </button>
-              <button className="dropdown-item"> {/* Add language logic later */}
+              <button className="dropdown-item"> 
                 <FiGlobe className="dropdown-icon" /> Language
               </button>
               <button className="dropdown-item logout-button" onClick={handleLogout}>

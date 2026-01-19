@@ -1,27 +1,24 @@
 /* src/App.css */
 
-/* Main App container should take full height */
 .App {
    height: 100%;
-   /* Apply global font if not set on body */
-   /* font-family: 'Ubuntu', sans-serif; */
+   width: 100%;
+   text-align: left;
 }
 
-/* --- WRAPPER FOR AUTHENTICATION PAGES (like Signup/Login) --- */
+/* --- WRAPPER FOR AUTH PAGES --- */
 .auth-page-wrapper {
-  min-height: 100%; /* Use 100% to fill parent height */
+  min-height: 100%;
   width: 100%;
   display: flex;
-  justify-content: center; /* Center horizontally */
-  align-items: center; /* Center vertically */
-  padding: 2rem; /* Padding around the centered box */
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
   box-sizing: border-box;
-  /* Background applied globally via index.css */
   position: relative;
-  overflow: hidden; /* Hide overflow from background effects */
+  overflow: hidden;
 }
 
-/* Optional: Background orb effect for auth pages */
 .auth-page-wrapper::before {
   content: '';
   position: absolute;
@@ -32,67 +29,67 @@
   background: radial-gradient(circle, rgba(0, 123, 255, 0.1) 0%, transparent 70%);
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  z-index: 0; /* Behind content */
+  z-index: 0;
   pointer-events: none;
 }
-/* ----------------------------------------------------------------- */
-
 
 /* --- DASHBOARD LAYOUT STRUCTURE --- */
 .dashboard-root {
   min-height: 100vh;
   display: flex;
-  flex-direction: column; /* Stack Navbar on top */
+  flex-direction: column;
 }
 
-/* Container below the navbar */
 .dashboard-body {
   display: flex;
-  flex-grow: 1; /* Takes remaining height */
+  flex-grow: 1;
+  width: 100%;
+  position: relative; /* Context for fixed elements */
 }
 
-/* Main area to the right of the sidebar */
+/* --- MAIN CONTENT AREA FIX --- */
 .dashboard-content-area {
+  /* 1. LAYOUT: Push right by Sidebar Width (260px) */
+  margin-left: 260px; 
+  /* 2. LAYOUT: Push down by Navbar Height (64px) */
+  padding-top: 64px; 
+  
   flex-grow: 1;
-  /* Add padding-left equal to sidebar width */
-  padding-left: 240px; /* Sidebar width */
-  /* Background color set in DashboardPage.css */
+  width: calc(100% - 260px); /* Fill remaining width */
+  min-height: 100vh;
   box-sizing: border-box;
-  /* Add padding-top to account for fixed navbar height */
-  padding-top: 60px;
-  /* Ensure background covers the area (set in DashboardPage.css or here) */
-  background-color: #ffffff; /* Default light theme background */
-  color: #212529; /* Default light theme text */
-  min-height: calc(100vh - 60px); /* Ensure it fills height below navbar */
+  
+  /* 3. BACKGROUND: Ensure no color gap appears */
+  background-color: #ffffff; 
+  color: #212529;
 }
 
 /* Dark mode override for dashboard content area */
 body.dark .dashboard-content-area {
-  background-color: var(--color-bg-dashboard-main-dark); /* Dark grey */
-  color: var(--color-text-dashboard-primary-dark); /* Light text */
+  background-color: #0f1115; /* Match DashboardPage background */
+  color: #ffffff;
 }
 
-/* Loading state styling (global) */
+/* Loading state styling */
 .loading-state {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   font-size: 1.5rem;
-  /* Use theme variable */
-  background-color: var(--color-bg-features); /* Default dark background */
-  color: var(--color-text-secondary); /* Default dark theme text */
+  background-color: var(--color-bg-features);
+  color: var(--color-text-secondary);
 }
 body.light .loading-state {
-  background-color: var(--color-bg-dashboard-main); /* Light background */
-  color: var(--color-text-dashboard-secondary); /* Light theme text */
+  background-color: var(--color-bg-dashboard-main);
+  color: var(--color-text-dashboard-secondary);
 }
 
-
-/* --- Responsive adjustments for Dashboard --- */
+/* --- Responsive adjustments --- */
 @media (max-width: 768px) {
   .dashboard-content-area {
-    padding-left: 0; /* No padding when sidebar is hidden/overlay */
+    margin-left: 0; /* Remove side margin on mobile */
+    width: 100%;
+    padding-top: 64px;
   }
 }
-/* ------------------------------------------ */

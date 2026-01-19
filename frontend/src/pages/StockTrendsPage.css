@@ -1,243 +1,471 @@
-/* src/pages/StockTrendsPage.css */
-
-.stock-trends-page {
-  padding: 2.5rem; /* Match dashboard padding */
-  color: var(--color-text-dashboard-primary); /* Use light theme text */
-  background-color: var(--color-bg-dashboard-main); /* Match dashboard background */
+.trends-page-content {
+    padding: 2rem;
+    color: #e0e0e0;
+    max-width: 1400px;
+    margin: 0 auto;
+    font-family: 'Inter', sans-serif;
 }
 
-/* Dark mode adjustments */
-body.dark .stock-trends-page {
-    color: var(--color-text-dashboard-primary-dark);
-    background-color: var(--color-bg-dashboard-main-dark);
+.trends-header {
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #333;
+    padding-bottom: 1rem;
 }
 
-
-.stock-trends-page h2 {
-  font-size: 1.8rem;
-  font-weight: 600;
-  margin-top: 0;
-  margin-bottom: 2rem;
-  color: inherit; /* Inherit color from parent */
+/* MAIN LAYOUT: LEFT (Controls) | RIGHT (Chart + ROI) */
+.trends-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr; /* Sidebar fixed, Chart flexible */
+    gap: 2rem;
+    align-items: stretch; /* CRITICAL: Forces Left & Right panels to same height */
 }
 
-.trends-form {
-  margin-bottom: 2.5rem; /* More space below form */
-  padding: 1.5rem;
-  background-color: var(--color-bg-sidebar); /* White background for form */
-  border-radius: 8px;
-  border: 1px solid var(--color-border-card); /* Light border */
-}
-/* Dark mode form background */
-body.dark .trends-form {
-    background-color: var(--color-bg-sidebar-dark);
-    border-color: var(--color-border-card); /* Dark theme border */
+/* Wrapper for stacking Chart and ROI */
+.trends-right-col {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
 }
 
-
-.form-row {
-  display: flex;
-  flex-wrap: wrap; /* Allow wrapping on smaller screens */
-  gap: 1.5rem;
-  align-items: flex-end; /* Align items to bottom (labels, inputs, button) */
-  margin-bottom: 1.5rem;
+/* --- LEFT PANEL: CONTROLS --- */
+.controls-panel {
+    background: #1e1e1e;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid #333;
+    display: flex;       /* Added Flex to push content if needed */
+    flex-direction: column;
+    /* Height is now controlled by the grid stretch */
 }
-.form-row:last-child {
-    margin-bottom: 0;
+
+.control-section h3 {
+    font-size: 0.9rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 1rem;
+}
+
+.divider {
+    border: 0;
+    border-top: 1px solid #333;
+    margin: 1.5rem 0;
 }
 
 .form-group {
-  flex: 1; /* Allow flexible sizing */
-  min-width: 200px; /* Minimum width before wrapping */
+    margin-bottom: 1rem;
 }
 
 .form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-  font-size: 0.9rem;
-  color: var(--color-text-dashboard-secondary); /* Grey label text */
-}
-/* Dark mode label */
-body.dark .form-group label {
-    color: var(--color-text-dashboard-secondary-dark);
-}
-
-
-/* Common input/select/date styles */
-.form-group input[type="text"],
-.form-group input[type="date"],
-.form-group select {
-  width: 100%;
-  padding: 0.7rem 1rem;
-  border: 1px solid var(--color-border-card); /* Light border */
-  border-radius: 6px;
-  background-color: var(--color-bg-dashboard-main); /* White input background */
-  color: var(--color-text-dashboard-primary); /* Dark input text */
-  font-size: 1rem;
-  box-sizing: border-box;
-}
-/* Dark mode input/select styles */
-body.dark .form-group input[type="text"],
-body.dark .form-group input[type="date"],
-body.dark .form-group select {
-    background-color: var(--color-bg-card); /* Darker input */
-    color: var(--color-text-dashboard-primary-dark);
-    border-color: var(--color-border-card);
-}
-
-/* Focus styles for inputs and select */
-.form-group input:focus,
-.form-group select:focus {
-  border-color: var(--color-primary-blue);
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
-}
-
-/* Select specific styles (arrow) */
-.form-group select {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%236c757d%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  background-size: 0.65em auto;
-  padding-right: 2.5rem; /* Make space for arrow */
-}
-/* Dark mode select arrow */
-body.dark .form-group select {
-    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23aaaaaa%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
-}
-
-.date-range {
-    align-items: flex-end;
-}
-.date-range .form-group {
-    flex-basis: 200px; /* Give date inputs a base size */
-    flex-grow: 1;
-}
-
-.symbol-format-hint {
     display: block;
-    font-size: 0.75rem;
-    color: var(--color-text-dashboard-secondary);
-    margin-top: 0.3rem;
-}
-body.dark .symbol-format-hint {
-    color: var(--color-text-dashboard-secondary-dark);
+    margin-bottom: 0.4rem;
+    font-size: 0.85rem;
+    color: #aaa;
 }
 
-.trends-button {
-  background-color: var(--color-primary-blue);
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  /* Match input height (adjust padding numbers if input padding changes) */
-  height: calc(0.7rem + 0.7rem + 1rem + 2px); /* top/bottom padding + font-size + border */
-  margin-left: 1.5rem; /* Default space for desktop */
-}
-.trends-button:hover:not(:disabled) {
-  background-color: var(--color-primary-blue-dark);
-}
-.trends-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+input, select {
+    width: 100%;
+    padding: 10px;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 6px;
+    color: #fff;
+    outline: none;
 }
 
-.error-message {
-  color: #dc3545; /* Red */
-  background-color: #f8d7da; /* Light red background */
-  border: 1px solid #f5c2c7; /* Lighter red border */
-  padding: 0.8rem;
-  border-radius: 6px;
-  margin: -1rem 0 1.5rem 0; /* Position between form and chart */
-  font-size: 0.9rem;
-  text-align: center;
-}
-/* Dark mode error message */
-body.dark .error-message {
-    color: #ff758f;
-    background-color: rgba(255, 117, 143, 0.1);
-    border-color: rgba(255, 117, 143, 0.2);
+.analyze-btn {
+    width: 100%;
+    padding: 10px;
+    background: #00C49F;
+    border: none;
+    border-radius: 6px;
+    color: #000;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
 }
 
+.analyze-btn:hover { background: #00e6ba; }
 
-.chart-container {
-  margin-top: 2rem;
-  height: 400px; /* Fixed height for the chart area */
-  width: 100%;
-  position: relative; /* For loading spinner positioning */
-}
-
-.loading-spinner {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 1.2rem;
-  color: var(--color-text-dashboard-secondary);
-}
-body.dark .loading-spinner {
-    color: var(--color-text-dashboard-secondary-dark);
+.analyze-btn:disabled {
+    background: #444;
+    color: #888;
+    cursor: not-allowed;
 }
 
-.no-data-message {
-  text-align: center;
-  color: var(--color-text-dashboard-secondary);
-  margin-top: 4rem;
-  font-size: 1.1rem;
-}
-body.dark .no-data-message {
-    color: var(--color-text-dashboard-secondary-dark);
-}
-
-/* Recharts class overrides */
-.recharts-tooltip-wrapper {
-  outline: none; /* Remove focus outline */
-}
-/* Style axis ticks */
-.recharts-cartesian-axis-tick-value {
-    font-size: 12px;
-    fill: var(--color-text-dashboard-secondary); /* Ensure ticks use theme color */
-}
-body.dark .recharts-cartesian-axis-tick-value {
-     fill: var(--color-text-dashboard-secondary-dark);
-}
-/* Style legend text */
-.recharts-legend-item-text {
-    font-size: 14px;
-    color: var(--color-text-dashboard-primary) !important; /* Use important if needed */
-}
-body.dark .recharts-legend-item-text {
-     color: var(--color-text-dashboard-primary-dark) !important;
+.update-graph-btn {
+    width: 100%;
+    margin-top: 10px;
+    padding: 8px;
+    background: transparent;
+    border: 1px solid #00C49F;
+    color: #00C49F;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: 0.2s;
 }
 
+.update-graph-btn:hover { background: rgba(0, 196, 159, 0.1); }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .stock-trends-page {
+.limit-text {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 5px;
+}
+
+/* Active Stock Tags */
+.active-list {
+    margin-top: 1rem;
+}
+
+.active-list h4 {
+    font-size: 0.9rem;
+    margin-bottom: 0.8rem;
+}
+
+.stock-tag {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #252525;
+    padding: 8px 12px;
+    border-radius: 20px;
+    border: 1px solid #444;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.stock-tag button {
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 1.2rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.error-card {
+    margin-top: 1rem;
+    padding: 0.8rem;
+    background: rgba(255, 77, 77, 0.1);
+    color: #ff4d4d;
+    border-radius: 6px;
+    font-size: 0.85rem;
+}
+
+/* --- RIGHT PANEL: CHART --- */
+.chart-panel {
+    background: #1e1e1e;
+    border-radius: 12px;
+    border: 1px solid #333;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    min-height: 450px; /* Force minimum height for the card */
+    position: relative;
+    overflow: hidden; /* Contains the loading bg */
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.chart-container-responsive {
+    flex-grow: 1;
+    width: 100%;
+    height: 500px;
+}
+
+.legend-custom span {
+    margin-left: 20px;
+    font-size: 0.9rem;
+    color: #aaa;
+}
+.legend-solid { text-decoration: underline; }
+.legend-dashed { border-bottom: 2px dashed #aaa; }
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #555;
+}
+.placeholder-icon { font-size: 4rem; opacity: 0.3; margin-bottom: 1rem; }
+
+/* --- ROI WIDGET CARD (SOLID BG) --- */
+.roi-widget-card {
+    grid-column: 1 / -1; /* CRITICAL: Spans from col 1 to end */
+    background: #1e1e1e;
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid #333;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    margin-top: 1rem;
+}
+
+.roi-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #333;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.roi-header h3 {
+    color: #fff;
+    font-size: 1.3rem;
+    margin: 0;
+}
+
+.roi-input-group {
+    display: flex;
+    align-items: baseline;
+    font-size: 1.1rem;
+    color: #aaa;
+}
+
+.roi-input-group input {
+    width: 110px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid #00C49F;
+    color: #00C49F;
+    font-weight: 800;
+    font-size: 1.3rem;
+    text-align: center;
+    margin: 0 10px;
+    padding: 5px;
+    border-radius: 0;
+    outline: none;
+}
+
+.roi-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+}
+
+.roi-card {
+    background: #252525;
     padding: 1.5rem;
-  }
-  .trends-form {
-    padding: 1rem;
-  }
-  .form-row {
-      gap: 1rem;
-      margin-bottom: 1rem;
-  }
-  /* Make button full width on mobile and appear below inputs */
-  .trends-button {
-      width: 100%;
-      margin-left: 0;
-      margin-top: 1rem;
-  }
-  .chart-container {
-      height: 300px; /* Smaller chart on mobile */
-  }
+    border-radius: 12px;
+    border-top-width: 5px;
+    border-top-style: solid;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s;
+}
+
+.roi-card:hover { transform: translateY(-3px); }
+
+.roi-card h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #ccc;
+    margin-bottom: 0.5rem;
+}
+
+.roi-percent {
+    font-size: 2rem;
+    font-weight: 900;
+    margin: 0.8rem 0;
+}
+
+.roi-details { margin-top: auto; }
+
+.roi-details p {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.95rem;
+    color: #aaa;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #333;
+}
+
+.roi-details p:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    font-weight: bold;
+    color: #fff;
+}
+
+.pos { color: #00C49F; }
+.neg { color: #FF4d4d; }
+/* ... keep all existing styles ... */
+
+/* --- NEW: AI SUMMARY CARD --- */
+.ai-summary-card {
+    background: #1e1e1e;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid #333;
+    border-left: 5px solid #00C49F; /* Accent line */
+}
+
+.ai-header h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1.2rem;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.insight-item {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #333;
+}
+
+.insight-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.trend-icon {
+    font-size: 1.5rem;
+    font-weight: bold;
+    background: rgba(255,255,255,0.05);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.insight-text strong {
+    display: block;
+    color: #ddd;
+    margin-bottom: 4px;
+}
+
+.insight-text p {
+    color: #aaa;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* --- UPDATED ROI STYLES FOR INFLATION TOGGLE --- */
+.roi-header {
+    margin-bottom: 1rem; /* Reduced margin */
+}
+
+.roi-controls-right {
+    font-size: 0.9rem;
+}
+
+.inflation-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    color: #aaa;
+    user-select: none;
+}
+
+.inflation-toggle input {
+    width: auto; /* Reset width */
+    margin: 0;
+}
+
+.roi-input-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: center; /* Center the input sentence */
+    font-size: 1.2rem;
+    color: #ddd;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.roi-input-row input {
+    width: 120px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid #00C49F;
+    color: #00C49F;
+    font-weight: 800;
+    font-size: 1.5rem;
+    text-align: center;
+    margin: 0 10px;
+    outline: none;
+}
+
+
+.loading-tip-container {
+    background: linear-gradient(145deg, #1e1e1e 0%, #111 100%);
+    /* Remove border radius if you want it flush, or keep it to match card */
+    border-radius: 8px; 
+    padding: 40px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    
+    /* FORCE FULL SIZE */
+    width: 100%;
+    height: 100%; 
+    flex: 1; /* Grow to fill flex parent */
+    
+    animation: fadeIn 0.3s ease-in;
+    z-index: 10;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #333;
+    border-top: 4px solid #00C49F;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 25px;
+}
+
+.tip-content h4 {
+    color: #00C49F;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+}
+
+.tip-content h3 {
+    color: #fff;
+    margin: 0 0 10px 0;
+    font-size: 1.5rem;
+}
+
+.tip-content p {
+    color: #aaa;
+    max-width: 600px;
+    line-height: 1.6;
+    font-size: 1.05rem;
+}
+
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@media (max-width: 900px) {
+    .trends-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .roi-widget-card {
+        grid-column: 1; /* Reset to single column */
+    }
 }

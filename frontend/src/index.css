@@ -2,70 +2,75 @@
 
 /* --- GLOBAL RESETS AND SIZING --- */
 html, body {
-  margin: 0; /* Remove default browser margin */
-  padding: 0; /* Remove default browser padding */
-  height: 100%; /* Ensure they take full height */
-  width: 100%; /* Ensure they take full width */
-  overflow-x: hidden; /* Prevent horizontal scroll */
-  box-sizing: border-box; /* Apply box-sizing globally */
-  overscroll-behavior: none; /* Prevent scroll chaining on touch devices */
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%; /* Force full width */
+  overflow-x: hidden;
+  box-sizing: border-box;
+  overscroll-behavior: none;
 }
 
 *, *::before, *::after {
-  box-sizing: inherit; /* Ensure all elements use border-box */
+  box-sizing: inherit;
 }
 
 body {
-  font-family: 'Ubuntu', sans-serif; /* Set your chosen font */
+  font-family: 'Ubuntu', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* --- CRITICAL ALIGNMENT FIXES --- */
+  display: block; 
+  text-align: left; /* Stop everything from centering */
+  /* -------------------------------- */
 
   /* --- Full Page Background --- */
   background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('./assets/hero-bg.jpeg');
   background-size: cover;
   background-position: center;
-  background-attachment: fixed; /* Keep background fixed during scroll */
-  background-color: #0d0d0d; /* Dark fallback color */
-  /* ------------------------------------------------------------------ */
+  background-attachment: fixed;
+  background-color: #0d0d0d;
 }
 
-/* Ensure React root div takes full height */
+/* Ensure React root div takes full dimensions */
 #root {
   height: 100%;
+  width: 100%;
+  text-align: left;
 }
 
 html {
-  scroll-behavior: smooth; /* Enable smooth scrolling */
+  scroll-behavior: smooth;
 }
 
-/* --- Custom Scrollbar Styles (WebKit - Chrome, Safari, Edge) --- */
+/* --- Custom Scrollbar Styles (WebKit) --- */
 ::-webkit-scrollbar {
-  width: 8px; /* Width of the vertical scrollbar */
-  height: 8px; /* Height of the horizontal scrollbar */
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #1a1a1a; /* Dark background for the track */
+  background: #1a1a1a;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #4a4a4a; /* Dark grey color for the scrollbar handle */
+  background-color: #4a4a4a;
   border-radius: 4px;
-  border: 2px solid #1a1a1a; /* Creates padding around thumb */
+  border: 2px solid #1a1a1a;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #6a6a6a; /* Lighter grey on hover */
+  background-color: #6a6a6a;
 }
 
 ::-webkit-scrollbar-corner {
-  background: #1a1a1a; /* Background for the corner */
+  background: #1a1a1a;
 }
 
 /* --- Custom Scrollbar Styles (Firefox) --- */
 html {
-  /* Note: Firefox support is more limited */
-  scrollbar-width: thin; /* Options: 'auto', 'thin', 'none' */
-  scrollbar-color: #4a4a4a #1a1a1a; /* thumb track */
+  scrollbar-width: thin;
+  scrollbar-color: #4a4a4a #1a1a1a;
 }

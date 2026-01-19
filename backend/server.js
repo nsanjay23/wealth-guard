@@ -10,8 +10,12 @@ const LocalStrategy = require('passport-local').Strategy; // Email/Password stra
 const session = require('express-session'); // Session management
 const db = require('../db/db'); // Database connection module (adjust path if needed)
 const ensureAuthenticated = require('./middleware/auth');
-const yahooFinance = require('yahoo-finance2');
 require('dotenv').config(); // Load environment variables
+const portfolioRoutes = require('./routes/portfolio');
+const path = require('path');
+const fs = require('fs'); // Add fs to read the CSV file
+const csv = require('csv-parser'); // You might need to install this: npm install csv-parser
+const { spawn } = require('child_process'); // To start Python server
 
 // --- Helper Function: Convert String to Title Case ---
 const toTitleCase = (str) => {
@@ -52,6 +56,7 @@ const app = express();
 const port = process.env.PORT || 5001;
 
 // --- PASSPORT CONFIGURATION ---
+
 
 // 1. Google OAuth 2.0 Strategy
 passport.use(new GoogleStrategy({
@@ -157,21 +162,70 @@ app.use(express.json());
 
 // Configure and use express-session for session management
 app.use(session({
-    secret: process.env.SESSION_SECRET, // Secret key to sign the session ID cookie
-    resave: false,                     // Don't save session if unmodified
-    saveUninitialized: false,          // Don't create session until something stored
-    cookie: {
-        secure: process.env.NODE_ENV === 'production', // Use secure cookies in production (HTTPS)
-        httpOnly: true, // Prevent client-side JS from reading the cookie
-        maxAge: 1000 * 60 * 60 * 24 // Example: Cookie expires in 1 day
-    }
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false } // Set to true if using HTTPS
 }));
 // Initialize Passport and allow it to use sessions
 app.use(passport.initialize());
 app.use(passport.session());
 // ----------------------
 
+
+// --- 1. START PYTHON SERVER IN BACKGROUND ---
+let pythonServerProcess;
+
+const startPythonServer = () => {
+    // POINT TO YOUR PREDICT.PY FILE NOW
+    const scriptPath = path.join(__dirname, '../ai/predict.py'); 
+    console.log('🚀 Starting Python AI Server (predict.py)...');
+    
+    // ADD THE '--server' FLAG
+    pythonServerProcess = spawn('python', [scriptPath, '--server']);
+
+    pythonServerProcess.stdout.on('data', (data) => {
+        console.log(`[PYTHON]: ${data.toString()}`);
+    });
+
+    pythonServerProcess.stderr.on('data', (data) => {
+        const output = data.toString();
+        
+        // Filter out "INFO" logs from Flask/Werkzeug so they don't look like errors
+        if (output.includes('INFO:') || output.includes('WARNING:')) {
+            console.log(`[PYTHON LOG]: ${output.trim()}`);
+        } else {
+            // Real errors stay red
+            console.error(`[PYTHON ERROR]: ${output.trim()}`);
+        }
+    });
+};
+
+// Start it immediately when Node starts
+startPythonServer();
+
 // --- Routes ---
+
+// --- 2. FAST API ROUTE ---
+app.post('/api/predict', async (req, res) => {
+    try {
+        // Forward the request to the running Python server (Port 5002)
+        const response = await axios.post('http://127.0.0.1:5002/predict', req.body);
+        
+        // Return the Python result directly to Frontend
+        res.json(response.data);
+
+    } catch (error) {
+        console.error("Prediction Error:", error.message);
+        if (error.code === 'ECONNREFUSED') {
+            return res.status(503).json({ 
+                message: "AI Server is warming up, please try again in 10 seconds." 
+            });
+        }
+        res.status(500).json({ message: "Prediction failed", error: error.message });
+    }
+});
+
 
 // Basic test route
 app.get('/', (req, res) => {
@@ -302,78 +356,73 @@ app.post('/api/signup', async (req, res) => {
   }
 });
 
-app.get('/api/features/stock-trends', ensureAuthenticated, async (req, res) => {
-    const { symbols, startDate, endDate } = req.query;
-    const apiKey = process.env.TWELVE_DATA_API_KEY;
+app.use('/api/portfolios', portfolioRoutes);
 
-    // --- Twelve Data API Details (VERIFY WITH DOCS) ---
-    const API_BASE_URL = "https://api.twelvedata.com/time_series";
-    const interval = "1day"; // Daily data
-    // --- -------------------------------------------- ---
+// --- PREDICTION ROUTE ---
+app.post('/api/predict', ensureAuthenticated, (req, res) => {
+    const { company, startDate, endDate } = req.body;
 
-    if (!symbols || !startDate || !endDate || !apiKey) {
-        return res.status(400).json({ message: 'Missing required parameters or API key.' });
+    if (!company || !startDate || !endDate) {
+        return res.status(400).json({ message: 'Missing required fields.' });
     }
 
-    const symbolList = symbols.split(',').map(s => s.trim().toUpperCase());
-    const combinedData = {};
-    let hasError = false;
+    // 1. Define paths
+    // Go up one level from 'backend' to 'ai'
+    const pythonScriptPath = path.join(__dirname, '../ai/predict.py'); 
+    const aiDir = path.join(__dirname, '../ai'); // Working directory for the script
 
-    try {
-        for (const symbol of symbolList) {
-            console.log(`Fetching Twelve Data for ${symbol} from ${startDate} to ${endDate}`);
-            try {
-                const response = await axios.get(API_BASE_URL, {
-                    params: {
-                        symbol: symbol,       // e.g., RELIANCE:NSE
-                        interval: interval,
-                        start_date: startDate, // e.g., 2024-01-01
-                        end_date: endDate,     // e.g., 2024-10-23
-                        apikey: apiKey,
-                        // country: 'India' // Add if needed/supported
-                    }
-                });
+    // 2. Spawn the Python process
+    // We run it inside the 'ai' folder so it finds the models easily
+    const pythonProcess = require('child_process').spawn('python', [pythonScriptPath, company, startDate, endDate], {
+        cwd: aiDir 
+    });
 
-                // --- Process Response (VERIFY FORMAT WITH DOCS) ---
-                // Assuming response.data.values is [{ datetime: 'YYYY-MM-DD', close: '123.45' }, ...]
-                if (response.data && response.data.values && Array.isArray(response.data.values)) {
-                    response.data.values.forEach(item => {
-                        const dateStr = item.datetime; // ASSUMED field
-                        const closePrice = parseFloat(item.close); // ASSUMED field
+    let scriptOutput = '';
 
-                        if (dateStr && !isNaN(closePrice)) {
-                            if (!combinedData[dateStr]) {
-                                combinedData[dateStr] = { date: dateStr };
-                            }
-                            combinedData[dateStr][symbol] = closePrice;
-                        }
+    pythonProcess.stdout.on('data', (data) => {
+        scriptOutput += data.toString();
+    });
+
+    pythonProcess.stderr.on('data', (data) => {
+        console.error(`Python Error: ${data}`);
+    });
+
+    pythonProcess.on('close', (code) => {
+        console.log(`Python script finished with code ${code}`);
+        
+        // --- DEBUG: Print what Python actually said ---
+        console.log("--- PYTHON OUTPUT START ---");
+        console.log(scriptOutput); 
+        console.log("--- PYTHON OUTPUT END ---");
+        // ---------------------------------------------
+
+        // 3. Check output for Success/Error tags
+        if (scriptOutput.includes('ERROR:')) {
+            // Send the specific python error to the frontend
+            return res.status(500).json({ message: 'Prediction failed', details: scriptOutput });
+        }
+
+        if (scriptOutput.includes('SUCCESS:')) {
+            const filenameMatch = scriptOutput.match(/SUCCESS:(.*)/);
+            if (filenameMatch && filenameMatch[1]) {
+                const csvFilename = filenameMatch[1].trim();
+                const csvFilePath = path.join(aiDir, csvFilename);
+
+                const results = [];
+                fs.createReadStream(csvFilePath)
+                    .pipe(csv())
+                    .on('data', (data) => results.push(data))
+                    .on('end', () => {
+                        res.json({ message: 'Success', data: results });
                     });
-                    console.log(`Processed ${response.data.values.length} records for ${symbol}.`);
-                } else {
-                    console.warn(`No valid 'values' array received for ${symbol}. Status: ${response.data?.status}`);
-                }
-                // ----------------------------------------------------
-
-            } catch (apiError) {
-                console.error(`API Error fetching ${symbol} from Twelve Data:`, apiError.response ? apiError.response.data : apiError.message);
-                hasError = true;
+            } else {
+                res.status(500).json({ message: 'Could not parse output file name.' });
             }
-            // Optional: Add delay if rate limited
-            // await new Promise(resolve => setTimeout(resolve, 1000)); // 1 sec delay
-        } // End symbol loop
-
-        // Format and respond (same as before)
-        const chartData = Object.values(combinedData).sort((a, b) => new Date(a.date) - new Date(b.date));
-         if (chartData.length === 0 && hasError) { /* ... error handling ... */ }
-         if (chartData.length === 0 && !hasError) { /* ... error handling ... */ }
-        res.status(200).json(chartData);
-
-    } catch (error) {
-        console.error('Stock Trends Error:', error);
-        res.status(500).json({ message: 'Internal server error processing stock trends.' });
-    }
+        } else {
+            res.status(500).json({ message: 'Unknown script response', raw: scriptOutput });
+        }
+    });
 });
-
 
 // --- Start the Server ---
 app.listen(port, () => {
