@@ -1,0 +1,276 @@
+/* --- COMPARE PAGE CSS --- */
+:root {
+  --cp-bg: #121212;
+  --cp-card: #1e1e1e;
+  --cp-border: #333;
+  --cp-primary: #00d2aa;
+  --cp-text-dim: #a1a1aa;
+}
+
+.cp-container {
+  background-color: var(--cp-bg);
+  min-height: 100vh;
+  color: white;
+  padding: 40px 60px; /* More horizontal padding */
+  font-family: 'Inter', sans-serif;
+}
+
+/* Header */
+.cp-header {
+  margin-bottom: 40px;
+  position: relative;
+  text-align: center; /* Center the title */
+}
+
+.cp-header h1 {
+  font-size: 2.2rem;
+  margin: 0;
+  font-weight: 700;
+}
+
+.cp-back {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--cp-text-dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.cp-back:hover { color: white; }
+
+/* Table Wrapper */
+.cp-table-wrapper {
+  border-radius: 16px;
+  overflow: hidden; /* Rounded corners for the whole table */
+  border: 1px solid var(--cp-border);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.cp-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--cp-card);
+  table-layout: fixed; /* Ensures equal column widths */
+}
+
+/* --- HEADER ROW --- */
+.cp-feature-header {
+  width: 250px;
+  background: #252529;
+  padding: 24px;
+  text-align: left;
+  font-size: 1.1rem;
+  color: white;
+  vertical-align: bottom; /* Align text to bottom */
+  border-right: 1px solid var(--cp-border);
+}
+
+.cp-policy-header {
+  padding: 24px;
+  vertical-align: top;
+  border-right: 1px solid var(--cp-border);
+  background: var(--cp-card);
+}
+
+.cp-plan-card {
+  text-align: left;
+}
+
+.cp-plan-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.cp-provider-tag {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--cp-primary);
+  font-weight: bold;
+}
+
+.cp-btn-remove {
+  background: transparent;
+  border: none;
+  color: #555;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.cp-btn-remove:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.cp-plan-name {
+  font-size: 1.1rem;
+  margin: 0 0 15px 0;
+  line-height: 1.4;
+  height: 40px; /* Fixed height for alignment */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cp-price {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: white;
+}
+
+/* --- ADD COLUMN --- */
+.cp-add-col {
+  padding: 24px;
+  vertical-align: middle;
+}
+
+.cp-add-card {
+  border: 2px dashed #444;
+  border-radius: 12px;
+  height: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--cp-text-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+  gap: 10px;
+}
+
+.cp-add-card:hover {
+  border-color: var(--cp-primary);
+  color: var(--cp-primary);
+  background: rgba(0, 210, 170, 0.03);
+}
+
+/* --- BODY CELLS --- */
+.cp-table tbody tr {
+  border-top: 1px solid var(--cp-border);
+}
+
+.cp-table tbody tr:hover {
+  background-color: rgba(255,255,255,0.02);
+}
+
+.cp-sticky-col {
+  background: #252529; /* Slightly lighter than card bg */
+  color: var(--cp-text-dim);
+  font-weight: 500;
+  padding: 20px 24px;
+  border-right: 1px solid var(--cp-border);
+}
+
+.cp-data-cell {
+  padding: 20px 24px;
+  font-size: 0.95rem;
+  color: #e4e4e7;
+  border-right: 1px solid var(--cp-border);
+  vertical-align: middle;
+}
+
+.cp-empty-cell {
+  border-right: none;
+}
+
+/* Features Icons */
+.cp-tag-yes {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.cp-tag-yes svg { color: var(--cp-primary); font-size: 1.1rem; }
+
+.cp-tag-no {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #555;
+}
+
+/* Empty State */
+.cp-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  color: var(--cp-text-dim);
+}
+
+.cp-btn-primary {
+  margin-top: 20px;
+  padding: 12px 30px;
+  background: var(--cp-primary);
+  color: black;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 50px;
+  transition: transform 0.2s;
+}
+
+.cp-btn-primary:hover {
+  transform: scale(1.05);
+
+}
+/* ... keep your existing root and container styles ... */
+
+/* Update .cp-data-cell to ensure text wraps nicely */
+.cp-data-cell {
+  padding: 24px;
+  font-size: 0.95rem;
+  color: #e4e4e7;
+  border-right: 1px solid var(--cp-border);
+  vertical-align: middle; /* Default alignment */
+}
+
+/* NEW: Helper to force top alignment for the Features row */
+.cp-align-top {
+  vertical-align: top !important;
+  padding-top: 30px; /* Give it a bit more breathing room at top */
+}
+
+/* NEW: Container for the list of features */
+.cp-features-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* Space between each feature */
+}
+
+/* Update the feature tag styling */
+.cp-tag-yes {
+  display: flex;
+  align-items: flex-start; /* Aligns icon with first line of text if text wraps */
+  gap: 12px;
+  line-height: 1.4;
+}
+
+.icon-check {
+  color: var(--cp-primary); 
+  font-size: 1.1rem; 
+  flex-shrink: 0; /* Prevents icon from shrinking if text is long */
+  margin-top: 2px; /* optical alignment */
+}
+
+.cp-tag-no {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #555;
+  font-style: italic;
+}

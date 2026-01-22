@@ -15,8 +15,30 @@ const portfolioRoutes = require('./routes/portfolio');
 const path = require('path');
 const fs = require('fs'); // Add fs to read the CSV file
 const csv = require('csv-parser'); // You might need to install this: npm install csv-parser
+const multer = require('multer');
+const pdfParse = require('pdf-extraction');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { spawn } = require('child_process'); // To start Python server
+const OpenAI = require('openai'); // CHANGED: Using OpenAI
+const Groq = require('groq-sdk');
 
+// Helper: Wait function
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+// Helper: Retry Gemini calls if they fail with 429
+async function generateContentWithRetry(model, prompt, retries = 3) {
+    try {
+        return await model.generateContent(prompt);
+    } catch (error) {
+        if (retries > 0 && (error.status === 429 || error.message.includes("429"))) {
+            const delay = 5000 + Math.floor(Math.random() * 5000); // Wait 5-10 seconds
+            console.log(`Gemini Rate Limit (429). Retrying in ${delay}ms...`);
+            await sleep(delay);
+            return generateContentWithRetry(model, prompt, retries - 1);
+        }
+        throw error;
+    }
+}
 // --- Helper Function: Convert String to Title Case ---
 const toTitleCase = (str) => {
   if (!str) return str;
@@ -51,6 +73,80 @@ async function checkEmailWithVerifyKit(emailToCheck) {
   }
 }
 
+// --- INSERT THIS FUNCTION AFTER YOUR HELPER FUNCTIONS ---
+// 1. UPDATE THE MOCK DATA GENERATOR (Place this near top)
+const generateMockPolicies = () => {
+    const providers = ["HDFC Life", "ICICI Prudential", "LIC", "Max Life", "Tata AIA", "SBI Life", "Niva Bupa", "Star Health", "Acko General", "Digit"];
+    const types = ["Term Life", "Health", "Motor", "Endowment"]; // Added Motor
+    
+    // Feature tags that match user inputs
+    const healthFeatures = ["Maternity Cover", "OPD Support", "Diabetes Care", "Senior Citizen Add-on", "Ayush Treatment", "No Room Rent Capping"];
+    const lifeFeatures = ["Tax Benefit 80C", "Return of Premium", "Critical Illness Rider", "Accidental Death Benefit", "Whole Life Cover"];
+    const motorFeatures = ["Zero Depreciation", "Roadside Assistance", "Engine Protection", "Consumables Cover"];
+
+    let policies = [];
+    let idCounter = 1001;
+
+    // Generate 150 Policies
+    for (let i = 0; i < 150; i++) {
+        const type = types[Math.floor(Math.random() * types.length)];
+        const provider = providers[Math.floor(Math.random() * providers.length)];
+        
+        let planName = "", premium = 0, cover = "", term = "", features = [], category = "";
+
+        if (type === "Term Life") {
+            planName = `${provider} ${['Secure', 'Protect', 'Shield', 'Smart'][Math.floor(Math.random()*4)]} Life`;
+            premium = Math.floor(Math.random() * (2500 - 500) + 500);
+            cover = `${Math.floor(Math.random() * 4 + 1)} Cr`;
+            term = "Till 85 Yrs";
+            // Randomly assign features relevant to Life
+            features = [lifeFeatures[Math.floor(Math.random()*lifeFeatures.length)], lifeFeatures[Math.floor(Math.random()*lifeFeatures.length)]];
+            // Tag for matching
+            category = "Protection"; 
+        } 
+        else if (type === "Health") {
+            const isFloater = Math.random() > 0.5;
+            planName = `${provider} ${isFloater ? 'Family First' : 'Optima'} ${['Gold', 'Platinum', 'Silver'][Math.floor(Math.random()*3)]}`;
+            premium = Math.floor(Math.random() * (2000 - 800) + 800);
+            cover = `${Math.floor(Math.random() * 20 + 5)} Lakhs`;
+            term = "1 Year";
+            features = [healthFeatures[Math.floor(Math.random()*healthFeatures.length)], isFloater ? "Family Floater" : "Individual"];
+            category = isFloater ? "Family" : "Individual";
+        } 
+        else if (type === "Motor") {
+            planName = `${provider} ${['Drive', 'Go', 'Zoom'][Math.floor(Math.random()*3)]} Assure`;
+            premium = Math.floor(Math.random() * (5000 - 1500) + 1500); // Yearly
+            cover = "IDV Market Value";
+            term = "1 Year";
+            features = [motorFeatures[Math.floor(Math.random()*motorFeatures.length)]];
+            category = "Car";
+        }
+        else { // Endowment
+            planName = `${provider} Wealth Builder`;
+            premium = Math.floor(Math.random() * (10000 - 3000) + 3000);
+            cover = "Sum + Bonus";
+            term = "20 Years";
+            features = ["Guaranteed Returns", "Tax Benefit 80C"];
+            category = "Investment";
+        }
+
+        policies.push({
+            id: idCounter++,
+            provider,
+            planName,
+            type,
+            category, // Used for specific matching
+            premium,
+            coverage: cover,
+            term,
+            features: [...new Set(features)], // Remove duplicates
+            badge: Math.random() > 0.85 ? "Super Match" : ""
+        });
+    }
+    return policies;
+};
+
+const LARGE_MOCK_DB = generateMockPolicies();
 // --- Express App Setup ---
 const app = express();
 const port = process.env.PORT || 5001;
@@ -205,6 +301,16 @@ const startPythonServer = () => {
 startPythonServer();
 
 // --- Routes ---
+// 1. Setup Gemini AI
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+// Fallback to the standard pro model if flash is giving 404
+// Trying the Experimental model - usually has separate limits
+// Trying the specific pinned Lite version
+const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-lite-001" });
+// Initialize OpenAI Client
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+// 2. Setup File Upload (Memory Storage)
+const upload = multer({ storage: multer.memoryStorage() });
 
 // --- 2. FAST API ROUTE ---
 app.post('/api/predict', async (req, res) => {
@@ -358,6 +464,106 @@ app.post('/api/signup', async (req, res) => {
 
 app.use('/api/portfolios', portfolioRoutes);
 
+// --- ROUTE 1: ANALYZE POLICY ---
+app.post('/api/analyze-policy', upload.single('policyPdf'), async (req, res) => {
+    try {
+        if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+
+        // 1. EXTRACT TEXT
+        let rawText = "";
+        try {
+            const data = await pdfParse(req.file.buffer);
+            rawText = data.text.substring(0, 40000); // Increased limit slightly for Groq
+        } catch (pdfError) {
+            return res.status(500).json({ error: "Failed to read PDF." });
+        }
+
+        // 2. AI PROMPT
+        const systemPrompt = `
+            You are an expert insurance analyst. Analyze this policy document.
+            
+            CRITICAL INSTRUCTION:
+            The user usually uploads a "Policy Wording" (Generic Rulebook).
+            - If a specific value (like Policy Number or Name) is missing, DO NOT say "Not Found".
+            - Instead, extract the DEFINITION or GENERAL RULE.
+            - Example: For "Sum Insured", if no number is found, return "As per Policy Schedule".
+            - Example: For "Policy Period", return "Usually 1 to 3 years".
+
+            RETURN JSON ONLY:
+            {
+                "fraudScore": number (80-100 for generic pdfs),
+                "isFraudulent": boolean,
+                "summary": {
+                    "provider": "string",
+                    "policyName": "string",
+                    "sumInsured": "string",
+                    "policyNum": "string",
+                    "policyHolder": "string",
+                    "startDate": "string",
+                    "endDate": "string",
+                    "premium": "string",
+                    "exclusions": ["string", "string", "string"]
+                }
+            }
+        `;
+
+        // 3. CALL GROQ (Llama 3 is Free & Fast)
+        const completion = await groq.chat.completions.create({
+            messages: [
+                { role: "system", content: systemPrompt },
+                { role: "user", content: `Document Text:\n${rawText}` }
+            ],
+            model: "llama-3.3-70b-versatile",
+            temperature: 0.1,
+            response_format: { type: "json_object" } 
+        });
+
+        const aiResponse = completion.choices[0].message.content;
+        const aiData = JSON.parse(aiResponse);
+
+        res.json({ ...aiData, rawTextContext: rawText });
+
+    } catch (error) {
+        console.error("Analysis Error:", error);
+        res.status(500).json({ error: "Analysis failed" });
+    }
+});
+
+// --- ROUTE 2: CHATBOT (Simpler & Shorter) ---
+app.post('/api/chat-policy', async (req, res) => {
+    try {
+        const { question, context } = req.body;
+
+        const systemPrompt = `
+            You are a helpful Insurance Assistant.
+            User Question: "${question}"
+            Document Context: "${context ? context.substring(0, 15000) : ''}"
+            
+            RULES FOR ANSWERING:
+            1. **Keep it SHORT.** Maximum 2-3 sentences.
+            2. **Simple English.** Explain it like you are talking to a high schooler.
+            3. No complex formatting. No bold (**), no bullet points.
+            4. If the answer is in the document context, use it. If not, answer generally.
+        `;
+
+        const completion = await groq.chat.completions.create({
+            messages: [{ role: "system", content: systemPrompt }],
+            model: "llama-3.3-70b-versatile", 
+            temperature: 0.7
+        });
+
+        // Double clean to remove any accidental markdown
+        const cleanText = completion.choices[0].message.content.replace(/\*\*/g, "").replace(/#/g, "");
+        
+        res.json({ answer: cleanText });
+
+    } catch (error) {
+        console.error("Chat Error:", error);
+        res.status(500).json({ error: "Chat failed" });
+    }
+});
+
+
 // --- PREDICTION ROUTE ---
 app.post('/api/predict', ensureAuthenticated, (req, res) => {
     const { company, startDate, endDate } = req.body;
@@ -423,6 +629,126 @@ app.post('/api/predict', ensureAuthenticated, (req, res) => {
         }
     });
 });
+
+// --- GET REAL POLICIES FROM NEON DB ---
+app.get('/api/insurance/live', ensureAuthenticated, async (req, res) => {
+    try {
+        // 1. Fetch from Database (Sorted by premium for better default view)
+        const result = await db.query('SELECT * FROM policies ORDER BY premium ASC');
+        
+        // 2. Map Database Columns (snake_case) to Frontend (camelCase)
+        const formattedPolicies = result.rows.map(row => ({
+            id: row.id,
+            provider: row.provider,
+            planName: row.plan_name,   // DB: plan_name -> Frontend: planName
+            type: row.type,            // Term Life, Health, etc.
+            category: row.category,    // Individual, Family, Car, etc.
+            premium: parseInt(row.premium), // Ensure it's a number
+            coverage: row.coverage,
+            term: row.term,
+            // Postgres returns arrays automatically, but we fallback to empty array just in case
+            features: Array.isArray(row.features) ? row.features : [], 
+            badge: row.badge
+        }));
+
+        res.json(formattedPolicies);
+
+    } catch (err) {
+        console.error("Error fetching policies:", err);
+        res.status(500).json({ message: "Server Error fetching policies" });
+    }
+});
+/// 2. UPDATE PROFILE ROUTES (Replace existing /api/user/profile routes)
+
+// GET Profile
+// --- GET Profile (Streamlined) ---
+app.get('/api/user/profile', ensureAuthenticated, async (req, res) => {
+    try {
+        const r = await db.query('SELECT * FROM users WHERE user_id = $1', [req.user.user_id]);
+        if (r.rows.length === 0) return res.json({});
+        const u = r.rows[0];
+        
+        res.json({
+            age: u.age, // CHANGED: dob -> age
+            gender: u.gender,
+            dependents: u.dependents,
+            city: u.city,
+            incomeRange: u.income_range,
+            occupation: u.occupation_type,
+            existingLoans: u.existing_loans,
+            smoker: u.is_smoker,
+            diseases: u.pre_existing_diseases ? u.pre_existing_diseases.split(',') : [],
+            lifeGoal: u.life_goal,
+            healthType: u.health_plan_type,
+            riskAppetite: u.risk_appetite,
+            tax80c: u.tax_saving_80c,
+            tax80d: u.tax_saving_80d
+        });
+    } catch (err) { console.error(err); res.status(500).send("Server Error"); }
+});
+
+// --- PUT Profile (Streamlined) ---
+app.put('/api/user/profile', ensureAuthenticated, async (req, res) => {
+    // CHANGED: dob -> age
+    const { 
+        age, gender, dependents, city,
+        incomeRange, occupation, existingLoans,
+        smoker, diseases,
+        lifeGoal, healthType, riskAppetite, tax80c, tax80d 
+    } = req.body;
+
+    try {
+        await db.query(`
+            UPDATE users SET 
+            age=$1, gender=$2, dependents=$3, city=$4,
+            income_range=$5, occupation_type=$6, existing_loans=$7,
+            is_smoker=$8, pre_existing_diseases=$9,
+            life_goal=$10, health_plan_type=$11, risk_appetite=$12, 
+            tax_saving_80c=$13, tax_saving_80d=$14
+            WHERE user_id=$15
+        `, [
+            age || null, gender, dependents, city, // CHANGED: age mapped to $1
+            incomeRange, occupation, existingLoans,
+            smoker, diseases ? diseases.join(',') : "",
+            lifeGoal, healthType, riskAppetite, tax80c, tax80d,
+            req.user.user_id
+        ]);
+        res.json({ message: "Profile Updated" });
+    } catch (err) { console.error(err); res.status(500).send("Update failed"); }
+});
+
+
+// --- DEBUG: LIST AVAILABLE MODELS ---
+async function listModels() {
+  try {
+    const { GoogleGenerativeAI } = require("@google/generative-ai");
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    
+    console.log("Checking available models...");
+    // Note: older versions of the SDK might use .listModels() differently
+    // This works for @google/generative-ai version 0.1.0+
+    const modelResponse = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models?key=${process.env.GEMINI_API_KEY}`
+    );
+    const data = await modelResponse.json();
+    
+    if (data.models) {
+      console.log("✅ AVAILABLE MODELS FOR YOUR KEY:");
+      data.models.forEach(m => {
+        if (m.supportedGenerationMethods.includes("generateContent")) {
+          console.log(`   - ${m.name.replace('models/', '')}`);
+        }
+      });
+    } else {
+      console.log("❌ No models found. Response:", data);
+    }
+  } catch (err) {
+    console.error("❌ Could not list models:", err.message);
+  }
+}
+
+// Run this on startup
+listModels();
 
 // --- Start the Server ---
 app.listen(port, () => {

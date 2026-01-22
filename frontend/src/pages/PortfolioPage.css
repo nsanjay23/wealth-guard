@@ -610,32 +610,54 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin
     color: #FFD700; /* Show yellow on hover even if not pinned */
 }
 
-/* Add to PortfolioPage.css */
+/* --- LOADING & TAX TIP STYLES --- */
 .loading-tip-container {
-    background: linear-gradient(145deg, #1e1e1e 0%, #111 100%);
-    border-radius: 8px; 
-    padding: 20px;
+    background-color: #1a1a1a; /* Dark background to cover the chart */
+    color: #e0e0e0;
     text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    animation: fadeIn 0.3s ease-in;
+    backdrop-filter: blur(4px); /* Optional: adds a nice blur effect */
 }
 
 .spinner {
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top: 3px solid #00C49F; /* Teal accent color */
+    border-radius: 50%;
     width: 40px;
     height: 40px;
-    border: 3px solid #333;
-    border-top: 3px solid #00C49F;
-    border-radius: 50%;
     animation: spin 1s linear infinite;
     margin-bottom: 15px;
 }
 
-.tip-content h4 { color: #00C49F; text-transform: uppercase; letter-spacing: 1px; font-size: 0.75rem; margin-bottom: 8px; }
-.tip-content h3 { color: #fff; margin: 0 0 8px 0; font-size: 1.1rem; }
-.tip-content p { color: #aaa; max-width: 90%; font-size: 0.9rem; line-height: 1.4; }
+.tip-content {
+    animation: fadeIn 0.5s ease-in;
+    max-width: 80%;
+}
 
-@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.tip-content h4 {
+    color: #00C49F;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.tip-content h3 {
+    color: #fff;
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+}
+
+.tip-content p {
+    color: #aaa;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}

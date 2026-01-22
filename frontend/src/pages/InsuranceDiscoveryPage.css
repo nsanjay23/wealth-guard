@@ -1,0 +1,380 @@
+:root {
+  --id-bg: #121212;
+  --id-card: #1e1e1e;
+  --id-border: #333;
+  --id-primary: #00d2aa;
+  --id-text: #fff;
+  --id-gray: #a1a1aa;
+}
+
+.id-page-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+  min-height: 100vh;
+  background-color: var(--id-bg);
+  color: var(--id-text);
+  font-family: 'Inter', sans-serif;
+  padding-bottom: 100px;
+}
+
+/* Header & Controls */
+.id-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+.id-header h1 { font-size: 1.8rem; margin: 0 0 5px 0; }
+.id-header-icon { font-size: 2rem; color: var(--id-primary); background: rgba(0, 210, 170, 0.1); padding: 10px; border-radius: 50%; display: flex; }
+
+.id-controls { display: flex; gap: 15px; margin-bottom: 30px; }
+.id-search {
+  background: var(--id-card); border: 1px solid var(--id-border);
+  padding: 12px 16px; border-radius: 8px; display: flex; align-items: center; gap: 10px;
+}
+.id-filter {
+  background: var(--id-card);
+  border: 1px solid var(--id-border);
+  border-radius: 8px; /* Smooth rounded corners */
+  padding: 0 16px; /* Remove vertical padding so select fills height */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  transition: border-color 0.2s;
+}
+.id-filter:hover {
+  border-color: #666; /* Subtle highlight on hover */
+}
+
+.id-search input{
+  background: transparent; border: none; color: white; outline: none; font-size: 1rem; width: 220px;
+}
+.id-filter select {
+  background: transparent;
+  border: none;
+  color: white;
+  outline: none;
+  font-size: 1rem;
+  width: 100%;
+  cursor: pointer;
+  
+  /* CRITICAL FIX: Forces browser native menu to be dark */
+  color-scheme: dark; 
+  
+  /* Remove default arrow so we can use our own icon or keep it clean */
+  /* You can keep the default arrow if you prefer, but this aligns text better */
+  appearance: none; 
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+/* Style the dropdown options specifically */
+.id-filter select option {
+  background-color: #1e1e1e; /* Dark background for the popup list */
+  color: white;
+  padding: 12px;
+}
+.id-icon { color: var(--id-gray); }
+
+/* Layout */
+.id-layout { display: grid; grid-template-columns: 1fr 320px; gap: 30px; align-items: start; }
+.id-list-container { display: flex; flex-direction: column; gap: 20px; }
+
+/* --- WIDE CARD STYLES --- */
+.id-wide-card {
+  background: var(--id-card);
+  border: 1px solid var(--id-border);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  gap: 20px;
+  transition: transform 0.2s, border-color 0.2s;
+}
+.id-wide-card:hover { transform: translateY(-2px); border-color: #555; }
+.id-wide-card.selected { border: 2px solid var(--id-primary); background: #152220; }
+
+.id-badge-ai {
+  position: absolute; top: -10px; left: 24px;
+  background: #7c3aed; color: white; padding: 4px 12px; border-radius: 20px;
+  font-size: 0.75rem; font-weight: bold; display: flex; align-items: center; gap: 5px;
+}
+
+/* Card Sections */
+.id-card-left { flex: 1.5; }
+.id-provider h4 { color: var(--id-gray); font-size: 0.85rem; text-transform: uppercase; margin: 0; }
+.id-plan-name { font-size: 1.4rem; margin: 5px 0 10px; color: white; }
+.id-features-inline { display: flex; gap: 8px; color: var(--id-gray); font-size: 0.9rem; align-items: center; }
+.id-features-inline svg { color: var(--id-primary); }
+
+.id-card-middle {
+  flex: 2; display: flex; justify-content: space-around;
+  background: #252529; padding: 15px; border-radius: 8px;
+}
+.id-stat-box { display: flex; flex-direction: column; gap: 4px; }
+.id-stat-box label { font-size: 0.75rem; color: var(--id-gray); }
+.id-stat-box strong { font-size: 1rem; }
+.price-box strong { color: var(--id-primary); font-size: 1.2rem; }
+
+.id-card-right {
+  flex: 0.8; display: flex; flex-direction: column; gap: 10px;
+}
+.id-btn-outline {
+  background: transparent; border: 1px solid var(--id-border); color: var(--id-gray);
+  padding: 10px; border-radius: 6px; cursor: pointer; transition: 0.2s;
+}
+.id-btn-outline:hover { border-color: white; color: white; }
+
+.id-btn-action {
+  border: none; padding: 12px; border-radius: 6px; font-weight: 600; cursor: pointer;
+}
+.btn-compare { background: var(--id-primary); color: black; }
+.btn-compare:hover { opacity: 0.9; }
+.btn-remove { background: #ef4444; color: white; }
+
+/* Sidebar */
+.id-profile-card, .id-guest-card {
+  background: var(--id-card); border: 1px solid var(--id-border);
+  border-radius: 12px; padding: 24px; position: sticky; top: 20px;
+}
+.id-profile-head { display: flex; gap: 10px; align-items: center; color: var(--id-primary); margin-bottom: 20px; }
+.id-profile-rows .row { display: flex; justify-content: space-between; margin-bottom: 12px; color: var(--id-gray); font-size: 0.95rem; }
+.id-profile-rows span:last-child { color: white; font-weight: 600; }
+.id-btn-edit, .id-btn-setup {
+  width: 100%; padding: 10px; margin-top: 10px; background: transparent; border: 1px solid var(--id-border); color: white; border-radius: 6px; cursor: pointer;
+}
+.id-btn-setup { background: white; color: black; border: none; font-weight: bold; display: flex; justify-content: center; gap: 8px; align-items: center;}
+
+/* Dock */
+.id-dock {
+  position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+  background: white; color: black; padding: 12px 30px; border-radius: 50px;
+  display: flex; gap: 40px; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 999;
+}
+.dock-content { display: flex; gap: 10px; font-weight: 600; align-items: center; }
+.dock-count { background: black; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 0.8rem; }
+.dock-btns { display: flex; gap: 15px; }
+.btn-text { background: none; border: none; font-weight: 600; cursor: pointer; color: #555; }
+.btn-go { background: black; color: var(--id-primary); border: none; padding: 8px 24px; border-radius: 20px; font-weight: bold; cursor: pointer; }
+.btn-go:hover { transform: scale(1.05); }
+
+/* ... Previous CSS ... */
+
+/* Disabled card state for cross-category mismatch */
+.id-wide-card.disabled-card {
+    opacity: 0.4;
+    pointer-events: none; /* Prevent clicking */
+    filter: grayscale(1);
+}
+
+/* Allow clicking the action button even if card is disabled, 
+   BUT we handle logic in JS. If simple CSS disable is preferred: */
+.id-wide-card.disabled-card .id-btn-action {
+    pointer-events: none;
+    background: #333;
+    color: #555;
+}
+
+/* AI Badge - Top Left floating */
+.id-badge-ai {
+  position: absolute; 
+  top: -10px; 
+  left: 24px;
+  background: linear-gradient(90deg, #7c3aed, #9f67ff); /* Gradient Purple */
+  color: white; 
+  padding: 4px 12px; 
+  border-radius: 20px;
+  font-size: 0.75rem; 
+  font-weight: bold; 
+  display: flex; 
+  align-items: center; 
+  gap: 5px;
+  box-shadow: 0 4px 10px rgba(124, 58, 237, 0.4);
+  z-index: 2;
+}
+
+/* Score Tag */
+.id-score-tag {
+    background: rgba(0, 210, 170, 0.1);
+    color: #00d2aa;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* Sidebar Warning */
+.id-profile-rows .row.warn span:last-child {
+    color: #f87171;
+}
+
+/* --- LOAD MORE BUTTON --- */
+.id-btn-load {
+  display: block;
+  margin: 20px auto 40px auto; /* Center horizontally, add spacing */
+  padding: 14px 40px;
+  background-color: var(--id-card); /* Match card background */
+  border: 1px solid var(--id-border);
+  border-radius: 50px; /* Pill shape */
+  color: var(--id-gray);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.id-btn-load:hover {
+  border-color: var(--id-primary); /* Teal border on hover */
+  color: #fff; /* White text on hover */
+  transform: translateY(-2px); /* Slight lift effect */
+  box-shadow: 0 6px 20px rgba(0, 210, 170, 0.15); /* Subtle teal glow */
+}
+
+.id-btn-load:active {
+  transform: translateY(0);
+}
+
+/* --- CUSTOM DROPDOWN FIX --- */
+
+/* The Container */
+.id-filter.custom-dropdown {
+    position: relative; /* Essential for the absolute menu */
+    cursor: pointer;
+    min-width: 200px; /* Ensure it has width */
+    justify-content: space-between;
+    user-select: none; /* Prevent text highlighting */
+}
+
+/* The Text */
+.dropdown-selected-text {
+    flex: 1;
+    color: white;
+    font-size: 1rem;
+    margin-left: 8px;
+}
+
+/* The Arrow Icon */
+.dropdown-arrow {
+    color: var(--id-gray);
+    transition: transform 0.3s ease;
+}
+.dropdown-arrow.open {
+    transform: rotate(180deg);
+}
+
+/* The Floating Menu List */
+.dropdown-menu-list {
+    position: absolute;
+    top: 120%; /* Puts it just below the input */
+    left: 0;
+    right: 0;
+    background-color: #1e1e1e; /* Match your card bg */
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 6px;
+    list-style: none;
+    z-index: 1000; /* Float above everything */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    animation: fadeIn 0.2s ease;
+}
+
+/* The Menu Items */
+.dropdown-item {
+    padding: 10px 12px;
+    border-radius: 6px;
+    color: #ccc;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.95rem;
+}
+
+.dropdown-item:hover {
+    background-color: #333;
+    color: white;
+}
+
+.dropdown-item.active {
+    background-color: var(--id-primary); /* Your theme green/teal */
+    color: black; /* Dark text for contrast on teal */
+    font-weight: 600;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+/* --- CUSTOM ALERT TOAST --- */
+.custom-alert {
+  position: fixed;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999; /* Ensure it's above everything */
+  
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  
+  min-width: 350px;
+  background: #1e1e1e; /* Card background */
+  padding: 16px 20px;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  border: 1px solid #333;
+  
+  animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Animations */
+@keyframes slideDown {
+  from { top: -100px; opacity: 0; }
+  to { top: 30px; opacity: 1; }
+}
+
+/* Alert Types */
+.custom-alert.error {
+  border-left: 4px solid #ef4444; /* Red accent */
+}
+.custom-alert.error .alert-icon {
+  color: #ef4444;
+}
+
+.custom-alert.warning {
+  border-left: 4px solid #f59e0b; /* Orange/Yellow accent */
+}
+.custom-alert.warning .alert-icon {
+  color: #f59e0b;
+}
+
+/* Icon & Text */
+.alert-icon {
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.alert-content {
+  flex: 1;
+  font-size: 0.95rem;
+  color: #fff;
+  font-weight: 500;
+}
+
+/* Close Button */
+.alert-close {
+  background: transparent;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.alert-close:hover {
+  background: rgba(255,255,255,0.1);
+  color: white;
+}

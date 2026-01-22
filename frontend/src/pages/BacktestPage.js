@@ -47,6 +47,7 @@ const BacktestPage = () => {
     
     const [loading, setLoading] = useState(false);
     const [results, setResults] = useState(null);
+    const [error, setError] = useState(null); // NEW: Error state for empty portfolios
     const [currentTip, setCurrentTip] = useState(TAX_TIPS[0]);
 
     // --- 1. FETCH PORTFOLIOS ON MOUNT ---
@@ -196,13 +197,28 @@ const BacktestPage = () => {
         return { endVal, totalReturn, cagr, maxDrawdown: maxDrawdown * 100 };
     };
 
-    // --- 2. BACKTEST LOGIC ---
     // --- 2. BACKTEST LOGIC (With 3-Second Minimum Load) ---
     const runBacktest = async () => {
+        setError(null); // Clear errors
         if (!selectedPortId1 && !selectedPortId2) return;
         
         if (selectedPortId1 === selectedPortId2) {
             alert("Please select two different portfolios to compare.");
+            return;
+        }
+
+        // --- NEW: Validation Check for Empty Portfolios ---
+        const p1 = portfolios.find(p => p.id === parseInt(selectedPortId1));
+        const p2 = portfolios.find(p => p.id === parseInt(selectedPortId2));
+
+        if (p1 && p1.stocks.length === 0) {
+            setResults(null);
+            setError(`Portfolio "${p1.name}" is empty. Please add stocks to this portfolio before backtesting.`);
+            return;
+        }
+        if (p2 && p2.stocks.length === 0) {
+            setResults(null);
+            setError(`Portfolio "${p2.name}" is empty. Please add stocks to this portfolio before backtesting.`);
             return;
         }
 
@@ -215,11 +231,10 @@ const BacktestPage = () => {
 
         // 2. Wrap the Data Logic in an async function
         const processData = async () => {
-            const port1 = portfolios.find(p => p.id === parseInt(selectedPortId1));
-            const port2 = portfolios.find(p => p.id === parseInt(selectedPortId2));
+            // We already found p1 and p2 above
             
-            const weights1 = port1 ? getComposition(port1) : [];
-            const weights2 = port2 ? getComposition(port2) : [];
+            const weights1 = p1 ? getComposition(p1) : [];
+            const weights2 = p2 ? getComposition(p2) : [];
 
             const symbols = new Set([
                 ...weights1.map(w => w.symbol), 
@@ -252,8 +267,8 @@ const BacktestPage = () => {
 
                 const dateKey = new Date(ts * 1000).toISOString().split('T')[0];
                 
-                const val1 = port1 ? calculateDailyValue(weights1, historyData, dateKey, investmentAmount, lastKnownPrices1) : null;
-                const val2 = port2 ? calculateDailyValue(weights2, historyData, dateKey, investmentAmount, lastKnownPrices2) : null;
+                const val1 = p1 ? calculateDailyValue(weights1, historyData, dateKey, investmentAmount, lastKnownPrices1) : null;
+                const val2 = p2 ? calculateDailyValue(weights2, historyData, dateKey, investmentAmount, lastKnownPrices2) : null;
                 
                 const benchStart = masterQuotes.find(q => q !== null);
                 const benchVal = (investmentAmount / benchStart) * masterQuotes[i];
@@ -261,27 +276,27 @@ const BacktestPage = () => {
                 timelineData.push({
                     date: new Date(ts * 1000).toLocaleDateString('en-US', { month: 'short', year: '2-digit' }),
                     fullDate: new Date(ts * 1000).toLocaleDateString(),
-                    [port1 ? port1.name : 'Strategy A']: val1,
-                    [port2 ? port2.name : 'Strategy B']: val2,
+                    [p1 ? p1.name : 'Strategy A']: val1,
+                    [p2 ? p2.name : 'Strategy B']: val2,
                     Benchmark: benchVal
                 });
             }
 
             const filteredData = timelineData.filter(d => 
-                (port1 ? d[port1.name] !== null : true) && 
-                (port2 ? d[port2.name] !== null : true)
+                (p1 ? d[p1.name] !== null : true) && 
+                (p2 ? d[p2.name] !== null : true)
             );
 
             if (filteredData.length === 0) throw new Error("No valid data points.");
 
-            const metrics1 = port1 ? calculateMetrics(filteredData, port1.name, investmentAmount, years) : null;
-            const metrics2 = port2 ? calculateMetrics(filteredData, port2.name, investmentAmount, years) : null;
+            const metrics1 = p1 ? calculateMetrics(filteredData, p1.name, investmentAmount, years) : null;
+            const metrics2 = p2 ? calculateMetrics(filteredData, p2.name, investmentAmount, years) : null;
             const metricsBench = calculateMetrics(filteredData, 'Benchmark', investmentAmount, years);
 
             return {
                 data: filteredData,
                 metrics: { port1: metrics1, port2: metrics2, benchmark: metricsBench },
-                names: { port1: port1 ? port1.name : 'Strategy A', port2: port2 ? port2.name : 'Strategy B' }
+                names: { port1: p1 ? p1.name : 'Strategy A', port2: p2 ? p2.name : 'Strategy B' }
             };
         };
 
@@ -294,6 +309,7 @@ const BacktestPage = () => {
 
         } catch (err) {
             console.error("Simulation error", err);
+            setError("Failed to generate backtest data. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -377,8 +393,17 @@ const BacktestPage = () => {
                 </div>
             )}
 
-            {/* STATE 2: INITIAL (NO RESULTS & NOT LOADING) - Show Placeholder */}
-            {!loading && !results && (
+            {/* STATE 2: ERROR (EMPTY PORTFOLIO) */}
+            {error && !loading && (
+                <div className="empty-state-message" style={{borderColor: '#ff4d4d', color: '#ff4d4d'}}>
+                    <FiAlertCircle size={40} />
+                    <h3>Unable to Simulate</h3>
+                    <p>{error}</p>
+                </div>
+            )}
+
+            {/* STATE 3: INITIAL (NO RESULTS & NOT LOADING & NO ERROR) - Show Placeholder */}
+            {!loading && !results && !error && (
                 <div className="empty-state-message">
                     <FiInfo size={40} />
                     <h3>Ready to Simulate</h3>
@@ -386,8 +411,8 @@ const BacktestPage = () => {
                 </div>
             )}
 
-            {/* STATE 3: RESULTS DASHBOARD */}
-            {results && !loading && (
+            {/* STATE 4: RESULTS DASHBOARD */}
+            {results && !loading && !error && (
                 <div className="results-container">
                     {/* MAIN CHART */}
                     <div className="chart-section">

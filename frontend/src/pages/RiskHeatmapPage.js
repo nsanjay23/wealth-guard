@@ -8,46 +8,46 @@ import './RiskHeatmapPage.css';
 // --- 1. REALISTIC RISK DATABASE (Based on 2024-25 Market Metrics) ---
 const RISK_DB = {
     // --- GIANTS & STABLE (Low-Med Risk) ---
-    "RELIANCE.NS": { volatility: 0.19, beta: 1.08, drawdown: 0.12, health: 0.90, sectorRisk: 0.3, marketCap: 1.00 }, // Oil/Telco Giant
-    "TCS.NS":      { volatility: 0.16, beta: 0.75, drawdown: 0.10, health: 0.95, sectorRisk: 0.2, marketCap: 0.85 }, // IT Leader
-    "HDFCBANK.NS": { volatility: 0.18, beta: 1.05, drawdown: 0.15, health: 0.92, sectorRisk: 0.4, marketCap: 0.90 }, // Banking Leader
-    "INFY.NS":     { volatility: 0.21, beta: 0.90, drawdown: 0.18, health: 0.90, sectorRisk: 0.3, marketCap: 0.75 }, // IT
-    "ITC.NS":      { volatility: 0.14, beta: 0.65, drawdown: 0.08, health: 0.94, sectorRisk: 0.2, marketCap: 0.60 }, // FMCG (Defensive)
-    "HINDUNILVR.NS":{volatility: 0.15, beta: 0.60, drawdown: 0.10, health: 0.93, sectorRisk: 0.2, marketCap: 0.65 }, // FMCG
-    "ASIANPAINT.NS":{volatility: 0.18, beta: 0.75, drawdown: 0.15, health: 0.90, sectorRisk: 0.3, marketCap: 0.40 }, // Consumption
-    "MARUTI.NS":   { volatility: 0.22, beta: 0.95, drawdown: 0.20, health: 0.90, sectorRisk: 0.5, marketCap: 0.45 }, // Auto (Stable)
-    "TITAN.NS":    { volatility: 0.24, beta: 1.10, drawdown: 0.18, health: 0.88, sectorRisk: 0.4, marketCap: 0.40 }, // Luxury Retail
-    "SUNPHARMA.NS":{ volatility: 0.19, beta: 0.65, drawdown: 0.12, health: 0.85, sectorRisk: 0.3, marketCap: 0.45 }, // Pharma (Defensive)
-    "POWERGRID.NS":{ volatility: 0.16, beta: 0.55, drawdown: 0.10, health: 0.85, sectorRisk: 0.2, marketCap: 0.35 }, // Utilities (Defensive)
-    "NTPC.NS":     { volatility: 0.18, beta: 0.70, drawdown: 0.12, health: 0.80, sectorRisk: 0.3, marketCap: 0.40 }, // Power PSU
+    "RELIANCE.NS": { volatility: 0.19, beta: 1.08, drawdown: 0.12, health: 0.90, sectorRisk: 0.3, marketCap: 1.00 },
+    "TCS.NS":      { volatility: 0.16, beta: 0.75, drawdown: 0.10, health: 0.95, sectorRisk: 0.2, marketCap: 0.85 },
+    "HDFCBANK.NS": { volatility: 0.18, beta: 1.05, drawdown: 0.15, health: 0.92, sectorRisk: 0.4, marketCap: 0.90 },
+    "INFY.NS":     { volatility: 0.21, beta: 0.90, drawdown: 0.18, health: 0.90, sectorRisk: 0.3, marketCap: 0.75 },
+    "ITC.NS":      { volatility: 0.14, beta: 0.65, drawdown: 0.08, health: 0.94, sectorRisk: 0.2, marketCap: 0.60 },
+    "HINDUNILVR.NS":{volatility: 0.15, beta: 0.60, drawdown: 0.10, health: 0.93, sectorRisk: 0.2, marketCap: 0.65 },
+    "ASIANPAINT.NS":{volatility: 0.18, beta: 0.75, drawdown: 0.15, health: 0.90, sectorRisk: 0.3, marketCap: 0.40 },
+    "MARUTI.NS":   { volatility: 0.22, beta: 0.95, drawdown: 0.20, health: 0.90, sectorRisk: 0.5, marketCap: 0.45 },
+    "TITAN.NS":    { volatility: 0.24, beta: 1.10, drawdown: 0.18, health: 0.88, sectorRisk: 0.4, marketCap: 0.40 },
+    "SUNPHARMA.NS":{ volatility: 0.19, beta: 0.65, drawdown: 0.12, health: 0.85, sectorRisk: 0.3, marketCap: 0.45 },
+    "POWERGRID.NS":{ volatility: 0.16, beta: 0.55, drawdown: 0.10, health: 0.85, sectorRisk: 0.2, marketCap: 0.35 },
+    "NTPC.NS":     { volatility: 0.18, beta: 0.70, drawdown: 0.12, health: 0.80, sectorRisk: 0.3, marketCap: 0.40 },
 
     // --- BANKING & FINANCE (Medium Risk) ---
     "ICICIBANK.NS":{ volatility: 0.22, beta: 1.15, drawdown: 0.18, health: 0.88, sectorRisk: 0.4, marketCap: 0.70 },
-    "SBIN.NS":     { volatility: 0.28, beta: 1.35, drawdown: 0.25, health: 0.75, sectorRisk: 0.5, marketCap: 0.60 }, // PSU Bank
+    "SBIN.NS":     { volatility: 0.28, beta: 1.35, drawdown: 0.25, health: 0.75, sectorRisk: 0.5, marketCap: 0.60 },
     "AXISBANK.NS": { volatility: 0.26, beta: 1.25, drawdown: 0.22, health: 0.80, sectorRisk: 0.4, marketCap: 0.45 },
     "KOTAKBANK.NS":{ volatility: 0.20, beta: 1.00, drawdown: 0.15, health: 0.88, sectorRisk: 0.4, marketCap: 0.50 },
-    "BAJFINANCE.NS":{volatility: 0.32, beta: 1.55, drawdown: 0.30, health: 0.85, sectorRisk: 0.6, marketCap: 0.55 }, // NBFC (High Growth)
+    "BAJFINANCE.NS":{volatility: 0.32, beta: 1.55, drawdown: 0.30, health: 0.85, sectorRisk: 0.6, marketCap: 0.55 },
 
     // --- CYCLICAL & VOLATILE (Med-High Risk) ---
-    "BHARTIARTL.NS":{volatility: 0.20, beta: 0.85, drawdown: 0.15, health: 0.75, sectorRisk: 0.3, marketCap: 0.75 }, // Telecom
-    "LT.NS":       { volatility: 0.22, beta: 1.10, drawdown: 0.20, health: 0.85, sectorRisk: 0.5, marketCap: 0.65 }, // Infra Giant
-    "M&M.NS":      { volatility: 0.24, beta: 1.15, drawdown: 0.20, health: 0.85, sectorRisk: 0.5, marketCap: 0.40 }, // Auto
-    "TATAMOTORS.NS":{volatility: 0.42, beta: 1.80, drawdown: 0.45, health: 0.65, sectorRisk: 0.6, marketCap: 0.35 }, // Auto (Cyclical)
-    "WIPRO.NS":    { volatility: 0.25, beta: 1.00, drawdown: 0.25, health: 0.80, sectorRisk: 0.3, marketCap: 0.30 }, // IT
-    "HCLTECH.NS":  { volatility: 0.23, beta: 0.90, drawdown: 0.18, health: 0.85, sectorRisk: 0.3, marketCap: 0.45 }, // IT
-    "ULTRACEMCO.NS":{volatility: 0.22, beta: 0.95, drawdown: 0.18, health: 0.85, sectorRisk: 0.4, marketCap: 0.35 }, // Cement
-    "GRASIM.NS":   { volatility: 0.26, beta: 1.10, drawdown: 0.22, health: 0.75, sectorRisk: 0.5, marketCap: 0.25 }, // Conglomerate
-    "BPCL.NS":     { volatility: 0.30, beta: 1.10, drawdown: 0.28, health: 0.70, sectorRisk: 0.6, marketCap: 0.20 }, // Oil PSU
-    "ONGC.NS":     { volatility: 0.28, beta: 0.95, drawdown: 0.25, health: 0.75, sectorRisk: 0.6, marketCap: 0.30 }, // Oil PSU
-    "COALINDIA.NS":{ volatility: 0.25, beta: 0.85, drawdown: 0.20, health: 0.80, sectorRisk: 0.5, marketCap: 0.25 }, // Mining
+    "BHARTIARTL.NS":{volatility: 0.20, beta: 0.85, drawdown: 0.15, health: 0.75, sectorRisk: 0.3, marketCap: 0.75 },
+    "LT.NS":       { volatility: 0.22, beta: 1.10, drawdown: 0.20, health: 0.85, sectorRisk: 0.5, marketCap: 0.65 },
+    "M&M.NS":      { volatility: 0.24, beta: 1.15, drawdown: 0.20, health: 0.85, sectorRisk: 0.5, marketCap: 0.40 },
+    "TATAMOTORS.NS":{volatility: 0.42, beta: 1.80, drawdown: 0.45, health: 0.65, sectorRisk: 0.6, marketCap: 0.35 },
+    "WIPRO.NS":    { volatility: 0.25, beta: 1.00, drawdown: 0.25, health: 0.80, sectorRisk: 0.3, marketCap: 0.30 },
+    "HCLTECH.NS":  { volatility: 0.23, beta: 0.90, drawdown: 0.18, health: 0.85, sectorRisk: 0.3, marketCap: 0.45 },
+    "ULTRACEMCO.NS":{volatility: 0.22, beta: 0.95, drawdown: 0.18, health: 0.85, sectorRisk: 0.4, marketCap: 0.35 },
+    "GRASIM.NS":   { volatility: 0.26, beta: 1.10, drawdown: 0.22, health: 0.75, sectorRisk: 0.5, marketCap: 0.25 },
+    "BPCL.NS":     { volatility: 0.30, beta: 1.10, drawdown: 0.28, health: 0.70, sectorRisk: 0.6, marketCap: 0.20 },
+    "ONGC.NS":     { volatility: 0.28, beta: 0.95, drawdown: 0.25, health: 0.75, sectorRisk: 0.6, marketCap: 0.30 },
+    "COALINDIA.NS":{ volatility: 0.25, beta: 0.85, drawdown: 0.20, health: 0.80, sectorRisk: 0.5, marketCap: 0.25 },
 
     // --- HIGH RISK / HIGH BETA (High Risk) ---
-    "ADANIENT.NS": { volatility: 0.65, beta: 2.45, drawdown: 0.60, health: 0.55, sectorRisk: 0.9, marketCap: 0.45 }, // High Volatility
-    "JSWSTEEL.NS": { volatility: 0.38, beta: 2.15, drawdown: 0.35, health: 0.65, sectorRisk: 0.8, marketCap: 0.30 }, // Metals
-    "TATASTEEL.NS":{ volatility: 0.40, beta: 1.50, drawdown: 0.40, health: 0.60, sectorRisk: 0.8, marketCap: 0.25 }, // Metals
-    "HINDALCO.NS": { volatility: 0.42, beta: 1.45, drawdown: 0.40, health: 0.65, sectorRisk: 0.8, marketCap: 0.20 }, // Metals
-    "VEDL.NS":     { volatility: 0.45, beta: 1.03, drawdown: 0.45, health: 0.50, sectorRisk: 0.8, marketCap: 0.20 }, // High Debt
-    "MRF.NS":      { volatility: 0.20, beta: 0.85, drawdown: 0.15, health: 0.85, sectorRisk: 0.4, marketCap: 0.15 }, // High Price/Low Vol
+    "ADANIENT.NS": { volatility: 0.65, beta: 2.45, drawdown: 0.60, health: 0.55, sectorRisk: 0.9, marketCap: 0.45 },
+    "JSWSTEEL.NS": { volatility: 0.38, beta: 2.15, drawdown: 0.35, health: 0.65, sectorRisk: 0.8, marketCap: 0.30 },
+    "TATASTEEL.NS":{ volatility: 0.40, beta: 1.50, drawdown: 0.40, health: 0.60, sectorRisk: 0.8, marketCap: 0.25 },
+    "HINDALCO.NS": { volatility: 0.42, beta: 1.45, drawdown: 0.40, health: 0.65, sectorRisk: 0.8, marketCap: 0.20 },
+    "VEDL.NS":     { volatility: 0.45, beta: 1.03, drawdown: 0.45, health: 0.50, sectorRisk: 0.8, marketCap: 0.20 },
+    "MRF.NS":      { volatility: 0.20, beta: 0.85, drawdown: 0.15, health: 0.85, sectorRisk: 0.4, marketCap: 0.15 },
 };
 const DEFAULT_RISK = { volatility: 0.30, beta: 1.0, drawdown: 0.25, health: 0.7, sectorRisk: 0.5, marketCap: 0.5 };
 
@@ -151,7 +151,9 @@ const RiskHeatmapPage = () => {
             const highRiskPercent = totalValue > 0 ? ((highRiskCount / totalValue) * 100).toFixed(1) : 0;
 
             let insight = "";
-            if (portfolioRiskScore < 30) {
+            if (data.length === 0) {
+                 insight = "⚠️ **Empty Portfolio:** No stocks found. Please add assets to analyze risk.";
+            } else if (portfolioRiskScore < 30) {
                 insight = `🛡️ **Defensive Portfolio:** Your overall risk score is ${portfolioRiskScore}/100. You are heavily invested in stable, blue-chip stocks. Excellent for capital preservation.`;
             } else if (portfolioRiskScore < 60) {
                 insight = `⚖️ **Balanced Strategy:** Your portfolio risk is moderate (${portfolioRiskScore}/100). You have a healthy mix of growth and stability. Consider hedging if market volatility increases.`;
@@ -245,17 +247,34 @@ const RiskHeatmapPage = () => {
                             </div>
                         </div>
                         <div className="chart-area">
-                            <ResponsiveContainer width="100%" height={400}>
-                                <Treemap
-                                    data={heatmapData}
-                                    dataKey="size"
-                                    stroke="#fff"
-                                    fill="#8884d8"
-                                    content={<CustomContent />}
-                                >
-                                    <Tooltip content={<CustomTooltip />} />
-                                </Treemap>
-                            </ResponsiveContainer>
+                            {/* FIX: Check if there is data before rendering the chart to avoid empty box */}
+                            {heatmapData.length > 0 ? (
+                                <ResponsiveContainer width="100%" height={400}>
+                                    <Treemap
+                                        data={heatmapData}
+                                        dataKey="size"
+                                        stroke="#fff"
+                                        fill="#8884d8"
+                                        content={<CustomContent />}
+                                    >
+                                        <Tooltip content={<CustomTooltip />} />
+                                    </Treemap>
+                                </ResponsiveContainer>
+                            ) : (
+                                <div style={{
+                                    height: '400px', 
+                                    display: 'flex', 
+                                    flexDirection: 'column',
+                                    alignItems: 'center', 
+                                    justifyContent: 'center', 
+                                    color: '#666',
+                                    border: '1px dashed #444',
+                                    borderRadius: '8px'
+                                }}>
+                                    <h3>No Stocks Found</h3>
+                                    <p>Add assets to this portfolio to visualize the Risk Map.</p>
+                                </div>
+                            )}
                         </div>
                         <p className="chart-note">Box Size = Investment Value | Color = Risk Level</p>
                     </div>
@@ -273,14 +292,18 @@ const RiskHeatmapPage = () => {
                                 <span>Score</span>
                             </div>
                             <div className="list-body">
-                                {heatmapData.sort((a,b) => b.score - a.score).map(stock => (
-                                    <div key={stock.name} className="list-row">
-                                        <span className="stock-name">{stock.name}</span>
-                                        <span className="risk-pill" style={{color: stock.fill, borderColor: stock.fill}}>
-                                            {stock.score}
-                                        </span>
-                                    </div>
-                                ))}
+                                {heatmapData.length > 0 ? (
+                                    heatmapData.sort((a,b) => b.score - a.score).map(stock => (
+                                        <div key={stock.name} className="list-row">
+                                            <span className="stock-name">{stock.name}</span>
+                                            <span className="risk-pill" style={{color: stock.fill, borderColor: stock.fill}}>
+                                                {stock.score}
+                                            </span>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div style={{padding: '20px', textAlign: 'center', color: '#666'}}>No data</div>
+                                )}
                             </div>
                         </div>
                     </div>

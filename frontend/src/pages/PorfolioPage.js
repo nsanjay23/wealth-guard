@@ -104,7 +104,7 @@ const PortfolioPage = () => {
         await Promise.all(symbols.map(async (sym) => {
             try {
                 // Using Local Proxy
-                const proxyUrl = `http://localhost:5001/api/portfolios/proxy/yahoo?symbol=${sym}&range=1d&interval=1d`;
+                const proxyUrl = `http://localhost:5001/api/portfolios/proxy/yahoo?symbol=${sym}&range=1d&interval=1m`;
                 const response = await fetch(proxyUrl);
                 const data = await response.json();
                 const meta = data?.chart?.result?.[0]?.meta;

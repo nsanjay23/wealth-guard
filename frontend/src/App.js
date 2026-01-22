@@ -20,6 +20,12 @@ import CompanyDetailsPage from './pages/CompanyDetailsPage';
 import PortfolioPage from './pages/PorfolioPage'; // <--- ADD THIS IMPORT
 import BacktestPage from './pages/BacktestPage'; // Adjust path as needed
 import RiskHeatmapPage from './pages/RiskHeatmapPage';
+import InsuranceDiscoveryPage from './pages/InsuranceDiscoverPage';
+import ProfilePage from './pages/UserProfilePage';
+import PolicyDetailsPage from './pages/PolicyDetails';
+import ComparePage from './pages/ComparePage';
+import PolicyUploadPage from './pages/PolicyUploadPage';
+
 
 // --- HOOKS & DATA ---
 import useAuthStatus from './hooks/useAuthStatus';
@@ -206,6 +212,41 @@ function App() {
           <ProtectedRoute>
             <DashboardLayout>
                <RiskHeatmapPage />
+            </DashboardLayout>
+          </ProtectedRoute>
+        } />
+        <Route path="/insurance" element={
+          <ProtectedRoute>
+            <DashboardLayout>
+               <InsuranceDiscoveryPage/>
+            </DashboardLayout>
+          </ProtectedRoute>
+        } />
+        <Route path="/profile" element={
+          <ProtectedRoute>
+            <DashboardLayout>
+               <ProfilePage />
+            </DashboardLayout>
+          </ProtectedRoute>
+        } />
+        <Route path="/policy-details" element={
+          <ProtectedRoute>
+            <DashboardLayout>
+               <PolicyDetailsPage />
+            </DashboardLayout>
+          </ProtectedRoute>
+        } />
+        <Route path="/compare" element={
+          <ProtectedRoute>
+            <DashboardLayout>
+               <ComparePage />
+            </DashboardLayout>
+          </ProtectedRoute>
+        } />
+        <Route path="/pdf" element={
+          <ProtectedRoute>
+            <DashboardLayout>
+               <PolicyUploadPage />
             </DashboardLayout>
           </ProtectedRoute>
         } />

@@ -2,10 +2,33 @@ const express = require('express');
 const router = express.Router();
 const db = require('../../db/db'); 
 const ensureAuthenticated = require('../middleware/auth'); 
+const yahooFinance = require('yahoo-finance2').default; // Note the .default
 
 // --- 0. SMART PROXY ROUTE (With DB Caching) ---
-// This handles requests from PortfolioPage & BacktestPage
-// --- 0. SMART PROXY ROUTE (With Headers Fix) ---
+// 1. HELPER FUNCTIONS (Add these outside your router.get)
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+const fetchWithRetry = async (url, options, retries = 3) => {
+    try {
+        const response = await fetch(url, options);
+        // If Yahoo says "Too Many Requests", throw an error to trigger a retry
+        if (response.status === 429) {
+            throw new Error("429");
+        }
+        return response;
+    } catch (err) {
+        if (retries > 0 && (err.message === "429" || err.message.includes("fetch failed"))) {
+            // Wait random time between 1s and 3s before trying again
+            const delay = 1000 + Math.floor(Math.random() * 2000);
+            console.log(`Yahoo 429 Error. Retrying in ${delay}ms...`);
+            await sleep(delay);
+            return fetchWithRetry(url, options, retries - 1);
+        }
+        throw err;
+    }
+};
+
+// 2. YOUR ROUTE
 router.get('/proxy/yahoo', async (req, res) => {
     const { symbol, range, interval } = req.query;
     
@@ -14,7 +37,7 @@ router.get('/proxy/yahoo', async (req, res) => {
     }
 
     try {
-        // 1. Check DB Cache
+        // --- STEP 1: Check DB Cache ---
         const cached = await db.query(
             `SELECT data, updated_at FROM stock_history_cache 
              WHERE symbol = $1 AND range = $2 AND interval = $3`,
@@ -23,19 +46,34 @@ router.get('/proxy/yahoo', async (req, res) => {
 
         if (cached.rows.length > 0) {
             const age = Date.now() - new Date(cached.rows[0].updated_at).getTime();
-            if (age < 86400000) { // 24 hours
+            
+            // Default 24 hours (86400000 ms)
+            let maxAge = 86400000; 
+            
+            // If live data (1m/5m) or 1d range, lower cache to 5 mins (300000 ms)
+            if (interval === '1m' || interval === '2m' || interval === '5m' || range === '1d') {
+                maxAge = 300000; 
+            }
+
+            if (age < maxAge) { 
                 return res.json(cached.rows[0].data);
             }
         }
 
-        // 2. Fetch from Yahoo with User-Agent Header (FIX FOR 500 ERROR)
+        // --- STEP 2: Fetch from Yahoo (WITH RETRY LOGIC) ---
         const yahooUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?range=${range}&interval=${interval}`;
         
-        const response = await fetch(yahooUrl, {
-            headers: {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-            }
-        });
+        let response;
+        try {
+            response = await fetchWithRetry(yahooUrl, {
+                headers: {
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+                }
+            });
+        } catch (fetchErr) {
+            console.error("Yahoo Rate Limit Hit:", fetchErr.message);
+            return res.status(429).json({ error: "Too many requests to Yahoo, please try again later." });
+        }
 
         if (!response.ok) {
             throw new Error(`Yahoo API responded with status ${response.status}`);
@@ -49,7 +87,7 @@ router.get('/proxy/yahoo', async (req, res) => {
             return res.status(500).json({ error: "Invalid data structure from Yahoo" });
         }
 
-        // 3. Save to DB
+        // --- STEP 3: Save to DB ---
         await db.query(
             `INSERT INTO stock_history_cache (symbol, range, interval, data, updated_at)
              VALUES ($1, $2, $3, $4, NOW())

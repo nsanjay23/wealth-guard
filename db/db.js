@@ -1,13 +1,14 @@
 const { Pool } = require('pg');
-// Make sure the path is correct if db.js is in the db folder
 require('dotenv').config({ path: '../backend/.env' });
 
-// --- ADD THIS LINE ---
-console.log('DATABASE_URL being used:', process.env.DATABASE_URL);
-// --------------------
+// Use the URL from env, or fallback to the hardcoded one if env fails
+const connectionString = process.env.DATABASE_URL || "postgresql://neondb_owner:npg_G9ebfOTEYH2c@ep-wispy-star-a1dh471a-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require";
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString,
+  ssl: {
+    rejectUnauthorized: false, // <--- THIS IS THE MAGIC FIX FOR NEON
+  },
 });
 
 module.exports = {

@@ -1,0 +1,43 @@
+.pd-container {
+  background: #121212; min-height: 100vh; color: white; padding: 40px; font-family: 'Inter', sans-serif;
+}
+
+.pd-back { background: none; border: none; color: #aaa; cursor: pointer; display: flex; align-items: center; gap: 8px; margin-bottom: 20px; font-size: 1rem; }
+.pd-back:hover { color: #00d2aa; }
+
+/* Header */
+.pd-header {
+  background: #1e1e1e; border: 1px solid #333; padding: 30px; border-radius: 12px;
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;
+}
+.pd-badge { background: #333; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; text-transform: uppercase; color: #ccc; }
+.pd-header h1 { margin: 10px 0; font-size: 2.2rem; }
+.pd-price { font-size: 2.2rem; color: #00d2aa; font-weight: bold; }
+.pd-price-box p { text-align: right; color: #aaa; margin: 0 0 5px 0; }
+
+/* Layout */
+.pd-content { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
+
+/* Stats - STRICT HORIZONTAL */
+.pd-stats-row {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 30px;
+}
+.pd-stat {
+  background: #1e1e1e; border: 1px solid #333; padding: 20px; border-radius: 12px;
+  display: flex; align-items: center; gap: 15px;
+}
+.pd-icon { font-size: 24px; color: #00d2aa; }
+.pd-stat label { display: block; font-size: 0.8rem; color: #aaa; }
+.pd-stat strong { font-size: 1.1rem; }
+
+/* Features */
+.pd-section h3 { border-left: 4px solid #00d2aa; padding-left: 15px; margin-bottom: 20px; }
+.pd-features { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.pd-feat-item { display: flex; align-items: center; gap: 10px; color: #ccc; }
+.pd-feat-item svg { color: #00d2aa; }
+
+/* Sidebar */
+.pd-summary { background: #1e1e1e; padding: 30px; border-radius: 12px; border: 1px solid #333; }
+.pd-row { display: flex; justify-content: space-between; margin-bottom: 15px; color: #aaa; }
+.pd-row.total { color: white; font-weight: bold; font-size: 1.2rem; margin-top: 15px; }
+hr { border: 0; border-top: 1px solid #333; margin: 20px 0; }
