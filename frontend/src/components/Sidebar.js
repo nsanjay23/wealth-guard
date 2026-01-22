@@ -68,8 +68,8 @@ const Sidebar = () => {
           <FiShield className="sidebar-icon" /> Policy Comparison
         </NavLink>
 
-        <NavLink to="/advisor" className={({ isActive }) => isActive ? 'sidebar-link active' : 'sidebar-link'}>
-          <FiPhone className="sidebar-icon" /> AI Advisor
+        <NavLink to="/pdf" className={({ isActive }) => isActive ? 'sidebar-link active' : 'sidebar-link'}>
+          <FiPhone className="sidebar-icon" /> Policy Summarizer
         </NavLink>
 
       </nav>

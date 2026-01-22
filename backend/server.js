@@ -25,25 +25,7 @@ const Groq = require('groq-sdk');
 // Helper: Wait function
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-// Helper: Retry Gemini calls if they fail with 429
-async function generateContentWithRetry(model, prompt, retries = 3) {
-    try {
-        return await model.generateContent(prompt);
-    } catch (error) {
-        if (retries > 0 && (error.status === 429 || error.message.includes("429"))) {
-            const delay = 5000 + Math.floor(Math.random() * 5000); // Wait 5-10 seconds
-            console.log(`Gemini Rate Limit (429). Retrying in ${delay}ms...`);
-            await sleep(delay);
-            return generateContentWithRetry(model, prompt, retries - 1);
-        }
-        throw error;
-    }
-}
-// --- Helper Function: Convert String to Title Case ---
-const toTitleCase = (str) => {
-  if (!str) return str;
-  return str.toLowerCase().replace(/\b(\w)/g, s => s.toUpperCase());
-};
+
 
 // --- Helper Function: Check Email Validity with VerifyKit.io ---
 async function checkEmailWithVerifyKit(emailToCheck) {
