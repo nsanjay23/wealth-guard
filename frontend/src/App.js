@@ -25,6 +25,7 @@ import ProfilePage from './pages/UserProfilePage';
 import PolicyDetailsPage from './pages/PolicyDetails';
 import ComparePage from './pages/ComparePage';
 import PolicyUploadPage from './pages/PolicyUploadPage';
+import PremiumManagementPage from './pages/PremiumManagementPage';
 
 
 // --- HOOKS & DATA ---
@@ -250,7 +251,15 @@ function App() {
             </DashboardLayout>
           </ProtectedRoute>
         } />
+        <Route path="/renew" element={
+          <ProtectedRoute>
+            <DashboardLayout>
+               <PremiumManagementPage />
+            </DashboardLayout>
+          </ProtectedRoute>
+        } />
       </Routes>
+      
     </div>
   );
 }

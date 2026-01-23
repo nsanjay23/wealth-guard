@@ -617,3 +617,92 @@ body { margin: 0; font-family: 'Inter', sans-serif; }
     .stats-row { grid-template-columns: 1fr; }
     .details-grid { grid-template-columns: 1fr; }
 }
+/* ... Keep existing variables and basic layout ... */
+
+/* Header Card Updates */
+.policy-meta-row {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+.meta-tag {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #333;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    color: #ccc;
+}
+
+/* Stat Value Adjustment for Long Text */
+.stat-value.small-text {
+    font-size: 1.1rem; /* Smaller for text like 'As per chart' */
+    line-height: 1.2;
+    padding-top: 5px;
+}
+
+/* Features List Styling */
+.features-card h3 {
+    color: var(--pu-primary);
+}
+.feature-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two columns for features */
+    gap: 10px 20px;
+    margin: 0;
+    padding-left: 20px;
+}
+.feature-list li {
+    color: #eee;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-bottom: 5px;
+}
+
+/* Mini List for Waiting Periods inside Grid */
+.mini-list {
+    padding-left: 20px;
+    margin: 0;
+}
+.mini-list li {
+    font-size: 0.85rem;
+    color: #bbb;
+    margin-bottom: 4px;
+}
+
+/* Adjust Grid for new content */
+.pu-grid-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 2 Column Layout */
+    gap: 20px;
+}
+
+/* Make Header span full width */
+.header-card, .exclusions-card, .features-card, .fraud-card {
+    grid-column: span 2; 
+}
+
+/* Stats and Details take 1 column each on desktop */
+.stats-row {
+    grid-column: span 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.details-card {
+    grid-column: span 1;
+}
+.details-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 850px) {
+    .feature-list { grid-template-columns: 1fr; }
+    .pu-grid-layout { display: flex; flex-direction: column; }
+    .header-card, .stats-row, .details-card, .features-card, .exclusions-card { grid-column: span 1; }
+}

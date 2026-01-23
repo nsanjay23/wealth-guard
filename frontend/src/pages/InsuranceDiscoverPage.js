@@ -11,7 +11,7 @@ const InsuranceDiscoveryPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     
-    // Load existing selection
+    // Load existing selection if returning from another page
     const initialCompareList = location.state?.selectedPolicies || [];
 
     const [allPolicies, setAllPolicies] = useState([]); 
@@ -27,10 +27,10 @@ const InsuranceDiscoveryPage = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     const filterOptions = [
-    { value: 'All', label: 'All Categories' },
-    { value: 'Term Life', label: 'Term Life' },
-    { value: 'Health', label: 'Health' },
-    { value: 'Motor', label: 'Motor' }
+        { value: 'All', label: 'All Categories' },
+        { value: 'Term Life', label: 'Term Life' },
+        { value: 'Health', label: 'Health' },
+        { value: 'Motor', label: 'Motor' }
     ];
 
     const triggerAlert = (msg, type = 'error') => {
@@ -41,89 +41,57 @@ const InsuranceDiscoveryPage = () => {
         }, 3000);
     };
     
-    // 1. DATA LOADING & AI SCORING ENGINE
+    // 1. DATA LOADING
     useEffect(() => {
         const init = async () => {
             try {
-                // A. Fetch Profile
-                let profile = null;
+                // A. Fetch Profile (to show in the sidebar)
                 try {
                     const profileRes = await axios.get('http://localhost:5001/api/user/profile', { withCredentials: true });
                     if (profileRes.data && (profileRes.data.age || profileRes.data.incomeRange)) {
-                        profile = profileRes.data;
-                        setUserProfile(profile);
+                        setUserProfile(profileRes.data);
                     }
-                } catch (e) { setUserProfile(null); }
-
-                // B. Fetch Policies
-                const policyRes = await axios.get('http://localhost:5001/api/insurance/live', { withCredentials: true });
-                const rawPolicies = policyRes.data;
-
-                // C. --- AI SCORING LOGIC ---
-                let processed = rawPolicies;
-                if (profile) {
-                    const hasFeature = (policy, keyword) => 
-                        policy.features && policy.features.some(f => f.toLowerCase().includes(keyword.toLowerCase()));
-
-                    const scoredPolicies = rawPolicies.map(p => {
-                        let score = 50; // Base Score
-
-                        // Rule 1: Age & Term Life
-                        if (profile.age && p.type === 'Term Life') {
-                            if (profile.age < 30) score += 15; 
-                            else if (profile.age > 50) score -= 10; 
-                        }
-
-                        // Rule 2: Health Specifics
-                        if (p.type === 'Health') {
-                            if (profile.dependents > 0 && p.category.includes('Family')) score += 20;
-                            if (profile.age > 60 && hasFeature(p, 'Senior')) score += 30;
-                        }
-
-                        // Rule 3: Income vs Premium
-                        const premium = p.premium;
-                        if (profile.incomeRange === '<5L') {
-                            if (premium < 10000) score += 20;
-                            if (premium > 25000) score -= 20;
-                        } else if (profile.incomeRange === '>50L') {
-                            if (p.coverage.includes('Cr') || premium > 20000) score += 15; 
-                        }
-
-                        // Rule 4: Disease Matching
-                        if (profile.diseases && profile.diseases.length > 0) {
-                            const coversDisease = profile.diseases.some(d => hasFeature(p, d) || hasFeature(p, 'Pre-existing'));
-                            if (coversDisease) score += 40;
-                        }
-
-                        // Cap Score
-                        return { ...p, matchScore: Math.min(Math.max(score, 0), 98) };
-                    });
-
-                    // Sort by Score
-                    scoredPolicies.sort((a, b) => b.matchScore - a.matchScore);
-
-                    // Mark Top 3 as AI Recommended
-                    processed = scoredPolicies.map((p, index) => ({
-                        ...p,
-                        isAiRecommended: index < 3 && p.matchScore > 60 
-                    }));
-                } else {
-                    processed = rawPolicies.map(p => ({ ...p, isAiRecommended: false, matchScore: null }));
+                } catch (e) { 
+                    console.log("User might be a guest or profile incomplete");
+                    setUserProfile(null); 
                 }
 
-                setAllPolicies(processed);
-                setDisplayPolicies(processed);
+                // B. Fetch Policies (Already AI-Sorted by Backend)
+                // The backend now handles the sorting and the 'isAiRecommended' flag
+                const policyRes = await axios.get('http://localhost:5001/api/insurance/live', { withCredentials: true });
+                const fetchedPolicies = policyRes.data;
 
-            } catch (err) { console.error(err); } finally { setLoading(false); }
+                setAllPolicies(fetchedPolicies);
+                setDisplayPolicies(fetchedPolicies);
+
+            } catch (err) { 
+                console.error("Error loading data:", err);
+                triggerAlert("Failed to load policies. Please try again.", "error");
+            } finally { 
+                setLoading(false); 
+            }
         };
         init();
     }, []);
 
-    // 2. Filter Logic
+    // 2. Filter Logic (Client-Side Search & Filter)
     useEffect(() => {
         let result = allPolicies;
-        if (selectedType !== 'All') result = result.filter(p => p.type === selectedType);
-        if (searchTerm) result = result.filter(p => p.provider.toLowerCase().includes(searchTerm.toLowerCase()) || p.planName.toLowerCase().includes(searchTerm.toLowerCase()));
+
+        // Type Filter
+        if (selectedType !== 'All') {
+            result = result.filter(p => p.type === selectedType);
+        }
+
+        // Search Filter
+        if (searchTerm) {
+            const lowerTerm = searchTerm.toLowerCase();
+            result = result.filter(p => 
+                p.provider.toLowerCase().includes(lowerTerm) || 
+                p.planName.toLowerCase().includes(lowerTerm)
+            );
+        }
+
         setDisplayPolicies(result);
     }, [searchTerm, selectedType, allPolicies]);
 
@@ -138,7 +106,7 @@ const InsuranceDiscoveryPage = () => {
             return;
         }
         
-        // --- UPDATED CHECKS ---
+        // Validation Checks
         if (compareList.length >= 3) {
             triggerAlert("Max 3 plans allowed. Remove one to add another.", "error");
             return;
@@ -147,7 +115,6 @@ const InsuranceDiscoveryPage = () => {
             triggerAlert(`Compare only ${compareList[0].type} plans together.`, "error");
             return;
         }
-        // -----------------------
         
         setCompareList(prev => [...prev, policy]);
     };
@@ -160,7 +127,7 @@ const InsuranceDiscoveryPage = () => {
         navigate('/compare', { state: { policies: compareList } });
     };
 
-    if (loading) return <div className="loading-state">Analyzing Profile...</div>;
+    if (loading) return <div className="loading-state">Analyzing Profile & Policies...</div>;
 
     return (
         <div className="id-page-container">
@@ -171,6 +138,8 @@ const InsuranceDiscoveryPage = () => {
                 </div>
                 <div className="id-header-icon"><FiShield /></div>
             </header>
+
+            {/* Custom Alert Pop-up */}
             {customAlert.show && (
                 <div className={`custom-alert ${customAlert.type}`}>
                     <div className="alert-icon">
@@ -184,10 +153,16 @@ const InsuranceDiscoveryPage = () => {
                     </button>
                 </div>
             )}
+
+            {/* Controls Bar */}
             <div className="id-controls">
                 <div className="id-search">
                     <FiSearch className="id-icon"/>
-                    <input placeholder="Search provider..." value={searchTerm} onChange={e=>setSearchTerm(e.target.value)} />
+                    <input 
+                        placeholder="Search provider or plan..." 
+                        value={searchTerm} 
+                        onChange={e => setSearchTerm(e.target.value)} 
+                    />
                 </div>
                 <div 
                     className="id-filter custom-dropdown" 
@@ -195,14 +170,12 @@ const InsuranceDiscoveryPage = () => {
                 >
                     <FiFilter className="id-icon"/>
                     
-                    {/* Display selected value */}
                     <span className="dropdown-selected-text">
                         {filterOptions.find(opt => opt.value === selectedType)?.label || selectedType}
                     </span>
                     
                     <FiChevronDown className={`dropdown-arrow ${isDropdownOpen ? 'open' : ''}`} />
 
-                    {/* The Dropdown Menu (Only shows when open) */}
                     {isDropdownOpen && (
                         <ul className="dropdown-menu-list">
                             {filterOptions.map((opt) => (
@@ -210,7 +183,7 @@ const InsuranceDiscoveryPage = () => {
                                     key={opt.value}
                                     className={`dropdown-item ${selectedType === opt.value ? 'active' : ''}`}
                                     onClick={(e) => {
-                                        e.stopPropagation(); // Stop the click from closing the menu immediately
+                                        e.stopPropagation();
                                         setSelectedType(opt.value);
                                         setIsDropdownOpen(false);
                                     }}
@@ -224,7 +197,12 @@ const InsuranceDiscoveryPage = () => {
             </div>
 
             <div className="id-layout">
+                {/* Main List Area */}
                 <div className="id-list-container">
+                    {displayPolicies.length === 0 && (
+                        <div className="no-results">No policies found matching your criteria.</div>
+                    )}
+
                     {displayPolicies.slice(0, visibleCount).map(p => {
                         const isSelected = compareList.some(c => c.id === p.id);
                         const isDisabled = compareList.length > 0 && compareList[0].type !== p.type;
@@ -232,7 +210,8 @@ const InsuranceDiscoveryPage = () => {
                         return (
                             <div key={p.id} className={`id-wide-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled-card' : ''}`}>
                                 
-                                {/* AI BADGE (Percentage removed) */}
+                                {/* AI RECOMMENDATION BADGE */}
+                                {/* This relies on the backend sending isAiRecommended: true */}
                                 {p.isAiRecommended && (
                                     <div className="id-badge-ai">
                                         <FiZap/> AI Recommended
@@ -242,7 +221,7 @@ const InsuranceDiscoveryPage = () => {
                                 <div className="id-card-left">
                                     <div className="id-provider">
                                         <h4>{p.provider}</h4>
-                                        <span>{p.type}</span>
+                                        <span className="policy-type-tag">{p.type}</span>
                                     </div>
                                     <h2 className="id-plan-name">{p.planName}</h2>
                                     <div className="id-features-inline">
@@ -279,11 +258,15 @@ const InsuranceDiscoveryPage = () => {
                             </div>
                         );
                     })}
+                    
                     {visibleCount < displayPolicies.length && (
-                        <button className="id-btn-load" onClick={()=>setVisibleCount(prev => prev + 10)}>Load More</button>
+                        <button className="id-btn-load" onClick={() => setVisibleCount(prev => prev + 10)}>
+                            Load More
+                        </button>
                     )}
                 </div>
 
+                {/* Sidebar Profile Summary */}
                 <aside className="id-sidebar">
                     {userProfile ? (
                         <div className="id-profile-card">
@@ -298,13 +281,14 @@ const InsuranceDiscoveryPage = () => {
                                     <div className="row warn"><span>Conditions</span> <span>{userProfile.diseases.length}</span></div>
                                 )}
                             </div>
-                            <button className="id-btn-edit" onClick={()=>navigate('/profile')}>Edit Profile</button>
+                            <button className="id-btn-edit" onClick={() => navigate('/profile')}>Edit Profile</button>
                         </div>
                     ) : (
                         <div className="id-guest-card">
                             <FiUser size={40}/>
                             <h3>Personalize Results</h3>
-                            <button className="id-btn-setup" onClick={()=>navigate('/profile')}>
+                            <p>Setup your profile to get AI-powered recommendations.</p>
+                            <button className="id-btn-setup" onClick={() => navigate('/profile')}>
                                 <FiPlusCircle /> Setup Profile
                             </button>
                         </div>
@@ -312,6 +296,7 @@ const InsuranceDiscoveryPage = () => {
                 </aside>
             </div>
 
+            {/* Compare Dock (Sticky Bottom) */}
             {compareList.length > 0 && (
                 <div className="id-dock">
                     <div className="dock-content">

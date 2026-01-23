@@ -282,6 +282,44 @@ const startPythonServer = () => {
 // Start it immediately when Node starts
 startPythonServer();
 
+// --- 2. START SECOND PYTHON SERVER (ai_server.py) ---
+let aiServerProcess;
+
+const startAiServer = () => {
+    // 1. Point to your new ai_server.py file
+    // Check if it is in the same folder as server.js or in '../ai/'
+    const scriptPath = path.join(__dirname, '../ai/ai_server.py'); 
+    
+    console.log('🚀 Starting New AI Server (ai_server.py)...');
+
+    // 2. Spawn the process (Port 5002 defined inside python file)
+    aiServerProcess = spawn('python', [scriptPath]);
+
+    // 3. Handle Standard Output
+    aiServerProcess.stdout.on('data', (data) => {
+        console.log(`[AI SERVER]: ${data.toString().trim()}`);
+    });
+
+    // 4. Handle Errors & Logs
+    aiServerProcess.stderr.on('data', (data) => {
+        const output = data.toString();
+        // Filter out normal Flask logs
+        if (output.includes('Running on') || output.includes('Press CTRL+C')) {
+            console.log(`[AI STATUS]: ${output.trim()}`);
+        } else {
+            console.error(`[AI ERROR]: ${output.trim()}`);
+        }
+    });
+
+    // 5. Handle Crash
+    aiServerProcess.on('close', (code) => {
+        console.log(`AI Server exited with code ${code}`);
+    });
+};
+
+// Start the second AI server immediately when Node starts
+startAiServer();
+
 // --- Routes ---
 // 1. Setup Gemini AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -455,59 +493,85 @@ app.post('/api/analyze-policy', upload.single('policyPdf'), async (req, res) => 
         let rawText = "";
         try {
             const data = await pdfParse(req.file.buffer);
-            rawText = data.text.substring(0, 40000); // Increased limit slightly for Groq
+            // REDUCED LIMIT: 30,000 chars is approx 7.5k tokens (Safe for 12k limit)
+            rawText = data.text.substring(0, 30000); 
         } catch (pdfError) {
             return res.status(500).json({ error: "Failed to read PDF." });
         }
 
         // 2. AI PROMPT
         const systemPrompt = `
-            You are an expert insurance analyst. Analyze this policy document.
-            
-            CRITICAL INSTRUCTION:
-            The user usually uploads a "Policy Wording" (Generic Rulebook).
-            - If a specific value (like Policy Number or Name) is missing, DO NOT say "Not Found".
-            - Instead, extract the DEFINITION or GENERAL RULE.
-            - Example: For "Sum Insured", if no number is found, return "As per Policy Schedule".
-            - Example: For "Policy Period", return "Usually 1 to 3 years".
+            You are an expert insurance underwriter. Analyze this document (Policy Bond or Product Brochure).
 
-            RETURN JSON ONLY:
+            CRITICAL INSTRUCTIONS:
+            1. **Identify the Document Type:** Is it a specific user policy or a general product brochure?
+            2. **Extract Product Logic:** If specific user details (Name, Dates) are missing, extract the PRODUCT RULES (e.g., "Eligibility: 5 months to 65 years", "Sum Insured: 1.5L to 15L").
+            3. **Summarize Key Sections:** Extract features, waiting periods, and specific plan options.
+
+            RETURN JSON ONLY (Do not use Markdown in JSON keys):
             {
-                "fraudScore": number (80-100 for generic pdfs),
+                "fraudScore": number (80-100, lower if document looks edited/fake),
                 "isFraudulent": boolean,
                 "summary": {
                     "provider": "string",
                     "policyName": "string",
+                    "policyType": "string",
                     "sumInsured": "string",
-                    "policyNum": "string",
-                    "policyHolder": "string",
-                    "startDate": "string",
-                    "endDate": "string",
                     "premium": "string",
+                    "policyHolder": "string",
+                    "policyTerm": "string",
+                    "eligibility": "string",
+                    "keyFeatures": ["string", "string", "string"],
+                    "waitingPeriods": ["string", "string"], 
                     "exclusions": ["string", "string", "string"]
                 }
             }
         `;
 
-        // 3. CALL GROQ (Llama 3 is Free & Fast)
-        const completion = await groq.chat.completions.create({
-            messages: [
-                { role: "system", content: systemPrompt },
-                { role: "user", content: `Document Text:\n${rawText}` }
-            ],
-            model: "llama-3.3-70b-versatile",
-            temperature: 0.1,
-            response_format: { type: "json_object" } 
-        });
+        // 3. CALL GROQ WITH ERROR HANDLING
+        try {
+            const completion = await groq.chat.completions.create({
+                messages: [
+                    { role: "system", content: systemPrompt },
+                    { role: "user", content: `Document Text:\n${rawText}` }
+                ],
+                // Stick to 70b first, it's smarter
+                model: "llama-3.3-70b-versatile",
+                temperature: 0.1,
+                response_format: { type: "json_object" } 
+            });
 
-        const aiResponse = completion.choices[0].message.content;
-        const aiData = JSON.parse(aiResponse);
+            const aiResponse = completion.choices[0].message.content;
+            const aiData = JSON.parse(aiResponse);
+            return res.json({ ...aiData, rawTextContext: rawText });
 
-        res.json({ ...aiData, rawTextContext: rawText });
+        } catch (groqError) {
+            // FALLBACK: If 70b hits rate limit, try 8b (it's faster and has higher limits)
+            if (groqError.status === 413 || groqError.code === 'rate_limit_exceeded') {
+                console.log("Rate limit hit. Retrying with smaller model...");
+                
+                const fallbackCompletion = await groq.chat.completions.create({
+                    messages: [
+                        { role: "system", content: systemPrompt },
+                        { role: "user", content: `Document Text:\n${rawText}` }
+                    ],
+                    model: "llama-3.1-8b-instant", // Fallback model
+                    temperature: 0.1,
+                    response_format: { type: "json_object" } 
+                });
+
+                const fallbackResponse = fallbackCompletion.choices[0].message.content;
+                const fallbackData = JSON.parse(fallbackResponse);
+                return res.json({ ...fallbackData, rawTextContext: rawText });
+            } else {
+                throw groqError; // Re-throw other errors
+            }
+        }
 
     } catch (error) {
         console.error("Analysis Error:", error);
-        res.status(500).json({ error: "Analysis failed" });
+        // Send a readable error to frontend
+        res.status(500).json({ error: "Analysis failed due to AI limits. Please try a smaller file." });
     }
 });
 
@@ -615,6 +679,68 @@ app.post('/api/predict', ensureAuthenticated, (req, res) => {
 // --- GET REAL POLICIES FROM NEON DB ---
 app.get('/api/insurance/live', ensureAuthenticated, async (req, res) => {
     try {
+        const userRes = await db.query('SELECT * FROM users WHERE user_id = $1', [req.user.user_id]);
+        const user = userRes.rows[0];
+
+        const policyRes = await db.query('SELECT * FROM policies');
+        let policies = policyRes.rows.map(row => ({
+            id: row.id,
+            provider: row.provider,
+            planName: row.plan_name,
+            type: row.type,
+            category: row.category,
+            premium: parseInt(row.premium),
+            coverage: row.coverage,
+            term: row.term,
+            features: Array.isArray(row.features) ? row.features : [],
+            badge: row.badge
+        }));
+
+        if (user && user.age && user.income_range) {
+            try {
+                // 1. Get Scores from Python
+                const payload = {
+                    user: {
+                        age: user.age,
+                        incomeRange: user.income_range,
+                        riskAppetite: user.risk_appetite || 'Balanced'
+                    },
+                    policies: policies.map(p => ({ id: p.id, type: p.type, premium: p.premium }))
+                };
+
+                const aiResponse = await axios.post('http://localhost:5003/predict', payload);
+                const scores = aiResponse.data; 
+
+                // 2. Attach Scores
+                policies = policies.map(p => {
+                    const s = scores.find(x => x.id === p.id);
+                    return { ...p, matchScore: s ? s.matchScore : 0 };
+                });
+
+                // 3. Sort (Highest Score First)
+                policies.sort((a, b) => b.matchScore - a.matchScore);
+
+                // 4. *** FORCE BADGE ON TOP 3 ***
+                policies = policies.map((p, index) => ({
+                    ...p,
+                    isAiRecommended: index < 3 // True for 0, 1, 2. False for others.
+                }));
+
+            } catch (e) {
+                console.error("AI Error, using default sort");
+            }
+        }
+        
+        res.json(policies);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Server Error");
+    }
+});
+
+/*
+app.get('/api/insurance/live', ensureAuthenticated, async (req, res) => {
+    try {
         // 1. Fetch from Database (Sorted by premium for better default view)
         const result = await db.query('SELECT * FROM policies ORDER BY premium ASC');
         
@@ -640,8 +766,9 @@ app.get('/api/insurance/live', ensureAuthenticated, async (req, res) => {
         res.status(500).json({ message: "Server Error fetching policies" });
     }
 });
-/// 2. UPDATE PROFILE ROUTES (Replace existing /api/user/profile routes)
+*/
 
+/// 2. UPDATE PROFILE ROUTES (Replace existing /api/user/profile routes)
 // GET Profile
 // --- GET Profile (Streamlined) ---
 app.get('/api/user/profile', ensureAuthenticated, async (req, res) => {
@@ -668,6 +795,7 @@ app.get('/api/user/profile', ensureAuthenticated, async (req, res) => {
         });
     } catch (err) { console.error(err); res.status(500).send("Server Error"); }
 });
+
 
 // --- PUT Profile (Streamlined) ---
 app.put('/api/user/profile', ensureAuthenticated, async (req, res) => {

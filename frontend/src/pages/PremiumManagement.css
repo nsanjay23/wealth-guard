@@ -1,0 +1,108 @@
+/* Container & Global */
+.pm-container {
+    background-color: #121212;
+    min-height: 100vh;
+    color: white;
+    padding: 40px;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Header */
+.pm-header { margin-bottom: 40px; }
+.pm-header h1 { font-size: 2rem; margin: 10px 0; }
+.pm-header p { color: #a1a1aa; }
+.pm-back {
+    background: transparent; border: none; color: #a1a1aa; 
+    cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 1rem;
+}
+.pm-back:hover { color: #00d2aa; }
+
+/* Grid Layout */
+.pm-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 40px;
+}
+
+/* Section Headers */
+.pm-section h2 { font-size: 1.5rem; margin-bottom: 20px; color: white; border-left: 4px solid #00d2aa; padding-left: 15px; }
+
+/* --- POLICY CARDS --- */
+.pm-cards-list { display: flex; flex-direction: column; gap: 20px; }
+
+.pm-card {
+    background: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 24px;
+    transition: transform 0.2s;
+}
+.pm-card:hover { transform: translateY(-3px); border-color: #555; }
+.pm-card.card-overdue { border: 1px solid #ef4444; background: rgba(239, 68, 68, 0.05); }
+
+/* Card Top */
+.pm-card-top {
+    display: flex; justify-content: space-between; align-items: start; margin-bottom: 20px;
+}
+.pm-card-top h4 { margin: 0; color: #a1a1aa; font-size: 0.9rem; text-transform: uppercase; }
+.pm-card-top h3 { margin: 5px 0 0; font-size: 1.3rem; }
+
+/* Status Badges */
+.pm-status-badge {
+    padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 6px;
+}
+.status-ok { background: rgba(0, 210, 170, 0.1); color: #00d2aa; }
+.status-warning { background: rgba(234, 179, 8, 0.1); color: #eab308; }
+.status-danger { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+
+/* Info Row */
+.pm-details-row {
+    display: flex; gap: 40px; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #333;
+}
+.pm-info-block { display: flex; flex-direction: column; gap: 5px; }
+.pm-info-block label { font-size: 0.8rem; color: #777; }
+.pm-info-block span { font-size: 1rem; color: #ccc; }
+.pm-info-block span.amount { font-size: 1.2rem; color: white; font-weight: bold; }
+
+/* Action Buttons */
+.pm-actions { display: flex; justify-content: space-between; align-items: center; }
+
+.btn-reminder {
+    background: transparent; border: 1px solid #444; color: #aaa;
+    padding: 10px 16px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s;
+}
+.btn-reminder:hover { border-color: #fff; color: #fff; }
+.btn-reminder.active { background: #333; color: #00d2aa; border-color: #333; }
+
+.btn-pay-now {
+    background: #00d2aa; color: black; border: none;
+    padding: 10px 24px; border-radius: 6px; font-weight: bold; cursor: pointer;
+}
+.btn-pay-now:hover { opacity: 0.9; }
+.btn-pay-now.overdue { background: #ef4444; color: white; }
+
+/* --- SIDEBAR --- */
+.pm-sidebar { display: flex; flex-direction: column; gap: 20px; }
+
+.pm-widget {
+    background: #1e1e1e; border: 1px solid #333; border-radius: 12px; padding: 24px;
+}
+.pm-widget h3 { margin: 0 0 15px 0; font-size: 1.1rem; color: #fff; }
+
+.pm-links { list-style: none; padding: 0; margin: 0; }
+.pm-links li {
+    padding: 12px 0; border-bottom: 1px solid #333; color: #aaa; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.2s;
+}
+.pm-links li:hover { color: #00d2aa; padding-left: 5px; }
+.pm-links li:last-child { border-bottom: none; }
+
+.summary-widget .liability-amount {
+    font-size: 2rem; font-weight: bold; color: #00d2aa; margin: 10px 0;
+}
+.summary-widget p { color: #777; font-size: 0.9rem; margin: 0; }
+
+/* Responsive */
+@media (max-width: 900px) {
+    .pm-grid { grid-template-columns: 1fr; }
+    .pm-details-row { gap: 20px; }
+}

@@ -3,7 +3,7 @@ import axios from 'axios';
 import { 
     FiUploadCloud, FiFileText, FiShield, FiAlertTriangle, 
     FiCheckCircle, FiCpu, FiMessageSquare, FiSend, FiX, FiTrash2, FiMinimize2,
-    FiCalendar, FiUser, FiDollarSign, FiInfo, FiHelpCircle, FiActivity
+    FiCalendar, FiUser, FiDollarSign, FiInfo, FiHelpCircle, FiActivity, FiClock, FiStar, FiLayers
 } from 'react-icons/fi';
 import './PolicyUploadPage.css';
 
@@ -18,7 +18,7 @@ const PolicyUploadPage = () => {
     const [analysisResult, setAnalysisResult] = useState(null);
     const [pdfContext, setPdfContext] = useState(''); 
 
-    // Chatbot State (Starts Closed)
+    // Chatbot State
     const [isChatOpen, setIsChatOpen] = useState(false); 
     const [messages, setMessages] = useState([
         { sender: 'bot', text: 'Hi! I am your Insurance Assistant. I can explain terms or help you understand this policy.' }
@@ -111,7 +111,7 @@ const PolicyUploadPage = () => {
     }, [messages, isChatOpen]);
 
     const formatValue = (val) => {
-        if (!val || val === 'null' || val === 'undefined') return "--";
+        if (!val || val === 'null' || val === 'undefined') return "N/A";
         return val;
     };
 
@@ -132,8 +132,8 @@ const PolicyUploadPage = () => {
                         onClick={() => fileInputRef.current.click()}
                     >
                         <div className="icon-circle"><FiUploadCloud size={40} /></div>
-                        <h3>Upload Policy PDF</h3>
-                        <p>Learn what your policy actually covers.</p>
+                        <h3>Upload Policy or Brochure</h3>
+                        <p>Get a summary of coverage, benefits, and exclusions.</p>
                         <input type="file" ref={fileInputRef} hidden accept=".pdf" onChange={handleFileSelect}/>
                     </div>
                 )}
@@ -144,7 +144,7 @@ const PolicyUploadPage = () => {
                             {status === 'uploading' ? <FiUploadCloud className="pulse"/> : <FiCpu className="spin"/>}
                         </div>
                         <h2>{status === 'uploading' ? 'Reading Document...' : 'Analyzing Terms...'}</h2>
-                        <p className="loading-subtext">Extracting definitions and coverage limits...</p>
+                        <p className="loading-subtext">Extracting plan features and waiting periods...</p>
                     </div>
                 )}
 
@@ -164,9 +164,9 @@ const PolicyUploadPage = () => {
                             <div className="pu-card header-card">
                                 <div className="provider-badge">{formatValue(analysisResult.summary?.provider)}</div>
                                 <h2>{formatValue(analysisResult.summary?.policyName)}</h2>
-                                <div className="policy-id-row">
-                                    <span className="id-label">Policy / UIN No:</span>
-                                    <span className="id-val mono-font">{formatValue(analysisResult.summary?.policyNum)}</span>
+                                <div className="policy-meta-row">
+                                    <span className="meta-tag"><FiLayers/> {formatValue(analysisResult.summary?.policyType)}</span>
+                                    <span className="meta-tag"><FiUser/> {formatValue(analysisResult.summary?.policyHolder)}</span>
                                 </div>
                             </div>
 
@@ -174,43 +174,57 @@ const PolicyUploadPage = () => {
                             <div className="stats-row">
                                 <div className="pu-card stat-card highlight">
                                     <div className="stat-label">
-                                        Sum Insured 
-                                        <div className="tooltip" data-tip="Maximum amount the insurer will pay in a year."><FiHelpCircle/></div>
+                                        Sum Insured Range
+                                        <div className="tooltip" data-tip="Maximum coverage amount available"><FiHelpCircle/></div>
                                     </div>
                                     <div className="stat-value">{formatValue(analysisResult.summary?.sumInsured)}</div>
                                 </div>
                                 <div className="pu-card stat-card">
                                     <div className="stat-label">
-                                        Estimated Premium
-                                        <div className="tooltip" data-tip="The cost you pay for this coverage."><FiHelpCircle/></div>
+                                        Premium / Cost
+                                        <div className="tooltip" data-tip="Estimated cost or premium rules"><FiHelpCircle/></div>
                                     </div>
-                                    <div className="stat-value">{formatValue(analysisResult.summary?.premium)}</div>
+                                    <div className="stat-value small-text">{formatValue(analysisResult.summary?.premium)}</div>
                                 </div>
                             </div>
 
-                            {/* 3. DETAILS GRID */}
+                            {/* 3. POLICY ESSENTIALS */}
                             <div className="pu-card details-card">
-                                <h3><FiActivity /> Coverage Details</h3>
+                                <h3><FiInfo /> Policy Essentials</h3>
                                 <div className="details-grid">
                                     <div className="detail-item">
-                                        <label><FiUser/> Policy Holder</label>
-                                        <span>{formatValue(analysisResult.summary?.policyHolder)}</span>
+                                        <label><FiCheckCircle/> Eligibility</label>
+                                        <span>{formatValue(analysisResult.summary?.eligibility)}</span>
                                     </div>
                                     <div className="detail-item">
-                                        <label><FiCalendar/> Coverage Start</label>
-                                        <span>{formatValue(analysisResult.summary?.startDate)}</span>
+                                        <label><FiCalendar/> Policy Term</label>
+                                        <span>{formatValue(analysisResult.summary?.policyTerm)}</span>
                                     </div>
                                     <div className="detail-item">
-                                        <label><FiCalendar/> Coverage End</label>
-                                        <span>{formatValue(analysisResult.summary?.endDate)}</span>
+                                        <label><FiClock/> Waiting Periods</label>
+                                        <ul className="mini-list">
+                                            {analysisResult.summary?.waitingPeriods?.slice(0, 3).map((wp, i) => (
+                                                <li key={i}>{wp}</li>
+                                            )) || <li>No specific waiting periods found.</li>}
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* 4. EXCLUSIONS (Educational) */}
+                            {/* 4. KEY FEATURES (NEW) */}
+                            <div className="pu-card features-card">
+                                <h3><FiStar /> Key Features & Benefits</h3>
+                                <ul className="feature-list">
+                                    {analysisResult.summary?.keyFeatures?.map((feat, i) => (
+                                        <li key={i}>{formatMessage(feat)}</li>
+                                    )) || <li>No features extracted.</li>}
+                                </ul>
+                            </div>
+
+                            {/* 5. EXCLUSIONS */}
                             <div className="pu-card exclusions-card">
                                 <h3>
-                                    <FiAlertTriangle /> Key Exclusions 
+                                    <FiAlertTriangle /> Major Exclusions 
                                     <span className="card-subtitle">(What is NOT covered)</span>
                                 </h3>
                                 <ul>
@@ -220,15 +234,15 @@ const PolicyUploadPage = () => {
                                 </ul>
                             </div>
 
-                            {/* 5. AUTHENTICITY (Side or Bottom) */}
+                            {/* 6. AUTHENTICITY / FOOTER */}
                             <div className={`pu-card fraud-card ${analysisResult.isFraudulent ? 'risk' : 'safe'}`}>
                                 <div className="fraud-content">
                                     <div className="fraud-text">
-                                        <h3>Document Authenticity</h3>
-                                        <p>{analysisResult.isFraudulent ? "Potential issues found." : "This document looks authentic."}</p>
+                                        <h3>Document Analysis Score</h3>
+                                        <p>{analysisResult.isFraudulent ? "Potential inconsistencies found." : "Document structure appears standard."}</p>
                                     </div>
                                     <div className="fraud-score">
-                                        <span>{analysisResult.fraudScore}%</span>
+                                        <span>{analysisResult.fraudScore}/100</span>
                                     </div>
                                 </div>
                             </div>
@@ -238,7 +252,7 @@ const PolicyUploadPage = () => {
                 )}
             </div>
 
-            {/* --- CHATBOT --- */}
+            {/* --- CHATBOT (Unchanged Logic) --- */}
             <div className={`pu-floating-chat ${isChatOpen ? 'open' : ''}`}>
                 <button className="chat-toggle-btn" onClick={() => setIsChatOpen(!isChatOpen)}>
                     {isChatOpen ? <FiMinimize2 /> : <FiMessageSquare />}
@@ -266,7 +280,7 @@ const PolicyUploadPage = () => {
 
                         <div className="chat-input-wrapper">
                             <input 
-                                placeholder="Ask about this policy..."
+                                placeholder="Ask about specific benefits..."
                                 value={inputMsg}
                                 onChange={(e) => setInputMsg(e.target.value)}
                                 onKeyPress={(e) => e.key === 'Enter' && handleSend()}
