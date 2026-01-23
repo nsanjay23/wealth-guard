@@ -10,8 +10,26 @@ const DashboardNavbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
-  // Safe check for dark mode
-  const [isDarkMode, setIsDarkMode] = useState(document.body.classList.contains('dark'));
+
+  // Initialize state based on localStorage OR default to Dark Mode
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const savedTheme = localStorage.getItem('theme');
+    // Default to true (Dark) if no preference saved
+    return savedTheme ? savedTheme === 'dark' : true;
+  });
+
+  // Apply the theme to the body tag whenever isDarkMode changes
+  useEffect(() => {
+    if (isDarkMode) {
+      document.body.classList.add('dark');
+      document.body.classList.remove('light');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.body.classList.add('light');
+      document.body.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [isDarkMode]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -42,16 +60,13 @@ const DashboardNavbar = () => {
   };
 
   const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-    document.body.classList.toggle('dark');
-    document.body.classList.toggle('light'); 
+    setIsDarkMode(prevMode => !prevMode);
   };
 
   return (
     <nav className="dashboard-navbar">
       <div className="dashboard-navbar-left">
         <Link to="/dashboard" className="logo-link">
-          {/* Logo image class prevents explosion */}
           <img src={logo} alt="Wealth Guard Logo" className="dashboard-logo" />
         </Link>
       </div>

@@ -1,25 +1,38 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { FiArrowLeft, FiCheck, FiShield, FiClock, FiActivity } from 'react-icons/fi';
-import './PolicyDetails.css'; // SEPARATE CSS
+import { FiArrowLeft, FiCheck, FiShield, FiClock, FiActivity, FiFileText } from 'react-icons/fi';
+import './PolicyDetails.css';
 
 const PolicyDetailsPage = () => {
     const { state } = useLocation();
     const navigate = useNavigate();
 
-    if (!state?.policy) return <div>Loading...</div>;
+    // Fallback if accessed directly without state
+    if (!state?.policy) {
+        return (
+            <div className="pd-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <p>No policy data found. <button onClick={() => navigate('/insurance')} style={{background:'transparent', border:'none', color:'#00d2aa', cursor:'pointer', textDecoration:'underline'}}>Go back</button></p>
+            </div>
+        );
+    }
+    
     const { policy } = state;
 
     return (
         <div className="pd-container">
-            <button className="pd-back" onClick={() => navigate(-1)}><FiArrowLeft /> Back</button>
-            
+            {/* Header Card with Back Button Inside */}
             <div className="pd-header">
-                <div>
-                    <span className="pd-badge">{policy.type}</span>
-                    <h1>{policy.planName}</h1>
-                    <p>by {policy.provider}</p>
+                <div className="pd-header-left">
+                    <button className="pd-back-btn" onClick={() => navigate(-1)}>
+                        <FiArrowLeft />
+                    </button>
+                    <div className="pd-header-info">
+                        <span className="pd-badge">{policy.type}</span>
+                        <h1>{policy.planName}</h1>
+                        <p className="pd-provider">by {policy.provider}</p>
+                    </div>
                 </div>
+                
                 <div className="pd-price-box">
                     <p>Annual Premium</p>
                     <div className="pd-price">₹{policy.premium.toLocaleString()}</div>
@@ -56,11 +69,13 @@ const PolicyDetailsPage = () => {
 
                 <div className="pd-sidebar">
                     <div className="pd-summary">
-                        <h3>Summary</h3>
-                        <div className="pd-row"><span>Base</span><span>₹{policy.premium}</span></div>
-                        <div className="pd-row"><span>GST (18%)</span><span>₹{(policy.premium * 0.18).toFixed(0)}</span></div>
+                        <div className="pd-summary-header">
+                            <FiFileText /> <h3>Summary</h3>
+                        </div>
+                        <div className="pd-row"><span>Base Premium</span><span>₹{policy.premium.toLocaleString()}</span></div>
+                        <div className="pd-row"><span>GST (18%)</span><span>₹{(policy.premium * 0.18).toLocaleString(undefined, {maximumFractionDigits: 0})}</span></div>
                         <hr/>
-                        <div className="pd-row total"><span>Total</span><span>₹{(policy.premium * 1.18).toFixed(0)}</span></div>
+                        <div className="pd-row total"><span>Total Payable</span><span>₹{(policy.premium * 1.18).toLocaleString(undefined, {maximumFractionDigits: 0})}</span></div>
                     </div>
                 </div>
             </div>

@@ -21,11 +21,34 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { spawn } = require('child_process'); // To start Python server
 const OpenAI = require('openai'); // CHANGED: Using OpenAI
 const Groq = require('groq-sdk');
+const nodemailer = require('nodemailer');
+const { google } = require('googleapis');
 
 // Helper: Wait function
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+// Helper: Convert string to Title Case
+const toTitleCase = (str) => {
+  if (!str) return '';
+  return str
+    .toLowerCase()
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+};
+const transporter = nodemailer.createTransport({
+    service: 'gmail', // Use Google's predefined service settings
+    auth: {
+        user: process.env.EMAIL_USER, // Reads from your .env file
+        pass: process.env.EMAIL_PASS  // Reads from your .env file
+    }
+});
 
-
+const oauth2Client = new google.auth.OAuth2(
+    process.env.GOOGLE_CLIENT_ID,     // Placeholder
+    process.env.GOOGLE_CLIENT_SECRET, // Placeholder
+    'http://localhost:3000'      // Redirect URL
+);
+const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
 
 // --- Helper Function: Check Email Validity with VerifyKit.io ---
 async function checkEmailWithVerifyKit(emailToCheck) {
@@ -55,80 +78,7 @@ async function checkEmailWithVerifyKit(emailToCheck) {
   }
 }
 
-// --- INSERT THIS FUNCTION AFTER YOUR HELPER FUNCTIONS ---
-// 1. UPDATE THE MOCK DATA GENERATOR (Place this near top)
-const generateMockPolicies = () => {
-    const providers = ["HDFC Life", "ICICI Prudential", "LIC", "Max Life", "Tata AIA", "SBI Life", "Niva Bupa", "Star Health", "Acko General", "Digit"];
-    const types = ["Term Life", "Health", "Motor", "Endowment"]; // Added Motor
-    
-    // Feature tags that match user inputs
-    const healthFeatures = ["Maternity Cover", "OPD Support", "Diabetes Care", "Senior Citizen Add-on", "Ayush Treatment", "No Room Rent Capping"];
-    const lifeFeatures = ["Tax Benefit 80C", "Return of Premium", "Critical Illness Rider", "Accidental Death Benefit", "Whole Life Cover"];
-    const motorFeatures = ["Zero Depreciation", "Roadside Assistance", "Engine Protection", "Consumables Cover"];
 
-    let policies = [];
-    let idCounter = 1001;
-
-    // Generate 150 Policies
-    for (let i = 0; i < 150; i++) {
-        const type = types[Math.floor(Math.random() * types.length)];
-        const provider = providers[Math.floor(Math.random() * providers.length)];
-        
-        let planName = "", premium = 0, cover = "", term = "", features = [], category = "";
-
-        if (type === "Term Life") {
-            planName = `${provider} ${['Secure', 'Protect', 'Shield', 'Smart'][Math.floor(Math.random()*4)]} Life`;
-            premium = Math.floor(Math.random() * (2500 - 500) + 500);
-            cover = `${Math.floor(Math.random() * 4 + 1)} Cr`;
-            term = "Till 85 Yrs";
-            // Randomly assign features relevant to Life
-            features = [lifeFeatures[Math.floor(Math.random()*lifeFeatures.length)], lifeFeatures[Math.floor(Math.random()*lifeFeatures.length)]];
-            // Tag for matching
-            category = "Protection"; 
-        } 
-        else if (type === "Health") {
-            const isFloater = Math.random() > 0.5;
-            planName = `${provider} ${isFloater ? 'Family First' : 'Optima'} ${['Gold', 'Platinum', 'Silver'][Math.floor(Math.random()*3)]}`;
-            premium = Math.floor(Math.random() * (2000 - 800) + 800);
-            cover = `${Math.floor(Math.random() * 20 + 5)} Lakhs`;
-            term = "1 Year";
-            features = [healthFeatures[Math.floor(Math.random()*healthFeatures.length)], isFloater ? "Family Floater" : "Individual"];
-            category = isFloater ? "Family" : "Individual";
-        } 
-        else if (type === "Motor") {
-            planName = `${provider} ${['Drive', 'Go', 'Zoom'][Math.floor(Math.random()*3)]} Assure`;
-            premium = Math.floor(Math.random() * (5000 - 1500) + 1500); // Yearly
-            cover = "IDV Market Value";
-            term = "1 Year";
-            features = [motorFeatures[Math.floor(Math.random()*motorFeatures.length)]];
-            category = "Car";
-        }
-        else { // Endowment
-            planName = `${provider} Wealth Builder`;
-            premium = Math.floor(Math.random() * (10000 - 3000) + 3000);
-            cover = "Sum + Bonus";
-            term = "20 Years";
-            features = ["Guaranteed Returns", "Tax Benefit 80C"];
-            category = "Investment";
-        }
-
-        policies.push({
-            id: idCounter++,
-            provider,
-            planName,
-            type,
-            category, // Used for specific matching
-            premium,
-            coverage: cover,
-            term,
-            features: [...new Set(features)], // Remove duplicates
-            badge: Math.random() > 0.85 ? "Super Match" : ""
-        });
-    }
-    return policies;
-};
-
-const LARGE_MOCK_DB = generateMockPolicies();
 // --- Express App Setup ---
 const app = express();
 const port = process.env.PORT || 5001;
@@ -140,37 +90,34 @@ const port = process.env.PORT || 5001;
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "http://localhost:5001/api/auth/google/callback" // Must match Google Console Redirect URI
+    callbackURL: "http://localhost:5001/api/auth/google/callback"
   },
   async (accessToken, refreshToken, profile, done) => {
-    // This function is called after successful Google authentication
-    const email = profile.emails && profile.emails[0] ? profile.emails[0].value : null;
-    const firstName = profile.name ? profile.name.givenName : null;
-    const lastName = profile.name ? profile.name.familyName : null;
-
-    if (!email) {
-        return done(new Error('Failed to retrieve email from Google profile.'), null);
-    }
-
+    const email = profile.emails[0].value;
+    
     try {
-        // Find or create user in the database
+        // 1. Check if user exists
         let userResult = await db.query('SELECT * FROM users WHERE email = $1', [email]);
         let user = userResult.rows[0];
 
         if (user) {
-            // User exists
-            return done(null, user); // Pass user object to serializeUser
-        } else {
-            // User does not exist, create a new one (password_hash is NULL for OAuth users)
-            const newUserResult = await db.query(
-                'INSERT INTO users (email, first_name, last_name) VALUES ($1, $2, $3) RETURNING user_id, email, first_name, last_name, created_at',
-                [email, toTitleCase(firstName), toTitleCase(lastName)]
+            // 2. USER EXISTS: Update their tokens!
+            // We need to save these so we can use Calendar API later.
+            await db.query(
+                'UPDATE users SET google_access_token = $1, google_refresh_token = $2 WHERE email = $3',
+                [accessToken, refreshToken, email]
             );
-            user = newUserResult.rows[0];
-            return done(null, user); // Pass new user object to serializeUser
+            return done(null, user); 
+        } else {
+            // 3. NEW USER: Create them AND save tokens
+            const newUser = await db.query(
+                'INSERT INTO users (email, first_name, last_name, google_access_token, google_refresh_token) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+                [email, profile.name.givenName, profile.name.familyName, accessToken, refreshToken]
+            );
+            return done(null, newUser.rows[0]);
         }
     } catch (err) {
-        return done(err, null); // Database or other error
+        return done(err, null);
     }
   }
 ));
@@ -360,9 +307,14 @@ app.get('/', (req, res) => {
 
 // --- AUTHENTICATION ROUTES ---
 
-// Google Auth - Step 1: Redirect to Google
+// CHANGE: Added 'calendar' scope and 'access_type: offline' to get a Refresh Token
 app.get('/api/auth/google',
-  passport.authenticate('google', { scope: ['profile', 'email'] }) // Request profile and email access
+  passport.authenticate('google', { 
+      scope: ['profile', 'email', 'https://www.googleapis.com/auth/calendar'],
+      // CHANGE THIS LINE BELOW:
+      access_type: 'offline', // <--- It must say 'offline', not 'online'
+      prompt: 'consent'       // <--- Keeps asking for consent to ensure we get the token
+  })
 );
 
 // Google Auth - Step 2: Callback URL after Google authentication
@@ -856,6 +808,213 @@ async function listModels() {
     console.error("❌ Could not list models:", err.message);
   }
 }
+
+// =========================================================
+// === NEW: PREMIUM & RENEWAL MANAGEMENT ROUTES ============
+// =========================================================
+
+// GET Policies (Unchanged)
+app.get('/api/policies', ensureAuthenticated, async (req, res) => {
+    try {
+        const result = await db.query(
+            'SELECT * FROM userpolicies WHERE user_id = $1 ORDER BY due_date ASC',
+            [req.user.user_id]
+        );
+        // Format data for frontend
+        const formattedPolicies = result.rows.map(row => ({
+            id: row.id,
+            policyName: row.policy_name,
+            insurer: row.insurer,
+            premiumAmount: parseFloat(row.premium_amount),
+            dueDate: row.due_date,
+            reminderSettings: row.reminder_settings,
+            googleEventId: row.google_event_id
+        }));
+        res.json(formattedPolicies);
+    } catch (err) {
+        console.error("Error fetching policies:", err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// POST Route - ADD New Policy & Send Email Notification
+app.post('/api/policies', ensureAuthenticated, async (req, res) => {
+    const { policyName, insurer, premiumAmount, dueDate, reminderSettings } = req.body;
+    const userEmail = req.user.email; // Get user's email from session
+
+    if (!policyName || !insurer || !premiumAmount || !dueDate) {
+        return res.status(400).json({ message: "All fields are required" });
+    }
+
+    try {
+        // 1. Save to Database first
+        const result = await db.query(
+            `INSERT INTO userpolicies (user_id, policy_name, insurer, premium_amount, due_date, reminder_settings) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+            [req.user.user_id, policyName, insurer, premiumAmount, dueDate, JSON.stringify(reminderSettings)]
+        );
+        const newPolicy = result.rows[0];
+
+        // 2. Handle Email Notification (If selected by user)
+        if (reminderSettings.email) {
+            console.log(`[Server] Attempting to send confirmation email to ${userEmail}...`);
+            
+            // This tries to send an email. Since we used 'jsonTransport: true' above, it will just log the email structure to your console.
+            transporter.sendMail({
+                from: '"WealthGuard Reminders" <no-reply@wealthguard.com>',
+                to: userEmail,
+                subject: `Reminder Set: ${policyName}`,
+                html: `<h3>Policy Added Successfully</h3><p>We will remind you to pay <strong>₹${premiumAmount}</strong> for <strong>${policyName}</strong> before <strong>${dueDate}</strong>.</p>`
+            }, (err, info) => {
+               if (err) console.error("[Email Error]:", err);
+               else console.log("[Email Success (Mocked)] Message ID:", info.messageId);
+            });
+        }
+
+        // Send the saved policy back to frontend
+        res.json({
+            id: newPolicy.id,
+            policyName: newPolicy.policy_name,
+            insurer: newPolicy.insurer,
+            premiumAmount: parseFloat(newPolicy.premium_amount),
+            dueDate: newPolicy.due_date,
+            reminderSettings: newPolicy.reminder_settings
+        });
+
+    } catch (err) {
+        console.error("Error adding policy:", err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// DELETE Route (Unchanged)
+app.delete('/api/policies/:id', ensureAuthenticated, async (req, res) => {
+    try {
+        const result = await db.query(
+            'DELETE FROM userpolicies WHERE id = $1 AND user_id = $2',
+            [req.params.id, req.user.user_id]
+        );
+        if (result.rowCount === 0) return res.status(404).json({ message: "Policy not found" });
+        res.json({ message: 'Policy deleted successfully' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// GOOGLE CALENDAR SYNC ROUTE
+app.post('/api/reminders/google-calendar', ensureAuthenticated, async (req, res) => {
+    const { policyName, premiumAmount, dueDate } = req.body;
+
+    try {
+        // 1. Get the latest tokens for this user from the DB
+        const userResult = await db.query('SELECT google_access_token, google_refresh_token FROM users WHERE user_id = $1', [req.user.user_id]);
+        const userTokens = userResult.rows[0];
+
+        if (!userTokens?.google_access_token) {
+            return res.status(400).json({ message: "Google Calendar not connected. Please log out and log in again." });
+        }
+
+        // 2. Setup Google Credentials
+        const oauth2Client = new google.auth.OAuth2(
+            process.env.GOOGLE_CLIENT_ID,
+            process.env.GOOGLE_CLIENT_SECRET,
+            "http://localhost:5001/api/auth/google/callback"
+        );
+
+        oauth2Client.setCredentials({
+            access_token: userTokens.google_access_token,
+            refresh_token: userTokens.google_refresh_token // Handles token expiration automatically
+        });
+
+        const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+
+        // 3. Create the Event Object
+        const event = {
+            summary: `Pay Premium: ${policyName}`,
+            description: `Reminder for ${policyName}. Amount: ₹${premiumAmount}`,
+            start: {
+                date: dueDate, // All-day event (YYYY-MM-DD)
+            },
+            end: {
+                date: dueDate,
+            },
+            reminders: {
+                useDefault: false,
+                overrides: [
+                    { method: 'email', minutes: 24 * 60 }, // Email 1 day before
+                    { method: 'popup', minutes: 60 },      // Notification 1 hour before
+                ],
+            },
+        };
+
+        // 4. Send to Google
+        const response = await calendar.events.insert({
+            calendarId: 'primary',
+            resource: event,
+        });
+
+        console.log("Calendar Event Created:", response.data.htmlLink);
+        res.json({ success: true, message: 'Event added to Google Calendar!' });
+
+    } catch (error) {
+        console.error('Google Calendar Error:', error);
+        res.status(500).json({ error: 'Failed to sync with Google Calendar. Try logging in again.' });
+    }
+});
+// GET Route: Fetch Events FROM Google Calendar
+app.get('/api/reminders/google-calendar', ensureAuthenticated, async (req, res) => {
+    try {
+        // 1. Get User Tokens
+        const userResult = await db.query('SELECT google_access_token, google_refresh_token FROM users WHERE user_id = $1', [req.user.user_id]);
+        const userTokens = userResult.rows[0];
+
+        if (!userTokens?.google_access_token) {
+            return res.status(400).json({ message: "Not connected to Google." });
+        }
+
+        // 2. Setup Google Client
+        const oauth2Client = new google.auth.OAuth2(
+            process.env.GOOGLE_CLIENT_ID,
+            process.env.GOOGLE_CLIENT_SECRET,
+            "http://localhost:5001/api/auth/google/callback"
+        );
+        oauth2Client.setCredentials({
+            access_token: userTokens.google_access_token,
+            refresh_token: userTokens.google_refresh_token
+        });
+
+        const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+
+        // 3. Fetch Events (Next 30 days)
+        const now = new Date();
+        const nextMonth = new Date();
+        nextMonth.setMonth(nextMonth.getMonth() + 1);
+
+        const response = await calendar.events.list({
+            calendarId: 'primary',
+            timeMin: now.toISOString(),
+            timeMax: nextMonth.toISOString(),
+            maxResults: 20,
+            singleEvents: true,
+            orderBy: 'startTime',
+        });
+
+        // 4. Send events to frontend
+        const events = response.data.items.map(event => ({
+            id: event.id,
+            title: event.summary,
+            date: event.start.dateTime || event.start.date, // Handle both timed and all-day events
+            link: event.htmlLink
+        }));
+
+        res.json(events);
+
+    } catch (error) {
+        console.error('Fetch Calendar Error:', error);
+        res.status(500).json({ error: 'Failed to fetch Google Calendar events.' });
+    }
+});
+
+// =========================================================
 
 // Run this on startup
 listModels();

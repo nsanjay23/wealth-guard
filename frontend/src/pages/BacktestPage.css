@@ -274,3 +274,111 @@
         height: 250px;
     }
 }
+
+/* ======================================================
+   LIGHT MODE OVERRIDES (Sand/Parchment Theme)
+   ====================================================== */
+
+/* 1. Global Page Background & Text */
+body.light .backtest-page {
+    color: #3d342b !important; /* Dark Coffee Text */
+}
+
+/* 2. Main Containers */
+body.light .config-panel,
+body.light .chart-section,
+body.light .metric-row,
+body.light .empty-state-message {
+    background: #fdf6e7 !important;       /* Sand Parchment */
+    border: 1px solid #d1c6b6 !important; /* Sand Border */
+    box-shadow: 0 4px 12px -2px rgba(92, 69, 45, 0.15) !important;
+    color: #231f20 !important;
+}
+
+/* 3. Headers & Typography */
+body.light h1, body.light h2, body.light h3, body.light h4,
+body.light .empty-state-message h3 {
+    color: #231f20 !important;
+}
+
+body.light p, body.light label, body.light .input-group label, body.light .metric-val .port-name {
+    color: #6b5f56 !important; /* Muted Brown */
+}
+
+/* 4. Inputs & Dropdowns */
+body.light select, body.light input {
+    background: #efe5d5 !important; /* Darker Sand */
+    border: 1px solid #d1c6b6 !important;
+    color: #231f20 !important;
+}
+body.light select:focus, body.light input:focus {
+    border-color: #15803d !important; /* Dark Green focus */
+}
+
+/* 5. Toggle Group (Time Range Buttons) */
+body.light .toggle-group {
+    background: #efe5d5 !important;
+    border-color: #d1c6b6 !important;
+}
+body.light .toggle-group button {
+    color: #6b5f56 !important;
+}
+body.light .toggle-group button:hover {
+    background: #e5dcd0 !important;
+    color: #231f20 !important;
+}
+body.light .toggle-group button.active {
+    background: #15803d !important; /* Dark Green Active */
+    color: #fff !important;
+}
+
+/* 6. Metric Values */
+body.light .metric-val {
+    background: #efe5d5 !important;
+    color: #231f20 !important;
+}
+body.light .metric-val.green {
+    color: #15803d !important;
+    border-left-color: #15803d !important;
+}
+body.light .metric-val.red {
+    color: #b91c1c !important;
+    border-left-color: #b91c1c !important;
+}
+body.light .metric-val.benchmark {
+    color: #6b5f56 !important;
+    border-left-color: #a89f91 !important;
+}
+
+/* 7. Loading State */
+body.light .loading-tip-container {
+    background: rgba(253, 246, 231, 0.95) !important;
+    border-color: #d1c6b6 !important;
+}
+body.light .spinner {
+    border-color: #d1c6b6;
+    border-top-color: #15803d;
+}
+
+/* 8. Fade In Animation (Override) */
+.backtest-page {
+    animation: fadeInPage 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes fadeInPage {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 9. Chart Fixes */
+body.light .recharts-cartesian-grid line {
+    stroke: #d1c6b6 !important;
+}
+body.light .recharts-text {
+    fill: #6b5f56 !important;
+}
+body.light .recharts-tooltip-wrapper .recharts-default-tooltip {
+    background-color: #fdf6e7 !important;
+    border-color: #d1c6b6 !important;
+    color: #231f20 !important;
+}

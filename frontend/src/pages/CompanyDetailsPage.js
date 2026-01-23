@@ -5,11 +5,14 @@ import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, 
     PieChart, Pie, Cell, LineChart, Line 
 } from 'recharts';
+import { 
+  FiArrowLeft, FiShield, FiCheckCircle, FiAlertTriangle, FiBarChart2, 
+  FiTrendingUp, FiActivity, FiColumns, FiPieChart 
+} from 'react-icons/fi';
 import './Fundamentals.css';
 
 const parseCurrency = (val) => {
     if (!val) return 0;
-    // Remove symbols but keep the numbers
     let num = parseFloat(val.toString().replace(/[₹,]/g, ''));
     if (val.toString().includes('T')) return num * 100000;
     if (val.toString().includes('Cr')) return num / 100;
@@ -18,10 +21,8 @@ const parseCurrency = (val) => {
 
 const CompanyDetailsPage = () => {
   const { symbol } = useParams();
-  // Find static data first
   const company = fundamentalsData.find(c => c.symbol.toLowerCase() === symbol?.toLowerCase());
   
-  // State for live price
   const [liveData, setLiveData] = useState(null);
 
   // Mapping needed for Yahoo Finance (NSE extension)
@@ -46,9 +47,7 @@ const CompanyDetailsPage = () => {
 
   const fetchStockPrice = async (yahooSymbol) => {
     try {
-      // Use local backend proxy
       const proxyUrl = `http://localhost:5001/api/portfolios/proxy/yahoo?symbol=${yahooSymbol}&range=1d&interval=1d`;
-
       const response = await fetch(proxyUrl);
       const data = await response.json();
       const meta = data?.chart?.result?.[0]?.meta;
@@ -72,12 +71,10 @@ const CompanyDetailsPage = () => {
 
   if (!company) return <div className="fundamentals-container"><div className="no-results">Company Not Found</div></div>;
 
-  // Use live data if available, otherwise fallback to static `company` data
   const displayPrice = liveData ? liveData.price : company.price;
   const displayChange = liveData ? liveData.change : company.change;
   const isPositive = liveData ? liveData.isPositive : company.change.includes('+');
 
-  // --- MOCK DATA LOGIC ---
   const cashFlowData = company.cashFlow ? company.history.years.map((year, i) => ({
       year,
       Operating: company.cashFlow.operating[i],
@@ -93,7 +90,9 @@ const CompanyDetailsPage = () => {
 
   return (
     <div className="details-page">
-      <Link to="/fundamentals" className="back-link">← Back to Search</Link>
+      <Link to="/fundamentals" className="back-link">
+        <FiArrowLeft style={{ marginRight: '8px' }} /> Back to Search
+      </Link>
 
       {/* 1. TOP SNAPSHOT HEADER */}
       <div className="details-header-card">
@@ -119,28 +118,31 @@ const CompanyDetailsPage = () => {
       {/* 2. HEALTH SCORE & INSIGHTS */}
       <div className="grid-section insights-grid">
         <div className="detail-card score-card">
-            <h3>🛡️ WealthGuard Health Score</h3>
-            <div className="score-dial">
-                <div className={`score-circle ${company.healthScore > 80 ? 'high' : 'med'}`}>
+            <h3><FiShield className="section-icon" /> WealthGuard Health Score</h3>
+            
+            {/* 🔥 RENAMED SECTION TO FORCE FIX 🔥 */}
+            <div className="health-dial-container">
+                <div className={`health-circle-display ${company.healthScore > 80 ? 'high' : 'med'}`}>
                     {company.healthScore}
                 </div>
-                <div className="score-text">
-                    <h4>{company.healthScore > 80 ? 'Strong Buy 💪' : 'Stable 🙂'}</h4>
+                <div className="health-text-content">
+                    <h4>{company.healthScore > 80 ? 'Strong Buy' : 'Stable'}</h4>
                     <p>Based on profitability, debt, & growth.</p>
                 </div>
             </div>
+
         </div>
         
         <div className="detail-card analysis-card">
             <div className="analysis-col">
-                <h4 className="good-text">✅ Strengths</h4>
+                <h4 className="good-text"><FiCheckCircle style={{marginRight: '6px'}}/> Strengths</h4>
                 <ul>
                     {company.strengths?.map((s,i) => <li key={i}>{s}</li>)}
                     <li>High ROE of {company.ratios.roe}%</li>
                 </ul>
             </div>
             <div className="analysis-col">
-                <h4 className="bad-text">⚠️ Red Flags</h4>
+                <h4 className="bad-text"><FiAlertTriangle style={{marginRight: '6px'}}/> Red Flags</h4>
                 <ul>
                     {company.weaknesses?.map((w,i) => <li key={i}>{w}</li>)}
                 </ul>
@@ -149,7 +151,7 @@ const CompanyDetailsPage = () => {
       </div>
 
       {/* 3. RATIOS MATRIX */}
-      <h3 className="section-title">📊 Key Financial Ratios</h3>
+      <h3 className="section-title"><FiBarChart2 className="section-icon" /> Key Financial Ratios</h3>
       <div className="ratios-matrix">
         <div className="ratio-box">
             <label>P/E Ratio</label>
@@ -188,7 +190,7 @@ const CompanyDetailsPage = () => {
       {/* 4. FINANCIAL TRENDS (Revenue & Profit) */}
       <div className="grid-section charts-grid">
         <div className="detail-card">
-            <h3>📈 Revenue vs Profit (5 Years)</h3>
+            <h3><FiTrendingUp className="section-icon" /> Revenue vs Profit (5 Years)</h3>
             <div className="chart-container">
                 <ResponsiveContainer width="100%" height={250}>
                     <BarChart data={company.history.years.map((y, i) => ({
@@ -200,9 +202,13 @@ const CompanyDetailsPage = () => {
                         <XAxis dataKey="year" stroke="#888" />
                         <YAxis stroke="#888" tickFormatter={(val) => `₹${val/1000}k`} />
                         <Tooltip 
-                            contentStyle={{ backgroundColor: '#1e1e1e', borderColor: '#333', color: '#fff' }} 
-                            itemStyle={{ color: '#fff' }}
-                            cursor={{fill: 'rgba(255,255,255,0.05)'}}
+                            contentStyle={{ 
+                                backgroundColor: document.body.classList.contains('light') ? '#fff' : '#1e1e1e', 
+                                borderColor: document.body.classList.contains('light') ? '#e0e0e0' : '#333', 
+                                color: document.body.classList.contains('light') ? '#000' : '#fff' 
+                            }} 
+                            itemStyle={{ color: document.body.classList.contains('light') ? '#000' : '#fff' }}
+                            cursor={{fill: document.body.classList.contains('light') ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.05)'}}
                         />
                         <Legend wrapperStyle={{paddingTop: '10px'}}/>
                         <Bar dataKey="Revenue" fill="#00C49F" radius={[4, 4, 0, 0]} />
@@ -214,7 +220,7 @@ const CompanyDetailsPage = () => {
 
         {/* 5. CASH FLOW ANALYSIS */}
         <div className="detail-card">
-            <h3>💸 Cash Flow Trends</h3>
+            <h3><FiActivity className="section-icon" /> Cash Flow Trends</h3>
             <div className="chart-container">
                 {cashFlowData.length > 0 ? (
                     <ResponsiveContainer width="100%" height={250}>
@@ -223,8 +229,13 @@ const CompanyDetailsPage = () => {
                             <XAxis dataKey="year" stroke="#888" />
                             <YAxis stroke="#888" tickFormatter={(val) => `₹${val/1000}k`} />
                             <Tooltip 
-                                contentStyle={{ backgroundColor: '#1e1e1e', borderColor: '#333', color: '#fff' }} 
-                                itemStyle={{ color: '#fff' }}
+                                contentStyle={{ 
+                                    backgroundColor: document.body.classList.contains('light') ? '#fff' : '#1e1e1e', 
+                                    borderColor: document.body.classList.contains('light') ? '#e0e0e0' : '#333', 
+                                    color: document.body.classList.contains('light') ? '#000' : '#fff' 
+                                }} 
+                                itemStyle={{ color: document.body.classList.contains('light') ? '#000' : '#fff' }}
+                                cursor={{fill: document.body.classList.contains('light') ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.05)'}}
                             />
                             <Legend wrapperStyle={{paddingTop: '10px'}}/>
                             <Line type="monotone" dataKey="Operating" stroke="#00C49F" strokeWidth={2} dot={{r: 4}} />
@@ -241,7 +252,7 @@ const CompanyDetailsPage = () => {
       {/* 6. BALANCE SHEET & SHAREHOLDING */}
       <div className="grid-section split-grid">
         <div className="detail-card">
-            <h3>⚖️ Balance Sheet Summary</h3>
+            <h3><FiColumns className="section-icon" /> Balance Sheet Summary</h3>
             <div className="bs-summary">
                 <div className="bs-row">
                     <span>Total Assets</span>
@@ -267,7 +278,7 @@ const CompanyDetailsPage = () => {
         </div>
 
         <div className="detail-card">
-            <h3>👥 Shareholding Pattern</h3>
+            <h3><FiPieChart className="section-icon" /> Shareholding Pattern</h3>
             <div className="chart-container">
                 <ResponsiveContainer width="100%" height={220}>
                     <PieChart>
@@ -287,9 +298,13 @@ const CompanyDetailsPage = () => {
                             <Cell fill="#FF8042" />
                         </Pie>
                         <Tooltip 
-                            contentStyle={{ backgroundColor: '#1e1e1e', borderColor: '#333', borderRadius: '8px' }}
-                            itemStyle={{ color: '#fff' }} 
-                            formatter={(value) => `${value}%`}
+                            contentStyle={{ 
+                                backgroundColor: document.body.classList.contains('light') ? '#fff' : '#1e1e1e', 
+                                borderColor: document.body.classList.contains('light') ? '#e0e0e0' : '#333', 
+                                color: document.body.classList.contains('light') ? '#000' : '#fff' 
+                            }} 
+                            itemStyle={{ color: document.body.classList.contains('light') ? '#000' : '#fff' }}
+                            cursor={{fill: document.body.classList.contains('light') ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.05)'}}
                         />
                     </PieChart>
                 </ResponsiveContainer>

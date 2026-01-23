@@ -6,12 +6,32 @@
     font-family: 'Inter', sans-serif;
 }
 
+/* --- UPDATED HEADER (Card Style like Image 2) --- */
 .trends-header {
+    background: #1e1e1e; /* Default Dark Card */
+    border: 1px solid #333;
+    border-radius: 16px;
+    padding: 30px;
     margin-bottom: 2rem;
-    border-bottom: 1px solid #333;
-    padding-bottom: 1rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
+.trends-header h1 {
+    margin: 0 0 8px 0;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #fff;
+}
+
+.trends-header p {
+    margin: 0;
+    color: #aaa;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
 /* MAIN LAYOUT: LEFT (Controls) | RIGHT (Chart + ROI) */
 .trends-layout {
     display: grid;
@@ -468,4 +488,320 @@ input, select {
     .roi-widget-card {
         grid-column: 1; /* Reset to single column */
     }
+}
+
+/* ======================================================
+   LIGHT MODE OVERRIDES (Peach/Sand Theme)
+   ====================================================== */
+
+/* 1. Global Page Background & Text */
+body.light .trends-page-content {
+    color: #3d342b !important; /* Dark Coffee Text */
+}
+
+/* 2. Main Cards (Header, Panels, Widget) - Sand Colored */
+body.light .trends-header,
+body.light .controls-panel,
+body.light .chart-panel,
+body.light .roi-widget-card,
+body.light .ai-summary-card {
+    background: #fdf6e7 !important;       /* Sand Parchment */
+    border: 1px solid #d1c6b6 !important; /* Sand Border */
+    box-shadow: 0 4px 12px -2px rgba(92, 69, 45, 0.15) !important; /* Warm Brown Shadow */
+    color: #231f20 !important;            /* Force Dark Text */
+}
+
+/* 3. Typography Updates */
+body.light .trends-header h1,
+body.light .roi-header h3,
+body.light .control-section h3,
+body.light .chart-header h3 {
+    color: #231f20 !important; /* Dark Coffee Headings */
+}
+
+body.light .trends-header p,
+body.light .form-group label,
+body.light .limit-text,
+body.light .roi-details p,
+body.light .inflation-toggle,
+body.light .legend-custom span,
+body.light .empty-state {
+    color: #6b5f56 !important; /* Muted Brown */
+}
+
+/* 4. Inputs & Selects */
+body.light input, 
+body.light select {
+    background: #efe5d5 !important; /* Darker Sand Input */
+    border: 1px solid #d1c6b6 !important;
+    color: #231f20 !important;
+}
+
+/* 5. Buttons & Interactive Elements */
+body.light .analyze-btn {
+    color: #000 !important; /* Ensure readable text on Teal btn */
+}
+body.light .update-graph-btn {
+    border-color: #15803d !important; /* Dark Green Border */
+    color: #15803d !important;        /* Dark Green Text */
+}
+body.light .stock-tag {
+    background: #efe5d5 !important;
+    border-color: #d1c6b6 !important;
+    color: #231f20 !important;
+}
+
+/* 6. ROI Cards (Small Bottom Cards) */
+body.light .roi-card {
+    background: #f8f4ed !important; /* Linen Color */
+    border: 1px solid #d1c6b6 !important;
+    border-top-width: 5px !important; /* Keep the colored top border */
+}
+body.light .roi-card h4 {
+    color: #6b5f56 !important;
+}
+body.light .roi-details p:last-child {
+    color: #231f20 !important; /* Final Value needs to be dark */
+}
+
+/* 7. Chart Axis & Grid Fixes (SVG Overrides) */
+body.light .recharts-cartesian-grid line {
+    stroke: #d1c6b6 !important; /* Turn the dark grid lines to Sand */
+}
+body.light .recharts-text {
+    fill: #6b5f56 !important; /* Turn axis numbers to Brown */
+}
+body.light .custom-tooltip {
+    background-color: #fdf6e7 !important;
+    border-color: #d1c6b6 !important;
+}
+body.light .custom-tooltip p {
+    color: #231f20 !important;
+}
+
+/* 8. Loading State */
+body.light .loading-tip-container {
+    background: linear-gradient(145deg, #fdf6e7 0%, #efe5d5 100%) !important;
+}
+body.light .tip-content h3 { color: #231f20 !important; }
+body.light .tip-content p { color: #6b5f56 !important; }
+body.light .spinner { border-color: #d1c6b6; border-top-color: #00C49F; }
+
+/* ======================================================
+   8. SPECIFIC REQUEST FIXES
+   ====================================================== */
+
+/* A. HEADER STYLE MATCH (Like Image 2) */
+/* This overrides the default header to look like the reliance card */
+.trends-header {
+    background: #1e1e1e; /* Dark Default */
+    border: 1px solid #333;
+    border-radius: 16px;
+    padding: 25px 30px;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* Light Mode Override for Header */
+body.light .trends-header {
+    background: #fdf6e7 !important;       /* Sand Parchment */
+    border: 1px solid #d1c6b6 !important; /* Sand Border */
+    box-shadow: 0 4px 12px -2px rgba(92, 69, 45, 0.15) !important;
+}
+body.light .trends-header h1 { color: #231f20 !important; }
+body.light .trends-header p { color: #6b5f56 !important; }
+
+/* B. INFLATION BUTTON STYLING (No Checkbox) */
+.inflation-btn {
+    background: transparent;
+    border: 1px solid #444;
+    color: #888;
+    padding: 8px 16px;
+    border-radius: 20px; /* Pill shape */
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.inflation-btn:hover {
+    border-color: #00C49F;
+    color: #00C49F;
+}
+
+.inflation-btn.active {
+    background: rgba(0, 196, 159, 0.15);
+    border-color: #00C49F;
+    color: #00C49F;
+}
+
+/* Light Mode for Inflation Button */
+body.light .inflation-btn {
+    border-color: #d1c6b6;
+    color: #6b5f56;
+}
+body.light .inflation-btn:hover {
+    border-color: #15803d; /* Dark Green */
+    color: #15803d;
+}
+body.light .inflation-btn.active {
+    background: rgba(21, 128, 61, 0.1);
+    border-color: #15803d;
+    color: #15803d;
+}
+
+/* C. ROI CALCULATOR TITLE FIX */
+/* Remove emoji gap */
+.roi-header h3 {
+    display: flex;
+    align-items: center;
+    gap: 0; 
+}
+
+/* D. PROFIT / LOSS COLORS IN LIGHT MODE */
+/* Ensures "Loss: ₹280" is Red and "Profit: ₹500" is Green */
+body.light .roi-details span.neg {
+    color: #b91c1c !important; /* Dark Red */
+    font-weight: 700;
+}
+body.light .roi-details span.pos {
+    color: #15803d !important; /* Dark Green */
+    font-weight: 700;
+}
+
+/* E. REMOVE EMOJIS FROM ERROR/EMPTY STATES */
+.error-card {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.error-card::before {
+    content: "!"; /* Replace emoji with simple text symbol if needed, or leave blank */
+    font-weight: bold;
+}
+
+/* ======================================================
+   FINAL LIGHT MODE FIX & ANIMATION
+   (Replace previous Light Mode code with this)
+   ====================================================== */
+
+/* 1. PAGE FADE-IN ANIMATION */
+@keyframes fadeInPage {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.trends-page-content {
+    animation: fadeInPage 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* 2. LIGHT MODE: GLOBAL TEXT & BG */
+body.light .trends-page-content {
+    color: #3d342b !important; /* Coffee Text */
+}
+
+/* 3. LIGHT MODE: CARDS & CONTAINERS */
+/* We set the background to Sand, but we treat borders carefully */
+body.light .trends-header,
+body.light .controls-panel,
+body.light .chart-panel,
+body.light .roi-widget-card,
+body.light .ai-summary-card {
+    background: #fdf6e7 !important;       /* Sand Parchment */
+    border: 1px solid #d1c6b6 !important; /* Sand Border */
+    box-shadow: 0 4px 12px -2px rgba(92, 69, 45, 0.15) !important;
+    color: #231f20 !important;
+}
+
+/* 4. LIGHT MODE: STOCK TAGS (THE PILLS) */
+/* Fix: We do NOT use !important on border-color so the Inline Color (Green/Yellow) works */
+body.light .stock-tag {
+    background: #efe5d5 !important;       /* Darker Sand BG */
+    color: #231f20 !important;            /* Dark Text */
+    border-width: 1px !important;         /* Keep size */
+    border-style: solid !important;
+    /* CRITICAL: No border-color here. The inline React style takes over! */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
+}
+
+/* 5. LIGHT MODE: ROI CARDS */
+/* Fix: We set Bottom/Left/Right to Sand, but leave TOP alone for the colored bar */
+body.light .roi-card {
+    background: #f8f4ed !important;       /* Linen BG */
+    border-bottom: 1px solid #d1c6b6 !important;
+    border-left: 1px solid #d1c6b6 !important;
+    border-right: 1px solid #d1c6b6 !important;
+    border-top-width: 5px !important;
+    border-top-style: solid !important;
+    /* CRITICAL: No border-top-color. Inline style wins. */
+    box-shadow: 0 4px 6px -2px rgba(92, 69, 45, 0.1) !important;
+}
+
+body.light .roi-card h4 {
+    color: #6b5f56 !important; /* Muted Brown Title */
+}
+
+body.light .roi-details p {
+    color: #6b5f56 !important; /* Muted Details */
+    border-bottom: 1px solid #e5dcd0 !important; /* Light line */
+}
+
+body.light .roi-details p:last-child {
+    color: #231f20 !important; /* Dark Final Value */
+    border-bottom: none !important;
+}
+
+/* 6. LIGHT MODE: HEADINGS & INPUTS */
+body.light h1, body.light h2, body.light h3 {
+    color: #231f20 !important;
+}
+
+body.light p, body.light label, body.light .legend-custom span {
+    color: #6b5f56 !important;
+}
+
+body.light input, body.light select {
+    background: #efe5d5 !important;
+    border: 1px solid #d1c6b6 !important;
+    color: #231f20 !important;
+}
+
+/* 7. LIGHT MODE: BUTTONS */
+body.light .analyze-btn {
+    color: #000 !important;
+    font-weight: 700 !important;
+}
+
+body.light .update-graph-btn {
+    border-color: #15803d !important;
+    color: #15803d !important;
+}
+
+body.light .inflation-btn {
+    border-color: #d1c6b6 !important;
+    color: #6b5f56 !important;
+}
+body.light .inflation-btn.active {
+    background: rgba(21, 128, 61, 0.1) !important;
+    border-color: #15803d !important;
+    color: #15803d !important;
+}
+
+/* 8. LIGHT MODE: PROFIT/LOSS COLORS */
+body.light .pos { color: #15803d !important; } /* Dark Green */
+body.light .neg { color: #b91c1c !important; } /* Dark Red */
+
+/* 9. LIGHT MODE: CHART GRID */
+body.light .recharts-cartesian-grid line {
+    stroke: #d1c6b6 !important;
+}
+body.light .recharts-text {
+    fill: #6b5f56 !important;
+}
+body.light .custom-tooltip {
+    background-color: #fdf6e7 !important;
+    border: 1px solid #d1c6b6 !important;
+}
+body.light .custom-tooltip p {
+    color: #231f20 !important;
 }

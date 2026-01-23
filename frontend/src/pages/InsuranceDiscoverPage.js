@@ -127,8 +127,6 @@ const InsuranceDiscoveryPage = () => {
         navigate('/compare', { state: { policies: compareList } });
     };
 
-    if (loading) return <div className="loading-state">Analyzing Profile & Policies...</div>;
-
     return (
         <div className="id-page-container">
             <header className="id-header">

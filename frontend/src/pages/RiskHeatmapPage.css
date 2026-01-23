@@ -242,3 +242,82 @@
     .risk-layout { grid-template-columns: 1fr; }
     .chart-area { min-height: 300px; }
 }
+
+/* ======================================================
+   LIGHT MODE OVERRIDES (Sand/Parchment Theme)
+   ====================================================== */
+
+/* 1. Global Page Background & Text */
+body.light .risk-page {
+    color: #3d342b !important; /* Dark Coffee Text */
+}
+
+/* 2. Main Containers */
+body.light .controls-bar,
+body.light .heatmap-container,
+body.light .risk-list,
+body.light .risk-tooltip {
+    background: #fdf6e7 !important;       /* Sand Parchment */
+    border: 1px solid #d1c6b6 !important; /* Sand Border */
+    box-shadow: 0 4px 12px -2px rgba(92, 69, 45, 0.15) !important;
+    color: #231f20 !important;
+}
+
+/* 3. Headers & Typography */
+body.light h1, body.light h2, body.light h3, body.light h4,
+body.light .card-title,
+body.light .stock-name {
+    color: #231f20 !important;
+}
+
+body.light p, body.light label, body.light .legend, body.light .chart-note {
+    color: #6b5f56 !important; /* Muted Brown */
+}
+
+/* 4. Inputs & Dropdowns */
+body.light select {
+    background: #efe5d5 !important; /* Darker Sand */
+    border: 1px solid #d1c6b6 !important;
+    color: #231f20 !important;
+}
+
+/* 5. List Items */
+body.light .list-row,
+body.light .list-header,
+body.light .page-header {
+    border-color: #e5dcd0 !important;
+}
+body.light .risk-pill {
+    background: rgba(0,0,0,0.05) !important;
+    border-color: transparent !important;
+}
+
+/* 6. AI Insight Card */
+body.light .ai-insight-card {
+    background: linear-gradient(135deg, #fdf6e7 0%, #efe5d5 100%) !important;
+    border: 1px solid #AF19FF !important;
+    box-shadow: 0 4px 15px rgba(175, 25, 255, 0.1) !important;
+}
+body.light .insight-text {
+    color: #3d342b !important;
+}
+
+/* 7. Loading State */
+body.light .loading-tip-container {
+    background: rgba(253, 246, 231, 0.95) !important;
+    border-color: #d1c6b6 !important;
+}
+body.light .spinner {
+    border-color: #d1c6b6;
+    border-top-color: #00C49F;
+}
+
+/* 8. Fade In Animation (Ensure this exists at top of file, or override here) */
+.risk-page {
+    animation: fadeInPage 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes fadeInPage {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}

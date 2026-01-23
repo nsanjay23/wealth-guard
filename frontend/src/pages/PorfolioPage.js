@@ -201,8 +201,6 @@ const PortfolioPage = () => {
         setIsChartLoading(true);
         pickRandomTip(); 
 
-        const minTimer = new Promise(resolve => setTimeout(resolve, 2500));
-
         const dataPromise = async () => {
             const allStocks = [];
             activePortfolios.forEach(p => p.stocks.forEach(s => allStocks.push(s)));
@@ -263,22 +261,23 @@ const PortfolioPage = () => {
         };
 
         try {
-            const [_, result] = await Promise.all([minTimer, dataPromise()]);
-            
+            const result = await dataPromise();            
             if (result && result.mergedData) {
                 setChartData(result.mergedData);
                 
                 if(result.mergedData.length > 0) {
-                    const final = result.mergedData[result.mergedData.length - 1];
-                    const diff = final.Portfolio - final.Benchmark;
-                    const benchName = selectedBenchmark === '^NSEI' ? 'NIFTY 50' : 'Benchmark';
-                    
-                    let msg = "";
-                    if (diff > 2) msg = `🚀 Outperformance! Your active portfolio beat the ${benchName} by ${diff.toFixed(2)}% this month.`;
-                    else if (diff < -2) msg = `⚠️ Underperformance. You trailed the ${benchName} by ${Math.abs(diff).toFixed(2)}%.`;
-                    else msg = `⚖️ Market Tracking. Your returns are mirroring the ${benchName} (${diff.toFixed(2)}% diff).`;
-                    setAiInsight(msg);
-                }
+                        const final = result.mergedData[result.mergedData.length - 1];
+                        const diff = final.Portfolio - final.Benchmark;
+                        const benchName = selectedBenchmark === '^NSEI' ? 'NIFTY 50' : 'Benchmark';
+                        
+                        let msg = "";
+                        // Emojis removed below:
+                        if (diff > 2) msg = `Outperformance: Your active portfolio beat the ${benchName} by ${diff.toFixed(2)}% this month.`;
+                        else if (diff < -2) msg = `Underperformance: You trailed the ${benchName} by ${Math.abs(diff).toFixed(2)}%.`;
+                        else msg = `Market Tracking: Your returns are mirroring the ${benchName} (${diff.toFixed(2)}% diff).`;
+                        
+                        setAiInsight(msg);
+                    }
             }
 
         } catch (e) {
@@ -393,41 +392,31 @@ const PortfolioPage = () => {
                     
                     {/* CHART AREA WITH LOADING SUPPORT */}
                     {/* FIX: Use relative position with hidden overflow */}
-                    <div className="benchmark-chart-container" style={{ position: 'relative', minHeight: '250px', overflow: 'hidden' }}>
-                        {isChartLoading ? (
-                            // FIX: Absolute positioning with negative margins to COVER 15px padding
-                            <div className="loading-tip-container" style={{ 
-                                position: 'absolute', 
-                                top: '-20px', 
-                                left: '-20px', 
-                                width: 'calc(100% + 40px)', 
-                                height: 'calc(100% + 40px)', 
-                                zIndex: 10, 
-                                borderRadius: '8px',
-                                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                                padding: '20px'
-                            }}>
-                                <div className="spinner"></div>
-                                <div className="tip-content">
-                                    <h4 style={{fontSize: '0.75rem', marginBottom:'5px'}}>Did You Know? Tax Tip</h4>
-                                    <h3 style={{fontSize: '1.2rem', marginBottom:'5px'}}>{currentTip.title}</h3>
-                                    <p style={{fontSize: '0.9rem', lineHeight:'1.4'}}>{currentTip.desc}</p>
-                                </div>
-                            </div>
-                        ) : (
+                    {/* CHART AREA - CLEAN FADE IN */}
+                <div className="benchmark-chart-container" style={{ position: 'relative', minHeight: '250px', overflow: 'hidden' }}>
+                    {isChartLoading ? (
+                        /* Optional: Simple text or blank space while fetching */
+                        <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: '#666', fontStyle: 'italic' }}>
+                            Updating Analysis...
+                        </div>
+                    ) : (
+                        /* Added animation style here */
+                        <div style={{ width: '100%', height: '100%', animation: 'fadeIn 1s ease-in-out' }}>
                             <ResponsiveContainer width="100%" height={250}>
                                 <LineChart data={chartData} margin={{top:5, right:20, bottom:5, left:0}}>
                                     <CartesianGrid strokeDasharray="3 3" stroke="#333" />
                                     <XAxis dataKey="date" stroke="#888" tickLine={false} fontSize={12} />
                                     <YAxis stroke="#888" tickFormatter={v=>`${v}%`} fontSize={12} />
-                                    <Tooltip content={<CustomLineTooltip />} isAnimationActive={false} />
+                                    <Tooltip content={<CustomLineTooltip />} />
                                     <Legend />
-                                    <Line type="monotone" dataKey="Portfolio" stroke="#00C49F" strokeWidth={2} dot={false} />
-                                    <Line type="monotone" dataKey="Benchmark" stroke="#FF4d4d" strokeWidth={2} dot={false} name={getBenchmarkName(selectedBenchmark)} />
+                                    {/* Added isAnimationActive={true} to the lines for drawing effect */}
+                                    <Line type="monotone" dataKey="Portfolio" stroke="#00C49F" strokeWidth={2} dot={false} isAnimationActive={true} />
+                                    <Line type="monotone" dataKey="Benchmark" stroke="#FF4d4d" strokeWidth={2} dot={false} name={getBenchmarkName(selectedBenchmark)} isAnimationActive={true} />
                                 </LineChart>
                             </ResponsiveContainer>
-                        )}
-                    </div>
+                        </div>
+                    )}
+                </div>
 
                     <div className="ai-insight-box">
                         <div className="icon-area"><FiCpu /></div>

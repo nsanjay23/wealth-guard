@@ -19,14 +19,21 @@
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "express-session": "^1.18.2",
+    "googleapis": "^170.1.0",
     "groq-sdk": "^0.37.0",
     "multer": "^2.0.2",
+    "nodemailer": "^7.0.12",
+    "ollama": "^0.6.3",
     "openai": "^6.16.0",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
     "pdf-extraction": "^1.0.2",
+    "pdf-parse": "^2.4.5",
+    "pdf-parse-new": "^2.0.0",
     "pg": "^8.17.1",
+    "uuid": "^13.0.0",
+    "vectra": "^0.12.3",
     "yahoo-finance2": "^3.11.2"
   }
 }

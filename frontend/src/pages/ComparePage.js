@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { FiArrowLeft, FiPlus, FiCheckCircle, FiXCircle, FiTrash2 } from 'react-icons/fi';
+import { FiArrowLeft, FiPlus, FiCheckCircle, FiXCircle, FiTrash2, FiLayers } from 'react-icons/fi';
 import './ComparePage.css';
 
 const ComparePage = () => {
@@ -36,11 +36,20 @@ const ComparePage = () => {
 
     return (
         <div className="cp-container">
+            {/* Header is now a Card container */}
             <header className="cp-header">
-                <button className="cp-back" onClick={() => navigate(-1)}>
-                    <FiArrowLeft/> <span>Back</span>
-                </button>
-                <h1>Compare Plans</h1>
+                <div className="cp-header-left">
+                    <button className="cp-back" onClick={() => navigate(-1)}>
+                        <FiArrowLeft/>
+                    </button>
+                    <div>
+                        <h1>Compare Plans</h1>
+                        <p className="cp-subtitle">Detailed comparison of your selected policies</p>
+                    </div>
+                </div>
+                <div className="cp-header-icon">
+                    <FiLayers />
+                </div>
             </header>
 
             <div className="cp-table-wrapper">

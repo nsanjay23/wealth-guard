@@ -3,7 +3,8 @@ import { NavLink } from 'react-router-dom';
 import './Sidebar.css';
 import { 
   FiGrid, FiTrendingUp, FiFileText, FiActivity, FiClock,
-  FiShield, FiPhone, FiBriefcase, FiChevronDown, FiChevronRight, FiLayers
+  FiShield, FiBriefcase, FiChevronDown, FiChevronRight, FiLayers,
+  FiPieChart, FiBell
 } from 'react-icons/fi';
 
 const Sidebar = () => {
@@ -19,30 +20,8 @@ const Sidebar = () => {
         </NavLink>
 
         <div className="sidebar-section-title">Stock Analysis</div>
-        
-        <div className="sidebar-link" onClick={() => setIsPortfoliosOpen(!isPortfoliosOpen)} style={{ cursor: 'pointer', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <FiBriefcase className="sidebar-icon" /> Portfolios
-          </div>
-          {isPortfoliosOpen ? <FiChevronDown /> : <FiChevronRight />}
-        </div>
 
-        {isPortfoliosOpen && (
-          <div className="sidebar-dropdown" style={{ paddingLeft: '20px' }}>
-            <NavLink to="/portfolio" className={({ isActive }) => isActive ? 'sidebar-link active' : 'sidebar-link'}>
-              <span className="sidebar-icon"></span> My Portfolio
-            </NavLink>
-
-            <NavLink to="/risk-heatmap" className={({ isActive }) => isActive ? 'sidebar-link active' : 'sidebar-link'}>
-              <FiActivity className="sidebar-icon" /> Risk Heatmap
-            </NavLink>
-
-            <NavLink to="/backtest" className={({ isActive }) => isActive ? 'sidebar-link active' : 'sidebar-link'}>
-              <FiClock className="sidebar-icon" /> Backtracking
-            </NavLink>
-          </div>
-        )}
-
+        {/* --- COMPANIES SECTION (Moved Up) --- */}
         <div className="sidebar-link" onClick={() => setIsCompaniesOpen(!isCompaniesOpen)} style={{ cursor: 'pointer', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <FiLayers className="sidebar-icon" /> Companies
@@ -62,14 +41,42 @@ const Sidebar = () => {
           </div>
         )}
 
+        {/* --- PORTFOLIOS SECTION (Moved Down) --- */}
+        <div className="sidebar-link" onClick={() => setIsPortfoliosOpen(!isPortfoliosOpen)} style={{ cursor: 'pointer', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <FiBriefcase className="sidebar-icon" /> Portfolios
+          </div>
+          {isPortfoliosOpen ? <FiChevronDown /> : <FiChevronRight />}
+        </div>
+
+        {isPortfoliosOpen && (
+          <div className="sidebar-dropdown" style={{ paddingLeft: '20px' }}>
+            <NavLink to="/portfolio" className={({ isActive }) => isActive ? 'sidebar-link active' : 'sidebar-link'}>
+              <FiPieChart className="sidebar-icon" /> My Portfolio
+            </NavLink>
+
+            <NavLink to="/risk-heatmap" className={({ isActive }) => isActive ? 'sidebar-link active' : 'sidebar-link'}>
+              <FiActivity className="sidebar-icon" /> Risk Heatmap
+            </NavLink>
+
+            <NavLink to="/backtest" className={({ isActive }) => isActive ? 'sidebar-link active' : 'sidebar-link'}>
+              <FiClock className="sidebar-icon" /> Backtesting
+            </NavLink>
+          </div>
+        )}
+
         <div className="sidebar-section-title">Insurance Tools</div>
 
         <NavLink to="/insurance" className={({ isActive }) => isActive ? 'sidebar-link active' : 'sidebar-link'}>
-          <FiShield className="sidebar-icon" /> Policy Comparison
+          <FiShield className="sidebar-icon" /> Policy Discovery
         </NavLink>
 
         <NavLink to="/pdf" className={({ isActive }) => isActive ? 'sidebar-link active' : 'sidebar-link'}>
-          <FiPhone className="sidebar-icon" /> Policy Summarizer
+          <FiFileText className="sidebar-icon" /> Policy Summarizer
+        </NavLink>
+        
+        <NavLink to="/renew" className={({ isActive }) => isActive ? 'sidebar-link active' : 'sidebar-link'}>
+          <FiBell className="sidebar-icon" /> Premium Reminders
         </NavLink>
 
       </nav>

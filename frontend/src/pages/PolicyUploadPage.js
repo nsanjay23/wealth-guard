@@ -1,15 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { 
     FiUploadCloud, FiFileText, FiShield, FiAlertTriangle, 
     FiCheckCircle, FiCpu, FiMessageSquare, FiSend, FiX, FiTrash2, FiMinimize2,
-    FiCalendar, FiUser, FiDollarSign, FiInfo, FiHelpCircle, FiActivity, FiClock, FiStar, FiLayers
+    FiCalendar, FiUser, FiInfo, FiHelpCircle, FiLayers, FiArrowLeft, FiStar, FiClock
 } from 'react-icons/fi';
 import './PolicyUploadPage.css';
 
 const PolicyUploadPage = () => {
     const fileInputRef = useRef(null);
     const chatEndRef = useRef(null);
+    const navigate = useNavigate();
 
     // --- STATE ---
     const [file, setFile] = useState(null);
@@ -117,9 +119,18 @@ const PolicyUploadPage = () => {
 
     return (
         <div className="pu-container">
-            <header className="pu-header">
-                 <h1>Policy Analyzer <span className="highlight-text">& Teacher</span></h1>
-            </header>
+            {/* Header Card Pattern */}
+            <div className="pu-header">
+                <div className="pu-header-left">
+                    <button className="pu-back-btn" onClick={() => navigate(-1)}>
+                        <FiArrowLeft />
+                    </button>
+                    <div className="pu-header-text">
+                        <h1>Policy Analyzer <span className="highlight-text">& Teacher</span></h1>
+                        <p>Upload your policy PDF to get AI-powered insights.</p>
+                    </div>
+                </div>
+            </div>
 
             <div className="pu-main-content">
                 
@@ -151,7 +162,7 @@ const PolicyUploadPage = () => {
                 {status === 'complete' && analysisResult && (
                     <div className="pu-dashboard fade-in">
                         
-                        {/* TOP BAR */}
+                        {/* ACTION BAR */}
                         <div className="pu-actions-bar">
                             <div className="file-tag"><FiFileText /> {file?.name}</div>
                             <button className="btn-reset" onClick={resetAnalysis}><FiTrash2 /> Reset</button>
@@ -160,7 +171,7 @@ const PolicyUploadPage = () => {
                         {/* --- MAIN DASHBOARD GRID --- */}
                         <div className="pu-grid-layout">
                             
-                            {/* 1. HEADER CARD (Provider & Name) */}
+                            {/* 1. PROVIDER INFO */}
                             <div className="pu-card header-card">
                                 <div className="provider-badge">{formatValue(analysisResult.summary?.provider)}</div>
                                 <h2>{formatValue(analysisResult.summary?.policyName)}</h2>
@@ -170,7 +181,7 @@ const PolicyUploadPage = () => {
                                 </div>
                             </div>
 
-                            {/* 2. KEY STATS (Sum Insured & Premium) */}
+                            {/* 2. KEY STATS */}
                             <div className="stats-row">
                                 <div className="pu-card stat-card highlight">
                                     <div className="stat-label">
@@ -211,7 +222,7 @@ const PolicyUploadPage = () => {
                                 </div>
                             </div>
 
-                            {/* 4. KEY FEATURES (NEW) */}
+                            {/* 4. KEY FEATURES */}
                             <div className="pu-card features-card">
                                 <h3><FiStar /> Key Features & Benefits</h3>
                                 <ul className="feature-list">

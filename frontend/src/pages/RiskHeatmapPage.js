@@ -109,69 +109,60 @@ const RiskHeatmapPage = () => {
         return { label: 'High Risk', color: '#FF4d4d', bg: 'rgba(255, 77, 77, 0.2)' };
     };
 
-    // --- 4. GENERATE HEATMAP (With Loading & Timer) ---
+// --- 4. GENERATE HEATMAP (Instant, No Delay, No Emojis) ---
     useEffect(() => {
         if (!selectedPortId || portfolios.length === 0) return;
 
         setLoading(true);
-        pickRandomTip(); // Show new tip
 
-        // 1. Minimum Loading Timer (2.5s)
-        const minTimer = new Promise(resolve => setTimeout(resolve, 2500));
-
-        // 2. Data Calculation Promise
-        const dataPromise = new Promise(resolve => {
-            const currentPort = portfolios.find(p => p.id === parseInt(selectedPortId));
-            if (!currentPort) return resolve(null);
-
-            let totalValue = 0;
-            let highRiskCount = 0;
-            let totalRiskScore = 0;
-
-            const data = currentPort.stocks.map(s => {
-                const value = (s.lastPrice || s.avgBuyPrice) * s.quantity;
-                totalValue += value;
-                const score = calculateRiskScore(s.symbol);
-                const category = getRiskCategory(score);
-
-                if (score > 60) highRiskCount += value;
-                totalRiskScore += (score * value);
-
-                return {
-                    name: s.symbol,
-                    size: value,
-                    score: score,
-                    category: category.label,
-                    fill: category.color
-                };
-            });
-
-            // AI Insight Logic
-            const portfolioRiskScore = totalValue > 0 ? Math.round(totalRiskScore / totalValue) : 0;
-            const highRiskPercent = totalValue > 0 ? ((highRiskCount / totalValue) * 100).toFixed(1) : 0;
-
-            let insight = "";
-            if (data.length === 0) {
-                 insight = "⚠️ **Empty Portfolio:** No stocks found. Please add assets to analyze risk.";
-            } else if (portfolioRiskScore < 30) {
-                insight = `🛡️ **Defensive Portfolio:** Your overall risk score is ${portfolioRiskScore}/100. You are heavily invested in stable, blue-chip stocks. Excellent for capital preservation.`;
-            } else if (portfolioRiskScore < 60) {
-                insight = `⚖️ **Balanced Strategy:** Your portfolio risk is moderate (${portfolioRiskScore}/100). You have a healthy mix of growth and stability. Consider hedging if market volatility increases.`;
-            } else {
-                insight = `⚠️ **High Exposure:** Your portfolio has a high risk score of ${portfolioRiskScore}/100. ${highRiskPercent}% of your capital is in volatile assets. Consider diversifying into defensive sectors like FMCG or IT.`;
-            }
-
-            resolve({ data, insight });
-        });
-
-        // 3. Wait for BOTH
-        Promise.all([minTimer, dataPromise]).then(([_, result]) => {
-            if (result) {
-                setHeatmapData(result.data);
-                setAiInsight(result.insight);
-            }
+        // Removed minTimer and Promise.all to make it instant
+        const currentPort = portfolios.find(p => p.id === parseInt(selectedPortId));
+        
+        if (!currentPort) {
             setLoading(false);
+            return;
+        }
+
+        let totalValue = 0;
+        let highRiskCount = 0;
+        let totalRiskScore = 0;
+
+        const data = currentPort.stocks.map(s => {
+            const value = (s.lastPrice || s.avgBuyPrice) * s.quantity;
+            totalValue += value;
+            const score = calculateRiskScore(s.symbol);
+            const category = getRiskCategory(score);
+
+            if (score > 60) highRiskCount += value;
+            totalRiskScore += (score * value);
+
+            return {
+                name: s.symbol,
+                size: value,
+                score: score,
+                category: category.label,
+                fill: category.color
+            };
         });
+
+        // AI Insight Logic - CLEANED STRINGS (No Emojis, No **)
+        const portfolioRiskScore = totalValue > 0 ? Math.round(totalRiskScore / totalValue) : 0;
+        const highRiskPercent = totalValue > 0 ? ((highRiskCount / totalValue) * 100).toFixed(1) : 0;
+
+        let insight = "";
+        if (data.length === 0) {
+                insight = "Empty Portfolio: No stocks found. Please add assets to analyze risk.";
+        } else if (portfolioRiskScore < 30) {
+            insight = `Defensive Portfolio: Your overall risk score is ${portfolioRiskScore}/100. You are heavily invested in stable, blue-chip stocks. Excellent for capital preservation.`;
+        } else if (portfolioRiskScore < 60) {
+            insight = `Balanced Strategy: Your portfolio risk is moderate (${portfolioRiskScore}/100). You have a healthy mix of growth and stability. Consider hedging if market volatility increases.`;
+        } else {
+            insight = `High Exposure: Your portfolio has a high risk score of ${portfolioRiskScore}/100. ${highRiskPercent}% of your capital is in volatile assets. Consider diversifying into defensive sectors like FMCG or IT.`;
+        }
+
+        setHeatmapData(data);
+        setAiInsight(insight);
+        setLoading(false);
 
     }, [selectedPortId, portfolios]);
 
@@ -226,14 +217,10 @@ const RiskHeatmapPage = () => {
             </div>
 
             {loading ? (
-                // --- FIXED LOADING UI (Matches other pages) ---
-                <div className="loading-tip-container">
-                    <div className="spinner"></div>
-                    <div className="tip-content">
-                        <h4>Did You Know? Tax Tip</h4>
-                        <h3>{currentTip.title}</h3>
-                        <p>{currentTip.desc}</p>
-                    </div>
+                /* SIMPLIFIED LOADING STATE - No Tips, Just Spinner */
+                <div style={{ padding: '60px', textAlign: 'center', color: '#888' }}>
+                     <div className="spinner"></div>
+                     <p>Analyzing market volatility...</p>
                 </div>
             ) : (
                 <div className="risk-layout">
@@ -247,7 +234,6 @@ const RiskHeatmapPage = () => {
                             </div>
                         </div>
                         <div className="chart-area">
-                            {/* FIX: Check if there is data before rendering the chart to avoid empty box */}
                             {heatmapData.length > 0 ? (
                                 <ResponsiveContainer width="100%" height={400}>
                                     <Treemap

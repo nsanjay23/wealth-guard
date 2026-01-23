@@ -16,12 +16,51 @@
   color: var(--id-text);
   font-family: 'Inter', sans-serif;
   padding-bottom: 100px;
+  animation: fadeInPage 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 /* Header & Controls */
-.id-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-.id-header h1 { font-size: 1.8rem; margin: 0 0 5px 0; }
-.id-header-icon { font-size: 2rem; color: var(--id-primary); background: rgba(0, 210, 170, 0.1); padding: 10px; border-radius: 50%; display: flex; }
+/* --- HEADER CARD (The Box Look) --- */
+.id-header {
+    /* Flexbox for layout (Text Left, Icon Right) */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    /* KEY CHANGES: Turning it into a Card */
+    background-color: #1e1e1e;  /* The dark grey card background */
+    border: 1px solid #333;     /* The card border */
+    border-radius: 12px;        /* Rounded corners */
+    padding: 30px;              /* Space inside the box */
+    
+    /* Spacing outside the box */
+    margin-bottom: 30px;        
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2); /* Subtle depth */
+}
+
+/* Typography inside the Card */
+.id-header h1 {
+    margin: 0;
+    color: #fff;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.id-header p {
+    color: #888;
+    margin: 8px 0 0 0;
+    font-size: 1rem;
+}
+
+/* The Icon inside the Card */
+.id-header-icon {
+    font-size: 2.5rem;
+    color: #00C49F;
+    opacity: 0.8; /* Increased opacity slightly to pop against the card bg */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
 .id-controls { display: flex; gap: 15px; margin-bottom: 30px; }
 .id-search {
@@ -379,3 +418,384 @@
   color: white;
 }
 
+@keyframes fadeInPage {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* ======================================================
+   LIGHT MODE OVERRIDES (Matches Backtesting Page)
+   ====================================================== */
+
+body.light {
+  /* 1. Theme Variables (Sampled from your Backtesting Image) */
+  --id-bg: #EAE0D5;        /* Dark Sand Background */
+  --id-card: #FDF6E7;      /* Light Cream Cards */
+  --id-border: #D1C6B6;    /* Sand Border */
+  --id-primary: #115E59;   /* Deep Teal (Compare Button) */
+  --id-text: #231F20;      /* Dark Coffee Text */
+  --id-gray: #6B5F56;      /* Muted Brown */
+  
+  /* Inner elements need to be slightly darker than the card to stand out */
+  --id-inner-bg: #F3EFE6;  
+}
+
+/* 2. Page Background */
+body.light .id-page-container {
+  background-color: var(--id-bg);
+  color: var(--id-text);
+}
+
+/* 3. Typography */
+body.light h1, body.light h2, body.light h3, body.light h4, 
+body.light .id-plan-name, body.light strong, body.light .dropdown-selected-text {
+  color: var(--id-text) !important;
+}
+
+body.light .id-header p,
+body.light .id-icon, 
+body.light .dropdown-arrow {
+  color: var(--id-gray);
+}
+
+/* 4. Cards (Light Cream on Dark Sand) */
+body.light .id-wide-card, 
+body.light .id-profile-card, 
+body.light .id-guest-card,
+body.light .custom-alert {
+  background: var(--id-card);
+  border: 1px solid var(--id-border);
+  box-shadow: 0 4px 6px -1px rgba(92, 69, 45, 0.1); /* Soft shadow for depth */
+}
+
+body.light .id-wide-card:hover {
+  border-color: #A89F91;
+  transform: translateY(-2px);
+}
+
+body.light .id-wide-card.selected {
+  background: #FFFDF5; /* Even lighter to pop when selected */
+  border-color: var(--id-primary);
+  box-shadow: 0 0 0 2px var(--id-primary);
+}
+
+/* 5. Middle Stats Box (Beige box inside the card) */
+body.light .id-card-middle {
+  background: #EFE9DD; /* Matches the inner boxes in your screenshot */
+  border: 1px solid #E6DFD1;
+  color: var(--id-text);
+}
+body.light .id-stat-box label {
+  color: #6B665F;
+  font-weight: 600;
+}
+
+/* 6. Inputs & Filters */
+body.light .id-search, 
+body.light .id-filter {
+  background: var(--id-card); /* Match card background */
+  border: 1px solid var(--id-border);
+}
+
+body.light .id-search input, 
+body.light .id-filter select {
+  color: var(--id-text);
+}
+body.light .id-search input::placeholder {
+  color: #9CA3AF;
+}
+
+/* 7. Dropdown Menu */
+body.light .dropdown-menu-list {
+  background-color: var(--id-card);
+  border: 1px solid var(--id-border);
+  box-shadow: 0 10px 30px rgba(92, 69, 45, 0.15);
+}
+body.light .dropdown-item { color: var(--id-text); }
+body.light .dropdown-item:hover { background-color: #EFE9DD; }
+body.light .dropdown-item.active { background-color: var(--id-primary); color: #fff; }
+
+/* 8. Buttons */
+/* Outline Buttons (Details, etc) */
+body.light .id-btn-outline {
+  border-color: var(--id-border);
+  color: var(--id-gray);
+}
+body.light .id-btn-outline:hover {
+  background: #EFE9DD;
+  border-color: #A89F91;
+  color: var(--id-text);
+}
+
+/* Compare Button */
+body.light .btn-compare {
+  background-color: var(--id-primary);
+  color: white;
+  border: none;
+}
+body.light .btn-compare:hover {
+  background-color: #0F514D;
+}
+
+/* Load More */
+body.light .id-btn-load {
+  background-color: var(--id-card);
+  border: 1px solid var(--id-border);
+  color: var(--id-gray);
+}
+body.light .id-btn-load:hover {
+  background-color: #EFE9DD;
+  color: var(--id-text);
+}
+
+/* 9. Sidebar Specifics */
+body.light .id-profile-rows .row span:last-child {
+  color: #231F20;
+}
+body.light .id-btn-edit {
+  border-color: var(--id-border);
+  color: var(--id-gray);
+}
+
+/* 10. AI Badge & Dock */
+body.light .id-badge-ai {
+  background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+  color: white;
+}
+
+body.light .id-dock {
+  background: #231F20; 
+  color: #fff;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+body.light .dock-count { background: #fff; color: #000; }
+body.light .btn-text { color: #ccc; }
+body.light .btn-go { background: #fff; color: var(--id-primary); }
+.id-page-container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', sans-serif;
+    animation: fadeIn 0.4s ease-in;
+}
+
+/* ======================================================
+   1. DEFAULT STYLES (DARK MODE / BASE)
+   ====================================================== */
+
+/* The Card Container (Default Dark Grey) */
+.id-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    /* Dark Mode Card Styles */
+    background-color: #1e1e1e; 
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 30px;
+    
+    margin-bottom: 30px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    transition: background-color 0.3s ease, border-color 0.3s ease; /* Smooth toggle */
+}
+
+/* Default Text (White for Dark Mode) */
+.id-header h1 {
+    margin: 0;
+    color: #fff; /* White text on dark card */
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.id-header p {
+    color: #888;
+    margin: 8px 0 0 0;
+    font-size: 1rem;
+}
+
+/* The Ghost Icon */
+.id-header-icon {
+    font-size: 2.5rem;
+    color: #00C49F;
+    opacity: 0.8; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ======================================================
+   2. LIGHT MODE OVERRIDES (MUST BE AT THE BOTTOM)
+   ====================================================== */
+
+/* Force the Card Background to Sand color in Light Mode */
+body.light .id-header {
+    background-color: #fdf6e7 !important;       /* Sand Parchment */
+    border: 1px solid #d1c6b6 !important;       /* Sand Border */
+    box-shadow: 0 4px 12px -2px rgba(92, 69, 45, 0.15) !important;
+}
+
+/* Force Text to Dark Coffee color in Light Mode */
+body.light .id-header h1 {
+    color: #231f20 !important;
+}
+
+body.light .id-header p {
+    color: #6b5f56 !important;
+}
+/* ======================================================
+   LIGHT MODE OVERRIDES (Strict Match to Backtest.css)
+   ====================================================== */
+
+/* 1. Global Text & Backgrounds */
+body.light .id-page-container {
+    color: #3d342b !important; /* Dark Coffee Text */
+    /* Ensure page background matches if not set on body */
+    background-color: transparent !important; 
+}
+
+/* 2. Main Cards (Header, Wide Cards, Sidebar, Alerts) */
+body.light .id-header,
+body.light .id-wide-card,
+body.light .id-profile-card,
+body.light .id-guest-card,
+body.light .custom-alert,
+body.light .dropdown-menu-list {
+    background: #fdf6e7 !important;       /* Sand Parchment */
+    border: 1px solid #d1c6b6 !important; /* Sand Border */
+    box-shadow: 0 4px 12px -2px rgba(92, 69, 45, 0.15) !important; /* Brown tint shadow */
+    color: #231f20 !important;
+}
+
+/* 3. Inner Containers (Inputs, Filters, Stat Boxes) */
+body.light .id-card-middle,
+body.light .id-search,
+body.light .id-filter,
+body.light .id-btn-load {
+    background: #efe5d5 !important;       /* Darker Sand (Contrast) */
+    border: 1px solid #d1c6b6 !important;
+    color: #231f20 !important;
+}
+
+/* 4. Typography Updates */
+body.light h1, body.light h2, body.light h3, body.light h4,
+body.light .id-plan-name,
+body.light strong,
+body.light .dropdown-selected-text {
+    color: #231f20 !important;
+}
+
+/* Muted Text (Brownish Grey) */
+body.light p,
+body.light label,
+body.light .id-header p,
+body.light .id-icon,
+body.light .dropdown-arrow,
+body.light .id-features-inline,
+body.light .id-stat-box label,
+body.light .id-provider h4,
+body.light .id-profile-rows .row,
+body.light .id-search input::placeholder {
+    color: #6b5f56 !important; /* Muted Brown */
+}
+
+/* 5. Inputs & Selects */
+body.light .id-search input,
+body.light .id-filter select {
+    color: #231f20 !important;
+}
+body.light .id-filter:hover {
+    border-color: #6b5f56 !important;
+}
+
+/* 6. Primary Accents (Switched from Teal to Dark Green #15803d) */
+body.light .price-box strong,
+body.light .id-profile-rows span:last-child {
+    color: #15803d !important; 
+}
+
+/* Header Icon (Ghost Mode) */
+body.light .id-header-icon {
+    color: #15803d !important;
+    opacity: 0.15 !important; /* Subtle watermark feel */
+}
+
+/* 7. Buttons */
+/* Primary Action (Compare/Add) */
+body.light .btn-compare,
+body.light .dropdown-item.active {
+    background-color: #15803d !important; /* Dark Green */
+    color: #fff !important;
+    border: none !important;
+}
+body.light .btn-compare:hover {
+    background-color: #166534 !important; /* Even Darker Green */
+    opacity: 1 !important;
+}
+
+/* Secondary/Outline Buttons */
+body.light .id-btn-outline,
+body.light .id-btn-edit,
+body.light .id-btn-setup,
+body.light .id-btn-load {
+    border-color: #d1c6b6 !important;
+    color: #6b5f56 !important;
+    background: transparent !important;
+}
+/* Load More Button Background Fix */
+body.light .id-btn-load {
+    background: #efe5d5 !important;
+}
+
+body.light .id-btn-outline:hover,
+body.light .id-btn-edit:hover,
+body.light .id-btn-setup:hover,
+body.light .id-btn-load:hover {
+    background: #e5dcd0 !important;
+    color: #231f20 !important;
+    border-color: #6b5f56 !important;
+}
+
+/* Remove Button (Red) */
+body.light .btn-remove {
+    background-color: #b91c1c !important;
+    color: #fff !important;
+}
+
+/* 8. Card Interaction States */
+body.light .id-wide-card:hover {
+    border-color: #a89f91 !important;
+    transform: translateY(-2px);
+}
+
+body.light .id-wide-card.selected {
+    background: #fff !important; /* Stark white to pop against sand */
+    border: 2px solid #15803d !important; /* Green Border */
+    box-shadow: 0 4px 15px rgba(21, 128, 61, 0.15) !important;
+}
+
+/* 9. Dropdowns & Floating Elements */
+body.light .dropdown-menu-list {
+    background-color: #fdf6e7 !important;
+}
+body.light .dropdown-item {
+    color: #231f20 !important;
+}
+body.light .dropdown-item:hover {
+    background-color: #e5dcd0 !important;
+}
+
+/* 10. Sticky Dock (Bottom) */
+body.light .id-dock {
+    background: #231f20 !important; /* Keep dark for contrast */
+    color: #fff !important;
+    box-shadow: 0 10px 30px rgba(92, 69, 45, 0.3) !important;
+}
+body.light .dock-count {
+    background: #fff !important;
+    color: #231f20 !important;
+}
+body.light .btn-go {
+    background: #fff !important;
+    color: #15803d !important; /* Green text */
+}

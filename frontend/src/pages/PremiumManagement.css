@@ -1,108 +1,267 @@
-/* Container & Global */
-.pm-container {
-    background-color: #121212;
+/* --- THEME VARIABLES (Dark Mode + Cyan Accent) --- */
+:root {
+    --wg-bg-main: #121212;
+    --wg-bg-card: #1e1e1e;
+    --wg-bg-input: #2a2a2a;
+    --wg-text-primary: #ffffff;
+    --wg-text-secondary: #a0a0a0;
+    --wg-accent: #00d09c;
+    --wg-accent-hover: #00b88a;
+    --wg-danger: #ff4d4d;
+    --wg-warning: #ffc107;
+    --wg-success: #00d09c;
+    --wg-border: #333333;
+}
+
+.premium-container {
+    padding: 2rem 3rem;
+    background-color: var(--wg-bg-main);
     min-height: 100vh;
-    color: white;
-    padding: 40px;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    color: var(--wg-text-primary);
 }
 
 /* Header */
-.pm-header { margin-bottom: 40px; }
-.pm-header h1 { font-size: 2rem; margin: 10px 0; }
-.pm-header p { color: #a1a1aa; }
-.pm-back {
-    background: transparent; border: none; color: #a1a1aa; 
-    cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 1rem;
+.header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
 }
-.pm-back:hover { color: #00d2aa; }
+.header-title h1 { font-size: 2.2rem; margin: 0; font-weight: 700; }
+.header-title p { color: var(--wg-text-secondary); margin-top: 0.5rem; }
 
-/* Grid Layout */
-.pm-grid {
+.add-btn {
+    background-color: var(--wg-accent);
+    color: #000;
+    padding: 0.8rem 1.5rem;
+    border: none; border-radius: 8px; font-weight: 700; cursor: pointer;
+    display: flex; align-items: center; gap: 0.5rem;
+    box-shadow: 0 4px 15px rgba(0, 208, 156, 0.3);
+    transition: all 0.2s;
+}
+.add-btn:hover { background-color: var(--wg-accent-hover); transform: translateY(-2px); }
+
+/* Stats Grid */
+.stats-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 40px;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+.stat-card {
+    background: var(--wg-bg-card);
+    padding: 1.5rem; border-radius: 16px; border: 1px solid var(--wg-border);
+    border-left: 6px solid var(--wg-accent);
+}
+.stat-card h3 { font-size: 0.85rem; color: var(--wg-text-secondary); text-transform: uppercase; margin: 0; }
+.stat-card p { font-size: 1.8rem; font-weight: 700; margin-top: 0.5rem; }
+.stat-card.cyan { border-left-color: var(--wg-accent); }
+.stat-card.yellow { border-left-color: var(--wg-warning); }
+.stat-card.red { border-left-color: var(--wg-danger); }
+
+/* --- MAIN DASHBOARD LAYOUT (List + Calendar) --- */
+.dashboard-content {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr; /* List takes more space, Calendar takes less */
+    gap: 2rem;
+    align-items: start;
 }
 
-/* Section Headers */
-.pm-section h2 { font-size: 1.5rem; margin-bottom: 20px; color: white; border-left: 4px solid #00d2aa; padding-left: 15px; }
+@media (max-width: 1024px) {
+    .dashboard-content { grid-template-columns: 1fr; } /* Stack on smaller screens */
+}
 
-/* --- POLICY CARDS --- */
-.pm-cards-list { display: flex; flex-direction: column; gap: 20px; }
+/* Policy List */
+.policies-list { display: flex; flex-direction: column; gap: 1rem; }
 
-.pm-card {
-    background: #1e1e1e;
-    border: 1px solid #333;
+.policy-card {
+    background: var(--wg-bg-card);
+    padding: 1.25rem 1.5rem;
     border-radius: 12px;
-    padding: 24px;
-    transition: transform 0.2s;
+    border: 1px solid var(--wg-border);
+    display: flex; justify-content: space-between; align-items: center;
+    transition: all 0.2s;
+    border-left: 4px solid var(--wg-text-secondary); /* Default */
 }
-.pm-card:hover { transform: translateY(-3px); border-color: #555; }
-.pm-card.card-overdue { border: 1px solid #ef4444; background: rgba(239, 68, 68, 0.05); }
+.policy-card:hover { border-color: var(--wg-accent); transform: translateX(5px); }
+.policy-card.green { border-left-color: var(--wg-success); }
+.policy-card.yellow { border-left-color: var(--wg-warning); }
+.policy-card.red { border-left-color: var(--wg-danger); }
 
-/* Card Top */
-.pm-card-top {
-    display: flex; justify-content: space-between; align-items: start; margin-bottom: 20px;
+.policy-info h4 { margin: 0; font-size: 1.1rem; }
+.policy-sub { color: var(--wg-text-secondary); font-size: 0.9rem; margin-top: 0.25rem; }
+.reminder-icons { display: flex; gap: 0.5rem; margin-top: 0.5rem; color: var(--wg-accent); }
+
+.amount { display: block; font-size: 1.2rem; font-weight: 700; color: var(--wg-accent); text-align: right; }
+.due-date { display: block; font-size: 0.85rem; color: var(--wg-text-secondary); text-align: right; margin-top: 0.25rem; }
+.policy-card.red .due-date { color: var(--wg-danger); font-weight: 700; }
+
+.action-btn.delete {
+    background: transparent; border: none; color: var(--wg-text-secondary);
+    font-size: 1.1rem; cursor: pointer; margin-left: 1rem; padding: 0.5rem;
+    transition: color 0.2s;
 }
-.pm-card-top h4 { margin: 0; color: #a1a1aa; font-size: 0.9rem; text-transform: uppercase; }
-.pm-card-top h3 { margin: 5px 0 0; font-size: 1.3rem; }
+.action-btn.delete:hover { color: var(--wg-danger); }
 
-/* Status Badges */
-.pm-status-badge {
-    padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 6px;
+/* --- CUSTOM CALENDAR STYLES (React-Calendar Override) --- */
+.calendar-wrapper {
+    background: var(--wg-bg-card);
+    padding: 1.5rem;
+    border-radius: 16px;
+    border: 1px solid var(--wg-border);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
 }
-.status-ok { background: rgba(0, 210, 170, 0.1); color: #00d2aa; }
-.status-warning { background: rgba(234, 179, 8, 0.1); color: #eab308; }
-.status-danger { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+.calendar-wrapper h3 { margin-top: 0; margin-bottom: 1rem; color: var(--wg-text-primary); }
 
-/* Info Row */
-.pm-details-row {
-    display: flex; gap: 40px; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #333;
+/* Override react-calendar defaults */
+.react-calendar {
+    width: 100%;
+    background: transparent !important;
+    border: none !important;
+    font-family: 'Segoe UI', sans-serif !important;
 }
-.pm-info-block { display: flex; flex-direction: column; gap: 5px; }
-.pm-info-block label { font-size: 0.8rem; color: #777; }
-.pm-info-block span { font-size: 1rem; color: #ccc; }
-.pm-info-block span.amount { font-size: 1.2rem; color: white; font-weight: bold; }
-
-/* Action Buttons */
-.pm-actions { display: flex; justify-content: space-between; align-items: center; }
-
-.btn-reminder {
-    background: transparent; border: 1px solid #444; color: #aaa;
-    padding: 10px 16px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s;
+.react-calendar__navigation button {
+    color: var(--wg-accent) !important;
+    font-size: 1.2rem;
+    font-weight: 700;
 }
-.btn-reminder:hover { border-color: #fff; color: #fff; }
-.btn-reminder.active { background: #333; color: #00d2aa; border-color: #333; }
-
-.btn-pay-now {
-    background: #00d2aa; color: black; border: none;
-    padding: 10px 24px; border-radius: 6px; font-weight: bold; cursor: pointer;
+.react-calendar__navigation button:enabled:hover,
+.react-calendar__navigation button:enabled:focus {
+    background-color: var(--wg-bg-input) !important;
+    border-radius: 8px;
 }
-.btn-pay-now:hover { opacity: 0.9; }
-.btn-pay-now.overdue { background: #ef4444; color: white; }
-
-/* --- SIDEBAR --- */
-.pm-sidebar { display: flex; flex-direction: column; gap: 20px; }
-
-.pm-widget {
-    background: #1e1e1e; border: 1px solid #333; border-radius: 12px; padding: 24px;
+.react-calendar__month-view__weekdays {
+    color: var(--wg-text-secondary);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    font-weight: 600;
 }
-.pm-widget h3 { margin: 0 0 15px 0; font-size: 1.1rem; color: #fff; }
-
-.pm-links { list-style: none; padding: 0; margin: 0; }
-.pm-links li {
-    padding: 12px 0; border-bottom: 1px solid #333; color: #aaa; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.2s;
+.react-calendar__tile {
+    color: var(--wg-text-primary);
+    background: transparent;
+    border-radius: 8px;
+    height: 45px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
-.pm-links li:hover { color: #00d2aa; padding-left: 5px; }
-.pm-links li:last-child { border-bottom: none; }
-
-.summary-widget .liability-amount {
-    font-size: 2rem; font-weight: bold; color: #00d2aa; margin: 10px 0;
+.react-calendar__tile:enabled:hover,
+.react-calendar__tile:enabled:focus {
+    background-color: var(--wg-bg-input) !important;
 }
-.summary-widget p { color: #777; font-size: 0.9rem; margin: 0; }
-
-/* Responsive */
-@media (max-width: 900px) {
-    .pm-grid { grid-template-columns: 1fr; }
-    .pm-details-row { gap: 20px; }
+.react-calendar__tile--now {
+    background: rgba(255, 193, 7, 0.2) !important;
+    color: var(--wg-warning) !important;
 }
+.react-calendar__tile--active {
+    background: var(--wg-accent) !important;
+    color: #000 !important;
+}
+/* Custom dot for policies */
+.calendar-dot {
+    height: 6px; width: 6px;
+    background-color: var(--wg-danger);
+    border-radius: 50%;
+    margin-top: 2px;
+}
+
+/* --- MODAL STYLES (Forms & Confirmation) --- */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 2000; backdrop-filter: blur(5px);
+}
+.modal-content {
+    background: var(--wg-bg-card);
+    padding: 2rem; border-radius: 16px; border: 1px solid var(--wg-border);
+    width: 450px; max-width: 90%;
+    color: var(--wg-text-primary);
+    animation: slideUp 0.3s ease-out;
+}
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+/* Confirmation Specific */
+.confirm-actions { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem; }
+.btn-secondary {
+    background: transparent; border: 1px solid var(--wg-border); color: var(--wg-text-secondary);
+    padding: 0.6rem 1.2rem; border-radius: 6px; cursor: pointer;
+}
+.btn-danger {
+    background: var(--wg-danger); color: white; border: none;
+    padding: 0.6rem 1.2rem; border-radius: 6px; cursor: pointer;
+}
+
+/* Form Styles */
+.form-group { margin-bottom: 1.2rem; }
+.form-group label { display: block; color: var(--wg-text-secondary); margin-bottom: 0.5rem; }
+.form-group input {
+    width: 100%; padding: 0.8rem; background: var(--wg-bg-input);
+    border: 1px solid var(--wg-border); color: white; border-radius: 8px;
+    box-sizing: border-box;
+}
+.form-group input:focus { outline: none; border-color: var(--wg-accent); }
+.toggle-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1rem; background: var(--wg-bg-input); border-radius: 8px; margin-bottom: 0.8rem;
+    border: 1px solid var(--wg-border); cursor: pointer;
+}
+.toggle-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--wg-accent); }
+
+/* Toast */
+.toast-container { position: fixed; bottom: 2rem; right: 2rem; z-index: 3000; display: flex; flex-direction: column; gap: 0.5rem; }
+.toast {
+    padding: 0.8rem 1.2rem; border-radius: 8px; font-weight: 600; display: flex; align-items: center; justify-content: space-between; min-width: 250px;
+}
+.toast.success { background: var(--wg-accent); color: black; }
+.toast.error { background: var(--wg-danger); color: white; }
+.toast-close { background: none; border: none; margin-left: 1rem; cursor: pointer; font-size: 1.2rem; }
+/* --- CLEAN CALENDAR GRID STYLES --- */
+
+/* The Tile (Day Box) */
+.react-calendar__tile {
+    height: 60px !important; /* Taller boxes */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Align number to top */
+    align-items: center;
+    padding-top: 8px !important;
+    position: relative;
+    border: 1px solid transparent; /* Keeps grid structure */
+}
+
+/* Hover Effect */
+.react-calendar__tile:enabled:hover {
+    background-color: var(--wg-bg-input) !important;
+    border-radius: 8px;
+}
+
+/* Active Day (Today) */
+.react-calendar__tile--now {
+    background: transparent !important; 
+    color: var(--wg-accent) !important;
+    font-weight: bold;
+}
+.react-calendar__tile--now abbr {
+    border: 1px solid var(--wg-accent);
+    border-radius: 50%;
+    width: 25px; height: 25px;
+    display: flex; align-items: center; justify-content: center;
+}
+
+/* Dots Container */
+.dots-container {
+    display: flex;
+    gap: 3px;
+    margin-top: 4px;
+}
+
+/* The Dots */
+.dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+}
+.dot.red { background-color: var(--wg-danger); box-shadow: 0 0 4px var(--wg-danger); }
+.dot.blue { background-color: #4285F4; box-shadow: 0 0 4px #4285F4; } /* Google Blue */

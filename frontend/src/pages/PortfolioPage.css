@@ -661,3 +661,179 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin
     from { opacity: 0; transform: translateY(5px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+/* ======================================================
+   LIGHT MODE OVERRIDES (Sand/Parchment Theme)
+   ====================================================== */
+
+/* 1. Global Page Background & Text */
+body.light .portfolio-page {
+    color: #3d342b !important; /* Dark Coffee Text */
+}
+
+/* 2. Main Containers (Cards, Summary, Sections) */
+body.light .summary-card,
+body.light .benchmark-section,
+body.light .create-section,
+body.light .portfolio-card,
+body.light .modal-content,
+body.light .suggestions-list {
+    background: #fdf6e7 !important;       /* Sand Parchment */
+    border: 1px solid #d1c6b6 !important; /* Sand Border */
+    box-shadow: 0 4px 12px -2px rgba(92, 69, 45, 0.15) !important;
+    color: #231f20 !important;
+}
+
+/* 3. Card Headers, Footers & Stats Areas */
+/* We make these slightly darker/different to distinguish sections */
+body.light .card-header,
+body.light .card-footer,
+body.light .card-stats,
+body.light .benchmark-chart-container {
+    background: #f8f4ed !important; /* Linen (lighter contrast) */
+    border-color: #d1c6b6 !important;
+}
+
+/* 4. Inputs & Dropdowns */
+body.light input,
+body.light select,
+body.light .benchmark-select,
+body.light .edit-box input {
+    background: #efe5d5 !important; /* Darker Sand */
+    border: 1px solid #d1c6b6 !important;
+    color: #231f20 !important;
+}
+
+body.light input:focus,
+body.light select:focus {
+    border-color: #15803d !important; /* Dark Green focus */
+}
+
+/* 5. Typography Fixes (Turning White text to Dark) */
+body.light h1, body.light h2, body.light h3, body.light h4,
+body.light .stock-price,
+body.light .stat-box .val,
+body.light .big-value,
+body.light .header-title {
+    color: #231f20 !important;
+}
+
+body.light p, 
+body.light label, 
+body.light .stock-info .details, 
+body.light .invested-label,
+body.light .section-header h3 {
+    color: #6b5f56 !important; /* Muted Brown */
+}
+
+/* 6. List Items & Borders */
+body.light .stock-item {
+    border-bottom: 1px solid #e5dcd0 !important;
+}
+body.light .stock-item:hover,
+body.light .suggestions-list li:hover {
+    background: #efe5d5 !important; /* Highlight color */
+}
+
+/* 7. Buttons */
+body.light .btn-secondary,
+body.light .btn-modal-cancel {
+    background: #efe5d5 !important;
+    border-color: #d1c6b6 !important;
+    color: #6b5f56 !important;
+}
+body.light .btn-secondary:hover {
+    background: #e5dcd0 !important;
+    color: #231f20 !important;
+}
+body.light .btn-refresh {
+    background: #efe5d5 !important;
+    color: #6b5f56 !important;
+}
+body.light .btn-refresh:hover {
+    background: #15803d !important;
+    color: #fff !important;
+}
+
+/* 8. Icons */
+body.light .icon-btn,
+body.light .del-stock-btn,
+body.light .mini-edit-btn {
+    color: #a89f91 !important;
+}
+body.light .icon-btn:hover,
+body.light .del-stock-btn:hover {
+    color: #b91c1c !important; /* Dark Red for delete */
+}
+
+/* 9. Data Colors (Green/Red) - Darker for Light Mode */
+body.light .green,
+body.light .val.green,
+body.light .sub-stat.green,
+body.light .stock-return.green,
+body.light .stock-info .sym {
+    color: #15803d !important; /* Dark Forest Green */
+}
+
+body.light .red,
+body.light .val.red,
+body.light .sub-stat.red,
+body.light .stock-return.red {
+    color: #b91c1c !important; /* Dark Brick Red */
+}
+
+/* Profit Pills adjustments */
+body.light .profit-pill.green {
+    background: rgba(21, 128, 61, 0.15) !important;
+    border-color: rgba(21, 128, 61, 0.3) !important;
+    color: #15803d !important;
+}
+body.light .profit-pill.red {
+    background: rgba(185, 28, 28, 0.15) !important;
+    border-color: rgba(185, 28, 28, 0.3) !important;
+    color: #b91c1c !important;
+}
+
+/* 10. AI Insight Box */
+body.light .ai-insight-box {
+    background: linear-gradient(90deg, #fdf6e7 0%, #efe5d5 100%) !important;
+    border-color: #15803d !important;
+}
+body.light .ai-insight-box .text-area h4,
+body.light .ai-insight-box .icon-area {
+    color: #15803d !important;
+}
+body.light .ai-insight-box .icon-area {
+    background: rgba(21, 128, 61, 0.1) !important;
+}
+body.light .ai-insight-box .text-area p {
+    color: #6b5f56 !important;
+}
+
+/* 11. Loading Screens & Tooltips */
+body.light .loading-tip-container {
+    background: rgba(253, 246, 231, 0.95) !important; /* Light blur */
+    color: #3d342b !important;
+}
+body.light .spinner {
+    border-color: #d1c6b6;
+    border-top-color: #15803d;
+}
+body.light .tip-content h3 { color: #231f20 !important; }
+body.light .tip-content p { color: #6b5f56 !important; }
+
+body.light .custom-tooltip {
+    background: #fdf6e7 !important;
+    border: 1px solid #d1c6b6 !important;
+    color: #231f20 !important;
+    box-shadow: 0 4px 10px rgba(92, 69, 45, 0.15) !important;
+}
+body.light .custom-tooltip .label { color: #6b5f56 !important; }
+
+/* 12. Chart Grid Overrides */
+body.light .recharts-cartesian-grid line {
+    stroke: #d1c6b6 !important;
+}
+body.light .recharts-text {
+    fill: #6b5f56 !important;
+}

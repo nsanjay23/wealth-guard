@@ -311,6 +311,7 @@ const StockTrendsPage = () => {
 
   return (
     <div className="trends-page-content">
+      {/* 1. Header Matches "Reliance Industries" Card Style */}
       <header className="trends-header">
         <h1>Market Comparison Tool</h1>
         <p>Compare historical performance and AI forecasts for multiple companies.</p>
@@ -323,25 +324,25 @@ const StockTrendsPage = () => {
           <div className="control-section">
             <h3>1. Set Date Range</h3>
             <div className="form-group">
-                <label>Start Date</label>
-                <input 
-                    type="date" name="startDate" 
-                    value={dates.startDate} onChange={handleDateChange} 
-                />
+              <label>Start Date</label>
+              <input 
+                  type="date" name="startDate" 
+                  value={dates.startDate} onChange={handleDateChange} 
+              />
             </div>
             <div className="form-group">
-                <label>End Date</label>
-                <input 
-                    type="date" name="endDate" 
-                    value={dates.endDate} onChange={handleDateChange} 
-                />
+              <label>End Date</label>
+              <input 
+                  type="date" name="endDate" 
+                  value={dates.endDate} onChange={handleDateChange} 
+              />
             </div>
             {Object.keys(stockMap).length > 0 && (
                 <button 
                     className="update-graph-btn" 
                     onClick={handleUpdateGraph} disabled={loading}
                 >
-                    {loading ? 'Refreshing...' : '↻ Update Graph with New Dates'}
+                    {loading ? 'Refreshing...' : 'Update Graph'}
                 </button>
             )}
           </div>
@@ -386,13 +387,12 @@ const StockTrendsPage = () => {
               </div>
           )}
 
-          {error && <div className="error-card">⚠️ {error}</div>}
+          {error && <div className="error-card">{error}</div>}
         </div>
 
-        {/* --- RIGHT PANEL: CHART OR LOADING --- */}
+        {/* --- RIGHT PANEL --- */}
         <div className="chart-panel">
             {loading ? (
-                // --- LOADING STATE (FULL HEIGHT CARD) ---
                 <div className="loading-tip-container">
                     <div className="spinner"></div>
                     <div className="tip-content">
@@ -441,7 +441,6 @@ const StockTrendsPage = () => {
                 </>
             ) : (
                 <div className="empty-state">
-                    <div className="placeholder-icon">📊</div>
                     <p>Set a date range and add companies to compare performance.</p>
                 </div>
             )}
@@ -451,17 +450,15 @@ const StockTrendsPage = () => {
         {!loading && chartData.length > 0 && (
         <div className="roi-widget-card">
             <div className="roi-header">
-                <h3>💰 Investment Simulator</h3>
-                <div className="roi-controls-right">
-                        <label className="inflation-toggle">
-                        <input 
-                            type="checkbox" 
-                            checked={showInflation}
-                            onChange={(e) => setShowInflation(e.target.checked)}
-                        />
-                        Adjust for Inflation (6%)
-                    </label>
-                </div>
+                <h3>ROI Calculator</h3>
+                
+                {/* REPLACED: Styled Button Toggle */}
+                <button 
+                    className={`inflation-btn ${showInflation ? 'active' : ''}`}
+                    onClick={() => setShowInflation(!showInflation)}
+                >
+                    {showInflation ? 'Inflation Adjusted (6%)' : 'Adjust for Inflation'}
+                </button>
             </div>
 
             <div className="roi-input-row">
@@ -474,11 +471,6 @@ const StockTrendsPage = () => {
                         const val = e.target.value;
                         if (val === '' || (parseFloat(val) >= 0 && !val.includes('-'))) {
                             setInvestment(val);
-                        }
-                    }}
-                    onKeyDown={(e) => {
-                        if (e.key === '-' || e.key === 'e') {
-                            e.preventDefault();
                         }
                     }}
                 />
@@ -494,14 +486,22 @@ const StockTrendsPage = () => {
                     return (
                         <div key={comp} className="roi-card" style={{borderTopColor: stockMap[comp].color}}>
                             <h4>{COMPANY_NAMES[comp]}</h4>
+                            
                             <div className={`roi-percent ${isProfit ? 'pos' : 'neg'}`}>
                                 {isProfit ? '▲' : '▼'} {roi.percentChange.toFixed(2)}%
                             </div>
+                            
                             <div className="roi-details">
-                                <p>Profit: <span className={isProfit ? 'pos' : 'neg'}>
-                                    {isProfit ? '+' : ''}₹{roi.profit.toFixed(0)}
-                                </span></p>
-                                <p>Final ({showInflation ? 'Real' : 'Nominal'}): ₹{roi.finalValue.toFixed(0)}</p>
+                                {/* CHANGED: Logic for Profit vs Loss label */}
+                                <p>
+                                    {isProfit ? 'Profit:' : 'Loss:'}
+                                    <span className={isProfit ? 'pos' : 'neg'}>
+                                        {/* Remove negative sign if using "Loss" label, display absolute value */}
+                                        ₹{Math.abs(roi.profit).toFixed(0)}
+                                    </span>
+                                </p>
+                                {/* CHANGED: Just "Final" */}
+                                <p>Final: ₹{roi.finalValue.toFixed(0)}</p>
                             </div>
                         </div>
                     );
