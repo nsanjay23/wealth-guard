@@ -63,3 +63,90 @@
   font-size: 1.1rem;
   min-width: 20px;
 }
+/* src/components/Sidebar.css */
+
+/* --- THEME VARIABLES --- */
+:root {
+  --sidebar-bg: #161b22;
+  --sidebar-border: #30363d;
+  --sidebar-text-title: #8b949e;
+  --sidebar-text-link: #c9d1d9;
+  --sidebar-hover-bg: rgba(56, 139, 253, 0.1);
+  --sidebar-active-bg: rgba(56, 139, 253, 0.15);
+  --sidebar-accent: #58a6ff;
+}
+
+/* Light Mode Overrides (Sand/Parchment Theme) */
+body.light {
+  --sidebar-bg: #f8f4ed;        /* Linen Light */
+  --sidebar-border: #d1c6b6;    /* Sand Border */
+  --sidebar-text-title: #6b5f56; /* Muted Brown */
+  --sidebar-text-link: #3d342b;  /* Coffee Text */
+  --sidebar-hover-bg: #efe5d5;   /* Darker Sand */
+  --sidebar-active-bg: rgba(21, 128, 61, 0.1); /* Soft Forest Green */
+  --sidebar-accent: #15803d;    /* Forest Green */
+}
+
+.sidebar {
+  width: 260px;
+  background-color: var(--sidebar-bg); 
+  border-right: 1px solid var(--sidebar-border);
+  
+  /* POSITIONING */
+  position: fixed;
+  top: 64px; 
+  left: 0;
+  height: calc(100vh - 64px); 
+  
+  overflow-y: auto;
+  z-index: 900; 
+  box-sizing: border-box;
+  padding-bottom: 2rem;
+  transition: all 0.3s ease;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  padding-top: 1.5rem;
+}
+
+.sidebar-section-title {
+  padding: 1.5rem 1.5rem 0.5rem 1.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--sidebar-text-title);
+  opacity: 0.8;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  color: var(--sidebar-text-link);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border-left: 3px solid transparent;
+  transition: all 0.2s ease;
+  margin-bottom: 2px;
+}
+
+.sidebar-link:hover {
+  background-color: var(--sidebar-hover-bg);
+  color: var(--sidebar-accent);
+}
+
+.sidebar-link.active {
+  background-color: var(--sidebar-active-bg);
+  color: var(--sidebar-accent);
+  border-left-color: var(--sidebar-accent);
+}
+
+.sidebar-icon {
+  margin-right: 12px;
+  font-size: 1.1rem;
+  min-width: 20px;
+}

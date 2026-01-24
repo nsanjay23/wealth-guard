@@ -389,3 +389,141 @@
     margin-left: 4px;
     font-weight: bold;
 }
+
+/* --- VARIABLES --- */
+:root {
+    --bg-main: #121212;
+    --bg-card: #1e1e1e;
+    --bg-input: #252525;
+    --border-color: #333;
+    --text-main: #fff;
+    --text-muted: #888;
+    --text-label: #aaa;
+    --accent: #00C49F;
+    --accent-soft: rgba(0, 196, 159, 0.1);
+    --danger: #FF4d4d;
+    --shadow: rgba(0,0,0,0.4);
+}
+
+/* Light Mode Overrides (Sand/Parchment Theme) */
+body.light {
+    --bg-main: #fdf6e7;
+    --bg-card: #f8f4ed;
+    --bg-input: #efe5d5;
+    --border-color: #d1c6b6;
+    --text-main: #231f20;
+    --text-muted: #6b5f56;
+    --text-label: #3d342b;
+    --accent: #15803d; /* Dark Forest Green for better contrast */
+    --accent-soft: rgba(21, 128, 61, 0.1);
+    --danger: #b91c1c;
+    --shadow: rgba(92, 69, 45, 0.15);
+}
+
+/* CONTAINER */
+.profile-wrapper {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: var(--bg-main);
+    min-height: 100vh;
+    font-family: 'Segoe UI', sans-serif;
+    color: var(--text-muted);
+    padding-bottom: 120px;
+    animation: fadeIn 0.4s ease-in;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* HEADER */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    background: var(--bg-card);
+    padding: 2rem;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 20px var(--shadow);
+}
+.page-header h1 { margin: 0; color: var(--text-main); font-size: 1.8rem; }
+.page-header p { color: var(--text-muted); margin: 5px 0 0 0; }
+.header-icon { font-size: 2.5rem; color: var(--accent); opacity: 0.8; }
+
+/* CARD STYLE */
+.form-card {
+    background: var(--bg-card);
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    transition: transform 0.2s, background-color 0.3s;
+    box-shadow: 0 4px 6px var(--shadow);
+}
+
+.form-card h3 {
+    color: var(--accent);
+    margin: 0 0 20px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.1rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+    text-transform: uppercase;
+}
+
+/* INPUTS */
+.field label { font-size: 0.85rem; color: var(--text-label); font-weight: 600; }
+
+.modern-input {
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 12px;
+    border-radius: 8px;
+    outline: none;
+    transition: 0.2s;
+}
+.modern-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-soft);
+}
+
+/* TOGGLE GROUPS & RISK SELECTORS */
+.toggle-group, .risk-selector button, .tag-btn, .modern-checkbox {
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+}
+
+.toggle-group button.active {
+    background: var(--accent);
+    color: #fff;
+}
+
+.risk-selector button.active, .tag-btn.selected, .modern-checkbox.active {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    color: var(--accent);
+}
+
+.modern-checkbox.active .check-circle {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+}
+
+/* MODALS & TOASTS */
+.modal-content, .toast-notification {
+    background: var(--bg-card) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-main) !important;
+}
+
+.toast-notification.success { border-left: 4px solid var(--accent) !important; color: var(--accent) !important; }
+.toast-notification.error { border-left: 4px solid var(--danger) !important; color: var(--danger) !important; }
+
+/* SPINNER */
+.spinner { border: 4px solid var(--bg-input); border-top: 4px solid var(--accent); }
+
+/* ... Rest of your layout CSS (Grid, FABs, Animations) stays the same ... */

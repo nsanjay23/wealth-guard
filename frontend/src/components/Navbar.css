@@ -1,5 +1,32 @@
+/* ======================================================
+   NAVBAR VARIABLE DEFINITIONS
+   ====================================================== */
+:root {
+  /* Dark Mode (Default) */
+  --nav-bg: rgba(26, 26, 26, 0.3);
+  --nav-bg-scrolled: rgba(26, 26, 26, 0.5);
+  --nav-text: #ffffff;
+  --nav-border: rgba(255, 255, 255, 0.2);
+  --nav-hover-bg: rgba(255, 255, 255, 0.1);
+  --nav-mobile-menu: rgba(26, 26, 26, 0.9);
+}
+
+body.light {
+  /* Light Mode (Sand/Parchment Theme) */
+  --nav-bg: rgba(253, 246, 231, 0.7);    /* Sand Parchment with transparency */
+  --nav-bg-scrolled: rgba(253, 246, 231, 0.9);
+  --nav-text: #231f20;                  /* Dark Coffee Text */
+  --nav-border: #d1c6b6;                /* Sand Border */
+  --nav-hover-bg: #efe5d5;              /* Darker Sand */
+  --nav-mobile-menu: #fdf6e7;           /* Solid Sand Parchment */
+}
+
+/* ======================================================
+   NAVBAR STYLES
+   ====================================================== */
+
 .navbar {
-  background-color: rgba(26, 26, 26, 0.3); /* Initial transparency */
+  background-color: var(--nav-bg);
   position: fixed;
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
@@ -7,14 +34,14 @@
   width: 100%;
   padding: 1rem 2rem;
   z-index: 1000;
-  transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  border-bottom: 1px solid var(--nav-border);
 }
 
 .navbar.scrolled {
-  background-color: rgba(26, 26, 26, 0.5); /* Alpha value (0.5) is crucial */
+  background-color: var(--nav-bg-scrolled);
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px); /* For Safari */
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .navbar-container {
@@ -28,12 +55,10 @@
 
 .navbar-logo img {
   height: 40px;
-  /* Add this if the image is getting a border/underline */
   border: none;
   text-decoration: none;
   cursor: pointer;
 }
-/* ... (keep all the existing styles for .navbar, .navbar-container, etc.) ... */
 
 .navbar-links {
   display: flex;
@@ -53,15 +78,14 @@
 
 .navbar-links .btn-login {
   background-color: transparent;
-  color: white;
-  /* border: 1px solid transparent; Remove any border */
+  color: var(--nav-text);
 }
 
 .navbar-links .btn-login:hover {
-  background-color: rgba(255, 255, 255, 0.1); /* Subtle hover effect */
+  background-color: var(--nav-hover-bg);
 }
 
-/* ... (rest of the file remains the same) ... */
+/* HAMBURGER ICON */
 .hamburger {
   display: none;
   cursor: pointer;
@@ -72,10 +96,14 @@
 .hamburger .bar {
   width: 25px;
   height: 3px;
-  background-color: white;
+  background-color: var(--nav-text);
   border-radius: 5px;
   transition: all 0.3s ease-in-out;
 }
+
+/* ======================================================
+   MOBILE RESPONSIVE
+   ====================================================== */
 
 @media (max-width: 768px) {
   .navbar-links {
@@ -85,9 +113,10 @@
     position: absolute;
     top: 60px;
     left: 0;
-    background-color: rgba(26, 26, 26, 0.9);
+    background-color: var(--nav-mobile-menu);
     backdrop-filter: blur(10px);
     padding: 1rem 0;
+    border-bottom: 1px solid var(--nav-border);
   }
 
   .navbar-links.active {
@@ -98,16 +127,10 @@
   .navbar-links .btn {
     width: 80%;
     margin: 0.5rem 0;
+    color: var(--nav-text); /* Ensures text is visible on mobile */
   }
-
-  .navbar-links .btn-login {
-    margin-right: 0;
-  }
-  
-  /* Removed theme-selector media query specific styles */
 
   .hamburger {
     display: flex;
   }
 }
-
