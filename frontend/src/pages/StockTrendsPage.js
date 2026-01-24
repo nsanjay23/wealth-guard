@@ -110,7 +110,7 @@ const StockTrendsPage = () => {
     pickRandomTip(); 
 
     // CHANGE: 2.5 Seconds (2500ms)
-    const minTimer = new Promise(resolve => setTimeout(resolve, 2500));
+    const minTimer = new Promise(resolve => setTimeout(resolve, 5000));
 
     const fetchDataPromise = async () => {
         const rawData = await fetchStockData(selectedCompany, dates.startDate, dates.endDate);
@@ -396,7 +396,7 @@ const StockTrendsPage = () => {
                 <div className="loading-tip-container">
                     <div className="spinner"></div>
                     <div className="tip-content">
-                        <h4>Did You Know? Tax Tip</h4>
+                        <h4>Did You Know?</h4>
                         <h3>{currentTip.title}</h3>
                         <p>{currentTip.desc}</p>
                     </div>

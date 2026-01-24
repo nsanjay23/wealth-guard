@@ -133,7 +133,7 @@ const UserProfilePage = () => {
         <div className="profile-wrapper">
             <header className="page-header">
                 <div>
-                    <h1>My Financial DNA</h1>
+                    <h1>My Profile</h1>
                     <p>Customize your profile to get 100% accurate AI matches.</p>
                 </div>
                 <div className="header-icon"><FiUser /></div>

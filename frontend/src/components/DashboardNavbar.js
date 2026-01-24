@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './DashboardNavbar.css';
 import logo from '../assets/logo.png'; 
-import { FiBell, FiUser, FiLogOut, FiSettings, FiSun, FiMoon, FiGlobe } from 'react-icons/fi';
+import { FiUser, FiLogOut, FiSun, FiMoon } from 'react-icons/fi'; // Removed FiBell, FiSettings, FiGlobe
 import useAuthStatus from '../hooks/useAuthStatus'; 
 
 const DashboardNavbar = () => {
@@ -11,14 +11,11 @@ const DashboardNavbar = () => {
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
-  // Initialize state based on localStorage OR default to Dark Mode
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const savedTheme = localStorage.getItem('theme');
-    // Default to true (Dark) if no preference saved
     return savedTheme ? savedTheme === 'dark' : true;
   });
 
-  // Apply the theme to the body tag whenever isDarkMode changes
   useEffect(() => {
     if (isDarkMode) {
       document.body.classList.add('dark');
@@ -70,32 +67,35 @@ const DashboardNavbar = () => {
           <img src={logo} alt="Wealth Guard Logo" className="dashboard-logo" />
         </Link>
       </div>
+
       <div className="dashboard-navbar-right">
-        <button className="navbar-icon-button">
-          <FiBell />
-        </button>
+        {/* Notification button removed from here */}
+        
         <div className="profile-menu" ref={dropdownRef}>
-          <button className="navbar-icon-button profile-button" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
+          <button 
+            className="navbar-icon-button profile-button" 
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          >
             <FiUser />
           </button>
+
           {isDropdownOpen && (
             <div className="profile-dropdown">
               <div className="dropdown-header">
                 Signed in as<br /><strong>{user?.first_name || 'User'}</strong> 
               </div>
+
               <Link to="/profile" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
                 <FiUser className="dropdown-icon" /> My Profile
               </Link>
-              <Link to="/settings" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
-                <FiSettings className="dropdown-icon" /> Settings
-              </Link>
+
+              {/* Settings and Language removed from here */}
+
               <button className="dropdown-item" onClick={toggleDarkMode}>
                 {isDarkMode ? <FiSun className="dropdown-icon" /> : <FiMoon className="dropdown-icon" />}
                 {isDarkMode ? 'Light Mode' : 'Dark Mode'}
               </button>
-              <button className="dropdown-item"> 
-                <FiGlobe className="dropdown-icon" /> Language
-              </button>
+
               <button className="dropdown-item logout-button" onClick={handleLogout}>
                 <FiLogOut className="dropdown-icon" /> Logout
               </button>

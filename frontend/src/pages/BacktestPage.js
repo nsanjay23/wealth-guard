@@ -227,7 +227,7 @@ const BacktestPage = () => {
         setResults(null);
         
         // 1. Create a promise that resolves after 3 seconds
-        const minLoadingTime = new Promise(resolve => setTimeout(resolve, 3000));
+        const minLoadingTime = new Promise(resolve => setTimeout(resolve, 5000));
 
         // 2. Wrap the Data Logic in an async function
         const processData = async () => {
@@ -386,7 +386,7 @@ const BacktestPage = () => {
                 <div className="loading-tip-container">
                     <div className="spinner"></div>
                     <div className="tip-content">
-                        <h4>Did You Know? Tax Tip</h4>
+                        <h4>Did You Know?</h4>
                         <h3>{currentTip.title}</h3>
                         <p>{currentTip.desc}</p>
                     </div>
