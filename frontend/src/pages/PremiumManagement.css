@@ -1,4 +1,4 @@
-/* --- THEME VARIABLES (Dark Mode + Cyan Accent) --- */
+/* --- THEME VARIABLES --- */
 :root {
     --wg-bg-main: #121212;
     --wg-bg-card: #1e1e1e;
@@ -14,35 +14,86 @@
 }
 
 .premium-container {
-    padding: 2rem 3rem;
+    padding: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
     background-color: var(--wg-bg-main);
     min-height: 100vh;
-    font-family: 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Inter', sans-serif;
     color: var(--wg-text-primary);
+    animation: fadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    padding-bottom: 100px;
 }
 
-/* Header */
-.header-section {
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- HEADER CARD (Matches InsuranceDiscovery) --- */
+.pm-header-card {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
+    background-color: var(--wg-bg-card);
+    border: 1px solid var(--wg-border);
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
 }
-.header-title h1 { font-size: 2.2rem; margin: 0; font-weight: 700; }
-.header-title p { color: var(--wg-text-secondary); margin-top: 0.5rem; }
+
+.pm-header-card h1 {
+    margin: 0;
+    color: var(--wg-text-primary);
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.pm-header-card p {
+    color: var(--wg-text-secondary);
+    margin: 8px 0 0 0;
+    font-size: 1rem;
+}
+
+.pm-header-icon {
+    font-size: 2.5rem;
+    color: var(--wg-accent);
+    opacity: 0.8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- CONTROLS AREA (For the Button) --- */
+.pm-controls {
+    display: flex;
+    justify-content: flex-end; /* Align button to the right, or 'flex-start' for left */
+    margin-bottom: 30px;
+}
 
 .add-btn {
     background-color: var(--wg-accent);
     color: #000;
     padding: 0.8rem 1.5rem;
-    border: none; border-radius: 8px; font-weight: 700; cursor: pointer;
-    display: flex; align-items: center; gap: 0.5rem;
+    border: none; 
+    border-radius: 8px; 
+    font-weight: 700; 
+    cursor: pointer;
+    display: flex; 
+    align-items: center; 
+    gap: 0.5rem;
     box-shadow: 0 4px 15px rgba(0, 208, 156, 0.3);
     transition: all 0.2s;
+    font-size: 1rem;
 }
-.add-btn:hover { background-color: var(--wg-accent-hover); transform: translateY(-2px); }
 
-/* Stats Grid */
+.add-btn:hover { 
+    background-color: var(--wg-accent-hover); 
+    transform: translateY(-2px); 
+}
+
+/* --- STATS GRID --- */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -51,25 +102,24 @@
 }
 .stat-card {
     background: var(--wg-bg-card);
-    padding: 1.5rem; border-radius: 16px; border: 1px solid var(--wg-border);
+    padding: 1.5rem; border-radius: 12px; border: 1px solid var(--wg-border);
     border-left: 6px solid var(--wg-accent);
 }
 .stat-card h3 { font-size: 0.85rem; color: var(--wg-text-secondary); text-transform: uppercase; margin: 0; }
-.stat-card p { font-size: 1.8rem; font-weight: 700; margin-top: 0.5rem; }
+.stat-card p { font-size: 1.8rem; font-weight: 700; margin-top: 0.5rem; color: var(--wg-text-primary); }
 .stat-card.cyan { border-left-color: var(--wg-accent); }
 .stat-card.yellow { border-left-color: var(--wg-warning); }
 .stat-card.red { border-left-color: var(--wg-danger); }
 
-/* --- MAIN DASHBOARD LAYOUT (List + Calendar) --- */
+/* --- DASHBOARD LAYOUT --- */
 .dashboard-content {
     display: grid;
-    grid-template-columns: 1.5fr 1fr; /* List takes more space, Calendar takes less */
+    grid-template-columns: 1.5fr 1fr;
     gap: 2rem;
     align-items: start;
 }
-
 @media (max-width: 1024px) {
-    .dashboard-content { grid-template-columns: 1fr; } /* Stack on smaller screens */
+    .dashboard-content { grid-template-columns: 1fr; }
 }
 
 /* Policy List */
@@ -82,14 +132,14 @@
     border: 1px solid var(--wg-border);
     display: flex; justify-content: space-between; align-items: center;
     transition: all 0.2s;
-    border-left: 4px solid var(--wg-text-secondary); /* Default */
+    border-left: 4px solid var(--wg-text-secondary); 
 }
-.policy-card:hover { border-color: var(--wg-accent); transform: translateX(5px); }
+.policy-card:hover { border-color: #555; transform: translateY(-2px); }
 .policy-card.green { border-left-color: var(--wg-success); }
 .policy-card.yellow { border-left-color: var(--wg-warning); }
 .policy-card.red { border-left-color: var(--wg-danger); }
 
-.policy-info h4 { margin: 0; font-size: 1.1rem; }
+.policy-info h4 { margin: 0; font-size: 1.1rem; color: var(--wg-text-primary); }
 .policy-sub { color: var(--wg-text-secondary); font-size: 0.9rem; margin-top: 0.25rem; }
 .reminder-icons { display: flex; gap: 0.5rem; margin-top: 0.5rem; color: var(--wg-accent); }
 
@@ -104,22 +154,23 @@
 }
 .action-btn.delete:hover { color: var(--wg-danger); }
 
-/* --- CUSTOM CALENDAR STYLES (React-Calendar Override) --- */
+/* --- CALENDAR WRAPPER --- */
 .calendar-wrapper {
     background: var(--wg-bg-card);
     padding: 1.5rem;
-    border-radius: 16px;
+    border-radius: 12px;
     border: 1px solid var(--wg-border);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
 }
 .calendar-wrapper h3 { margin-top: 0; margin-bottom: 1rem; color: var(--wg-text-primary); }
 
-/* Override react-calendar defaults */
+.calendar-legend { color: var(--wg-text-secondary); font-size: 0.85rem; margin-top: 1rem; display: flex; gap: 1rem; }
+
+/* React-Calendar Overrides */
 .react-calendar {
     width: 100%;
     background: transparent !important;
     border: none !important;
-    font-family: 'Segoe UI', sans-serif !important;
+    font-family: 'Inter', sans-serif !important;
 }
 .react-calendar__navigation button {
     color: var(--wg-accent) !important;
@@ -138,109 +189,23 @@
     font-weight: 600;
 }
 .react-calendar__tile {
-    color: var(--wg-text-primary);
-    background: transparent;
-    border-radius: 8px;
-    height: 45px;
+    height: 60px !important;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-.react-calendar__tile:enabled:hover,
-.react-calendar__tile:enabled:focus {
-    background-color: var(--wg-bg-input) !important;
-}
-.react-calendar__tile--now {
-    background: rgba(255, 193, 7, 0.2) !important;
-    color: var(--wg-warning) !important;
-}
-.react-calendar__tile--active {
-    background: var(--wg-accent) !important;
-    color: #000 !important;
-}
-/* Custom dot for policies */
-.calendar-dot {
-    height: 6px; width: 6px;
-    background-color: var(--wg-danger);
-    border-radius: 50%;
-    margin-top: 2px;
-}
-
-/* --- MODAL STYLES (Forms & Confirmation) --- */
-.modal-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.85);
-    display: flex; justify-content: center; align-items: center;
-    z-index: 2000; backdrop-filter: blur(5px);
-}
-.modal-content {
-    background: var(--wg-bg-card);
-    padding: 2rem; border-radius: 16px; border: 1px solid var(--wg-border);
-    width: 450px; max-width: 90%;
-    color: var(--wg-text-primary);
-    animation: slideUp 0.3s ease-out;
-}
-@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-/* Confirmation Specific */
-.confirm-actions { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem; }
-.btn-secondary {
-    background: transparent; border: 1px solid var(--wg-border); color: var(--wg-text-secondary);
-    padding: 0.6rem 1.2rem; border-radius: 6px; cursor: pointer;
-}
-.btn-danger {
-    background: var(--wg-danger); color: white; border: none;
-    padding: 0.6rem 1.2rem; border-radius: 6px; cursor: pointer;
-}
-
-/* Form Styles */
-.form-group { margin-bottom: 1.2rem; }
-.form-group label { display: block; color: var(--wg-text-secondary); margin-bottom: 0.5rem; }
-.form-group input {
-    width: 100%; padding: 0.8rem; background: var(--wg-bg-input);
-    border: 1px solid var(--wg-border); color: white; border-radius: 8px;
-    box-sizing: border-box;
-}
-.form-group input:focus { outline: none; border-color: var(--wg-accent); }
-.toggle-item {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 1rem; background: var(--wg-bg-input); border-radius: 8px; margin-bottom: 0.8rem;
-    border: 1px solid var(--wg-border); cursor: pointer;
-}
-.toggle-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--wg-accent); }
-
-/* Toast */
-.toast-container { position: fixed; bottom: 2rem; right: 2rem; z-index: 3000; display: flex; flex-direction: column; gap: 0.5rem; }
-.toast {
-    padding: 0.8rem 1.2rem; border-radius: 8px; font-weight: 600; display: flex; align-items: center; justify-content: space-between; min-width: 250px;
-}
-.toast.success { background: var(--wg-accent); color: black; }
-.toast.error { background: var(--wg-danger); color: white; }
-.toast-close { background: none; border: none; margin-left: 1rem; cursor: pointer; font-size: 1.2rem; }
-/* --- CLEAN CALENDAR GRID STYLES --- */
-
-/* The Tile (Day Box) */
-.react-calendar__tile {
-    height: 60px !important; /* Taller boxes */
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start; /* Align number to top */
+    justify-content: flex-start;
     align-items: center;
     padding-top: 8px !important;
     position: relative;
-    border: 1px solid transparent; /* Keeps grid structure */
+    border: 1px solid transparent;
+    color: var(--wg-text-primary);
+    background: transparent;
 }
-
-/* Hover Effect */
 .react-calendar__tile:enabled:hover {
     background-color: var(--wg-bg-input) !important;
     border-radius: 8px;
 }
-
-/* Active Day (Today) */
 .react-calendar__tile--now {
-    background: transparent !important; 
+    background: transparent !important;
     color: var(--wg-accent) !important;
     font-weight: bold;
 }
@@ -251,17 +216,177 @@
     display: flex; align-items: center; justify-content: center;
 }
 
-/* Dots Container */
-.dots-container {
-    display: flex;
-    gap: 3px;
-    margin-top: 4px;
+/* Dots */
+.dots-container { display: flex; gap: 3px; margin-top: 4px; }
+.dot { width: 6px; height: 6px; border-radius: 50%; }
+.dot.red { background-color: var(--wg-danger); box-shadow: 0 0 4px var(--wg-danger); }
+.dot.blue { background-color: #4285F4; box-shadow: 0 0 4px #4285F4; }
+
+/* --- MODAL --- */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 2000; backdrop-filter: blur(5px);
+}
+.modal-content {
+    background: var(--wg-bg-card);
+    padding: 2rem; border-radius: 12px; border: 1px solid var(--wg-border);
+    width: 450px; max-width: 90%;
+    color: var(--wg-text-primary);
+    animation: slideUp 0.3s ease-out;
+}
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.confirm-actions { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem; }
+.btn-secondary {
+    background: transparent; border: 1px solid var(--wg-border); color: var(--wg-text-secondary);
+    padding: 0.6rem 1.2rem; border-radius: 6px; cursor: pointer;
+}
+.btn-danger {
+    background: var(--wg-danger); color: white; border: none;
+    padding: 0.6rem 1.2rem; border-radius: 6px; cursor: pointer;
 }
 
-/* The Dots */
-.dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
+.form-group { margin-bottom: 1.2rem; }
+.form-group label { display: block; color: var(--wg-text-secondary); margin-bottom: 0.5rem; }
+.form-group input {
+    width: 100%; padding: 0.8rem; background: var(--wg-bg-input);
+    border: 1px solid var(--wg-border); color: var(--wg-text-primary); border-radius: 8px;
+    box-sizing: border-box;
 }
-.dot.red { background-color: var(--wg-danger); box-shadow: 0 0 4px var(--wg-danger); }
-.dot.blue { background-color: #4285F4; box-shadow: 0 0 4px #4285F4; } /* Google Blue */
+.toggle-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1rem; background: var(--wg-bg-input); border-radius: 8px; margin-bottom: 0.8rem;
+    border: 1px solid var(--wg-border); cursor: pointer; color: var(--wg-text-secondary);
+}
+.toggle-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--wg-accent); }
+
+/* --- TOAST --- */
+.toast-container { position: fixed; bottom: 2rem; right: 2rem; z-index: 3000; display: flex; flex-direction: column; gap: 0.5rem; }
+.toast {
+    padding: 0.8rem 1.2rem; border-radius: 8px; font-weight: 600; display: flex; align-items: center; justify-content: space-between; min-width: 250px;
+}
+.toast.success { background: var(--wg-accent); color: black; }
+.toast.error { background: var(--wg-danger); color: white; }
+.toast-close { background: none; border: none; margin-left: 1rem; cursor: pointer; font-size: 1.2rem; }
+.empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; color: var(--wg-text-secondary); opacity: 0.7;}
+
+
+/* ======================================================
+   LIGHT MODE OVERRIDES (Sand/Parchment Theme)
+   Matches InsuranceDiscoveryPage.css logic
+   ====================================================== */
+
+/* 1. Global Backgrounds */
+body.light .premium-container {
+    background-color: #EAE0D5 !important; /* Dark Sand */
+    color: #3d342b !important;
+}
+
+/* 2. Cards (Header, Stats, Policies, Calendar, Modal) */
+body.light .pm-header-card,
+body.light .stat-card,
+body.light .policy-card,
+body.light .calendar-wrapper,
+body.light .modal-content,
+body.light .toast {
+    background: #FDF6E7 !important;       /* Light Parchment */
+    border: 1px solid #D1C6B6 !important; /* Sand Border */
+    box-shadow: 0 4px 12px -2px rgba(92, 69, 45, 0.15) !important;
+    color: #231f20 !important;
+}
+
+/* 3. Typography & Muted Text */
+body.light h1, body.light h2, body.light h3, body.light h4, 
+body.light .pm-header-card h1,
+body.light .policy-info h4,
+body.light .amount,
+body.light .stat-card p,
+body.light .calendar-wrapper h3,
+body.light .modal-content h2,
+body.light .modal-content h3 {
+    color: #231f20 !important; /* Dark Coffee */
+}
+
+body.light p, 
+body.light .pm-header-card p,
+body.light .stat-card h3,
+body.light .policy-sub,
+body.light .due-date,
+body.light .react-calendar__month-view__weekdays,
+body.light .react-calendar__tile,
+body.light .calendar-legend,
+body.light .modal-content p,
+body.light .form-group label,
+body.light .toggle-item {
+    color: #6b5f56 !important; /* Muted Brown */
+}
+
+/* 4. Interactive Elements (Inputs & Toggles) */
+body.light .form-group input,
+body.light .toggle-item,
+body.light .react-calendar__navigation button:enabled:hover,
+body.light .react-calendar__tile:enabled:hover {
+    background: #EFE5D5 !important; /* Contrast Sand */
+    border-color: #D1C6B6 !important;
+    color: #231f20 !important;
+}
+
+/* 5. Buttons & Accents (Green #15803d) */
+body.light .add-btn,
+body.light .toast.success {
+    background-color: #15803d !important; /* Dark Green */
+    color: #fff !important;
+    box-shadow: none !important;
+}
+body.light .add-btn:hover {
+    background-color: #166534 !important;
+}
+
+body.light .pm-header-icon,
+body.light .reminder-icons,
+body.light .amount,
+body.light .react-calendar__tile--now,
+body.light .toggle-item input[type="checkbox"] {
+    color: #15803d !important;
+    accent-color: #15803d !important;
+}
+body.light .pm-header-icon {
+    opacity: 0.15 !important; /* Watermark feel */
+}
+
+/* 6. Calendar Specifics */
+body.light .react-calendar__tile--now abbr {
+    border-color: #15803d !important;
+}
+body.light .react-calendar__navigation button {
+    color: #15803d !important;
+}
+
+/* 7. Action Buttons */
+body.light .btn-secondary {
+    border-color: #D1C6B6 !important;
+    color: #6b5f56 !important;
+}
+body.light .btn-secondary:hover {
+    background: #EFE5D5 !important;
+    color: #231f20 !important;
+}
+body.light .btn-danger,
+body.light .toast.error {
+    background-color: #b91c1c !important;
+    color: #fff !important;
+}
+body.light .action-btn.delete {
+    color: #b91c1c !important;
+}
+body.light .action-btn.delete:hover {
+    background: rgba(185, 28, 28, 0.1) !important;
+}
+
+/* 8. Hover States for Cards in Light Mode */
+body.light .policy-card:hover {
+    border-color: #a89f91 !important;
+    background: #fff !important; /* Pop effect */
+}

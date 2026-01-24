@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { 
     FiUploadCloud, FiFileText, FiShield, FiAlertTriangle, 
     FiCheckCircle, FiCpu, FiMessageSquare, FiSend, FiX, FiTrash2, FiMinimize2,
-    FiCalendar, FiUser, FiInfo, FiHelpCircle, FiLayers, FiArrowLeft, FiStar, FiClock
+    FiCalendar, FiUser, FiInfo, FiHelpCircle, FiLayers, FiStar, FiClock, FiActivity
 } from 'react-icons/fi';
 import './PolicyUploadPage.css';
 
@@ -119,16 +119,14 @@ const PolicyUploadPage = () => {
 
     return (
         <div className="pu-container">
-            {/* Header Card Pattern */}
+            {/* CLEAN HEADER (No Back Button) */}
             <div className="pu-header">
-                <div className="pu-header-left">
-                    <button className="pu-back-btn" onClick={() => navigate(-1)}>
-                        <FiArrowLeft />
-                    </button>
-                    <div className="pu-header-text">
-                        <h1>Policy Analyzer <span className="highlight-text">& Teacher</span></h1>
-                        <p>Upload your policy PDF to get AI-powered insights.</p>
-                    </div>
+                <div className="pu-header-content">
+                    <h1>Policy Analyzer <span className="highlight-text">& Teacher</span></h1>
+                    <p>Upload your policy PDF to get AI-powered insights and fraud detection.</p>
+                </div>
+                <div className="pu-header-icon">
+                    <FiUploadCloud />
                 </div>
             </div>
 
@@ -155,7 +153,7 @@ const PolicyUploadPage = () => {
                             {status === 'uploading' ? <FiUploadCloud className="pulse"/> : <FiCpu className="spin"/>}
                         </div>
                         <h2>{status === 'uploading' ? 'Reading Document...' : 'Analyzing Terms...'}</h2>
-                        <p className="loading-subtext">Extracting plan features and waiting periods...</p>
+                        <p className="loading-subtext">Extracting plan features, waiting periods, and fraud checks...</p>
                     </div>
                 )}
 
@@ -165,105 +163,118 @@ const PolicyUploadPage = () => {
                         {/* ACTION BAR */}
                         <div className="pu-actions-bar">
                             <div className="file-tag"><FiFileText /> {file?.name}</div>
-                            <button className="btn-reset" onClick={resetAnalysis}><FiTrash2 /> Reset</button>
+                            <button className="btn-reset" onClick={resetAnalysis}><FiTrash2 /> Reset / Upload New</button>
                         </div>
 
-                        {/* --- MAIN DASHBOARD GRID --- */}
-                        <div className="pu-grid-layout">
+                        {/* --- NEW LAYOUT: LEFT CONTENT vs RIGHT SIDEBAR --- */}
+                        <div className="pu-layout-wrapper">
                             
-                            {/* 1. PROVIDER INFO */}
-                            <div className="pu-card header-card">
-                                <div className="provider-badge">{formatValue(analysisResult.summary?.provider)}</div>
-                                <h2>{formatValue(analysisResult.summary?.policyName)}</h2>
-                                <div className="policy-meta-row">
-                                    <span className="meta-tag"><FiLayers/> {formatValue(analysisResult.summary?.policyType)}</span>
-                                    <span className="meta-tag"><FiUser/> {formatValue(analysisResult.summary?.policyHolder)}</span>
+                            {/* LEFT COLUMN: The Details */}
+                            <div className="pu-layout-main">
+                                
+                                {/* 1. POLICY HEADER INFO */}
+                                <div className="pu-card header-summary-card">
+                                    <div className="provider-badge">{formatValue(analysisResult.summary?.provider)}</div>
+                                    <h2 className="policy-title-main">{formatValue(analysisResult.summary?.policyName)}</h2>
+                                    <div className="policy-chips">
+                                        <span className="chip"><FiLayers/> {formatValue(analysisResult.summary?.policyType)}</span>
+                                        <span className="chip"><FiUser/> {formatValue(analysisResult.summary?.policyHolder)}</span>
+                                    </div>
                                 </div>
+
+                                {/* 2. ESSENTIALS GRID */}
+                                <div className="pu-card">
+                                    <h3><FiInfo /> Policy Essentials</h3>
+                                    <div className="essentials-grid">
+                                        <div className="essential-box">
+                                            <label><FiCheckCircle/> Eligibility</label>
+                                            <strong>{formatValue(analysisResult.summary?.eligibility)}</strong>
+                                        </div>
+                                        <div className="essential-box">
+                                            <label><FiCalendar/> Term</label>
+                                            <strong>{formatValue(analysisResult.summary?.policyTerm)}</strong>
+                                        </div>
+                                        <div className="essential-box wide">
+                                            <label><FiClock/> Waiting Periods</label>
+                                            <ul>
+                                                {analysisResult.summary?.waitingPeriods?.slice(0, 3).map((wp, i) => (
+                                                    <li key={i}>{wp}</li>
+                                                )) || <li>No specific waiting periods found.</li>}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* 3. FEATURES */}
+                                <div className="pu-card">
+                                    <h3><FiStar /> Key Features</h3>
+                                    <ul className="feature-list">
+                                        {analysisResult.summary?.keyFeatures?.map((feat, i) => (
+                                            <li key={i}>{formatMessage(feat)}</li>
+                                        )) || <li>No features extracted.</li>}
+                                    </ul>
+                                </div>
+
+                                {/* 4. EXCLUSIONS */}
+                                <div className="pu-card exclusions-card">
+                                    <h3><FiAlertTriangle /> Major Exclusions</h3>
+                                    <ul>
+                                        {analysisResult.summary?.exclusions?.map((ex, i) => (
+                                            <li key={i}>{formatMessage(ex)}</li>
+                                        )) || <li>No specific exclusions detected.</li>}
+                                    </ul>
+                                </div>
+
                             </div>
 
-                            {/* 2. KEY STATS */}
-                            <div className="stats-row">
-                                <div className="pu-card stat-card highlight">
-                                    <div className="stat-label">
-                                        Sum Insured Range
-                                        <div className="tooltip" data-tip="Maximum coverage amount available"><FiHelpCircle/></div>
+                            {/* RIGHT COLUMN: Fraud & Stats */}
+                            <div className="pu-layout-sidebar">
+                                
+                                {/* 1. FRAUD SCORE (Prominent) */}
+                                <div className={`pu-card fraud-score-card ${analysisResult.isFraudulent ? 'risk' : 'safe'}`}>
+                                    <div className="score-header">
+                                        <FiShield size={24}/>
+                                        <span>Trust Score</span>
                                     </div>
+                                    <div className="score-circle">
+                                        {analysisResult.fraudScore}
+                                        <small>/100</small>
+                                    </div>
+                                    <p className="score-msg">
+                                        {analysisResult.isFraudulent 
+                                            ? "Caution: Inconsistencies found." 
+                                            : "Document structure looks authentic."}
+                                    </p>
+                                </div>
+
+                                {/* 2. FINANCIAL STATS */}
+                                <div className="pu-card stat-card highlight">
+                                    <div className="stat-label">Sum Insured Range</div>
                                     <div className="stat-value">{formatValue(analysisResult.summary?.sumInsured)}</div>
                                 </div>
+
                                 <div className="pu-card stat-card">
                                     <div className="stat-label">
                                         Premium / Cost
-                                        <div className="tooltip" data-tip="Estimated cost or premium rules"><FiHelpCircle/></div>
+                                        <FiHelpCircle className="info-icon" title="Estimated cost based on document"/>
                                     </div>
-                                    <div className="stat-value small-text">{formatValue(analysisResult.summary?.premium)}</div>
+                                    <div className="stat-value small">{formatValue(analysisResult.summary?.premium)}</div>
                                 </div>
-                            </div>
 
-                            {/* 3. POLICY ESSENTIALS */}
-                            <div className="pu-card details-card">
-                                <h3><FiInfo /> Policy Essentials</h3>
-                                <div className="details-grid">
-                                    <div className="detail-item">
-                                        <label><FiCheckCircle/> Eligibility</label>
-                                        <span>{formatValue(analysisResult.summary?.eligibility)}</span>
-                                    </div>
-                                    <div className="detail-item">
-                                        <label><FiCalendar/> Policy Term</label>
-                                        <span>{formatValue(analysisResult.summary?.policyTerm)}</span>
-                                    </div>
-                                    <div className="detail-item">
-                                        <label><FiClock/> Waiting Periods</label>
-                                        <ul className="mini-list">
-                                            {analysisResult.summary?.waitingPeriods?.slice(0, 3).map((wp, i) => (
-                                                <li key={i}>{wp}</li>
-                                            )) || <li>No specific waiting periods found.</li>}
-                                        </ul>
-                                    </div>
+                                {/* 3. AI SUMMARY TIP */}
+                                <div className="pu-card ai-tip-card">
+                                    <FiActivity />
+                                    <p>Ask the chatbot to explain "Co-pay" or "Room Rent Limits" specifically for this policy.</p>
                                 </div>
-                            </div>
 
-                            {/* 4. KEY FEATURES */}
-                            <div className="pu-card features-card">
-                                <h3><FiStar /> Key Features & Benefits</h3>
-                                <ul className="feature-list">
-                                    {analysisResult.summary?.keyFeatures?.map((feat, i) => (
-                                        <li key={i}>{formatMessage(feat)}</li>
-                                    )) || <li>No features extracted.</li>}
-                                </ul>
                             </div>
-
-                            {/* 5. EXCLUSIONS */}
-                            <div className="pu-card exclusions-card">
-                                <h3>
-                                    <FiAlertTriangle /> Major Exclusions 
-                                    <span className="card-subtitle">(What is NOT covered)</span>
-                                </h3>
-                                <ul>
-                                    {analysisResult.summary?.exclusions?.map((ex, i) => (
-                                        <li key={i}>{formatMessage(ex)}</li>
-                                    )) || <li>No specific exclusions detected.</li>}
-                                </ul>
-                            </div>
-
-                            {/* 6. AUTHENTICITY / FOOTER */}
-                            <div className={`pu-card fraud-card ${analysisResult.isFraudulent ? 'risk' : 'safe'}`}>
-                                <div className="fraud-content">
-                                    <div className="fraud-text">
-                                        <h3>Document Analysis Score</h3>
-                                        <p>{analysisResult.isFraudulent ? "Potential inconsistencies found." : "Document structure appears standard."}</p>
-                                    </div>
-                                    <div className="fraud-score">
-                                        <span>{analysisResult.fraudScore}/100</span>
-                                    </div>
-                                </div>
-                            </div>
-
                         </div>
+
                     </div>
                 )}
             </div>
 
-            {/* --- CHATBOT (Unchanged Logic) --- */}
+            {/* --- CHATBOT (Unchanged) --- */}
             <div className={`pu-floating-chat ${isChatOpen ? 'open' : ''}`}>
                 <button className="chat-toggle-btn" onClick={() => setIsChatOpen(!isChatOpen)}>
                     {isChatOpen ? <FiMinimize2 /> : <FiMessageSquare />}
@@ -274,7 +285,7 @@ const PolicyUploadPage = () => {
                         <div className="chat-header-bar">
                             <div className="chat-status">
                                 <span>Insurance Assistant</span>
-                                <small>{status === 'complete' ? '● Reading this Policy' : '● General Help'}</small>
+                                <small>{status === 'complete' ? '● Reading Policy' : '● Online'}</small>
                             </div>
                             <FiX className="close-icon" onClick={() => setIsChatOpen(false)}/>
                         </div>

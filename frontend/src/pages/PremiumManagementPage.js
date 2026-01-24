@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css'; // Default styles (overridden in CSS)
-import { FaPlus, FaGoogle, FaEnvelope, FaTrash, FaCalendarAlt, FaTimes } from 'react-icons/fa';
+import 'react-calendar/dist/Calendar.css'; 
+import { FaPlus, FaGoogle, FaEnvelope, FaTrash, FaCalendarAlt, FaTimes, FaBell } from 'react-icons/fa';
 import './PremiumManagement.css';
 
-// --- GLOBAL CONFIGURATION (Prevents Infinite Loop) ---
+// --- GLOBAL CONFIGURATION ---
 const API_BASE_URL = 'http://localhost:5001';
 const axiosInstance = axios.create({
     baseURL: API_BASE_URL,
-    withCredentials: true // CRITICAL: Sends session cookies for auth
+    withCredentials: true 
 });
 
 // --- SUB-COMPONENT: TOAST NOTIFICATION ---
@@ -27,7 +27,7 @@ const ConfirmationModal = ({ isOpen, message, onConfirm, onCancel }) => {
         <div className="modal-overlay">
             <div className="modal-content" style={{ width: '400px', textAlign: 'center' }}>
                 <h3 style={{ marginTop: 0 }}>Confirm Action</h3>
-                <p style={{ color: '#a0a0a0', fontSize: '1.1rem', marginBottom: '2rem' }}>{message}</p>
+                <p style={{ color: 'var(--wg-text-secondary)', fontSize: '1.1rem', marginBottom: '2rem' }}>{message}</p>
                 <div className="confirm-actions" style={{ justifyContent: 'center' }}>
                     <button className="btn-secondary" onClick={onCancel}>Cancel</button>
                     <button className="btn-danger" onClick={onConfirm}>Yes, Delete</button>
@@ -39,18 +39,17 @@ const ConfirmationModal = ({ isOpen, message, onConfirm, onCancel }) => {
 
 // --- MAIN COMPONENT ---
 const PremiumManagementPage = () => {
-    // --- STATE MANAGEMENT ---
     const [policies, setPolicies] = useState([]);
-    const [googleEvents, setGoogleEvents] = useState([]); // Stores fetched Google Calendar events
+    const [googleEvents, setGoogleEvents] = useState([]); 
     const [stats, setStats] = useState({ nextDue: '-', upcoming: 0, overdue: 0 });
     const [isLoading, setIsLoading] = useState(true);
     
     // UI State
     const [showFormModal, setShowFormModal] = useState(false);
     const [deleteModal, setDeleteModal] = useState({ show: false, policyId: null });
-    const [step, setStep] = useState(1); // For the 2-step Add Policy modal
+    const [step, setStep] = useState(1); 
     const [toast, setToast] = useState(null);
-    const [date, setDate] = useState(new Date()); // Calendar selected date
+    const [date, setDate] = useState(new Date()); 
 
     // Form Data State
     const [formData, setFormData] = useState({
@@ -61,13 +60,11 @@ const PremiumManagementPage = () => {
         reminderSettings: { googleCalendar: false, email: true }
     });
 
-    // --- HELPER: SHOW TOAST ---
     const showToast = (message, type = 'success') => {
         setToast({ message, type });
-        setTimeout(() => setToast(null), 3000); // Auto-hide after 3s
+        setTimeout(() => setToast(null), 3000); 
     };
 
-    // --- API: FETCH POLICIES ---
     const fetchPolicies = useCallback(async () => {
         try {
             const res = await axiosInstance.get('/api/policies');
@@ -81,24 +78,20 @@ const PremiumManagementPage = () => {
         }
     }, []);
 
-    // --- API: FETCH GOOGLE EVENTS ---
     const fetchGoogleEvents = useCallback(async () => {
         try {
             const res = await axiosInstance.get('/api/reminders/google-calendar');
             setGoogleEvents(res.data || []);
         } catch (error) {
-            // User might not be connected to Google, so we fail silently or log debug
-            console.log("Google Calendar fetch skipped or failed (User likely not connected via Google OAuth).");
+            console.log("Google Calendar fetch skipped or failed.");
         }
     }, []);
 
-    // --- EFFECT: INITIAL LOAD ---
     useEffect(() => {
         fetchPolicies();
         fetchGoogleEvents();
     }, [fetchPolicies, fetchGoogleEvents]);
 
-    // --- LOGIC: CALCULATE DASHBOARD STATS ---
     const calculateStats = (data) => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -117,7 +110,6 @@ const PremiumManagementPage = () => {
             if (diffDays < 0) overdue++;
             if (diffDays >= 0 && diffDays <= 30) upcoming++;
             
-            // Find nearest future date
             if (diffDays >= 0 && diffTime < minDiff) {
                 minDiff = diffTime;
                 nextDueDate = due;
@@ -131,12 +123,9 @@ const PremiumManagementPage = () => {
         });
     };
 
-    // --- LOGIC: CALENDAR DOTS ---
     const getTileContent = ({ date, view }) => {
         if (view === 'month') {
             const content = [];
-
-            // 1. Red Dot for Policy Due Dates
             const hasPolicy = policies.some(p => {
                 const d = new Date(p.dueDate);
                 return d.getDate() === date.getDate() &&
@@ -145,7 +134,6 @@ const PremiumManagementPage = () => {
             });
             if (hasPolicy) content.push(<div key="policy" className="dot red"></div>);
 
-            // 2. Blue Dot for Google Events
             const hasGoogleEvent = googleEvents.some(e => {
                 const d = new Date(e.date);
                 return d.getDate() === date.getDate() &&
@@ -159,7 +147,6 @@ const PremiumManagementPage = () => {
         return null;
     };
 
-    // --- LOGIC: CARD STATUS COLORS ---
     const getStatusColor = (dateStr) => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -167,15 +154,13 @@ const PremiumManagementPage = () => {
         due.setHours(0, 0, 0, 0);
         const diffDays = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
 
-        if (diffDays < 0) return 'red';    // Overdue
-        if (diffDays <= 15) return 'yellow'; // Urgent
-        return 'green';                    // Safe
+        if (diffDays < 0) return 'red';    
+        if (diffDays <= 15) return 'yellow'; 
+        return 'green';                    
     };
 
-    // --- HANDLERS ---
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        // Strict Number Validation for Premium
         if (name === 'premiumAmount') {
             if (value !== '' && !/^\d*\.?\d*$/.test(value)) return; 
         }
@@ -190,7 +175,6 @@ const PremiumManagementPage = () => {
         });
     };
 
-    // --- DELETE LOGIC ---
     const initiateDelete = (id) => {
         setDeleteModal({ show: true, policyId: id });
     };
@@ -200,7 +184,7 @@ const PremiumManagementPage = () => {
         try {
             await axiosInstance.delete(`/api/policies/${id}`);
             showToast("Policy removed successfully.", "success");
-            fetchPolicies(); // Refresh list
+            fetchPolicies(); 
         } catch (error) {
             console.error(error);
             showToast("Failed to delete policy.", "error");
@@ -209,7 +193,6 @@ const PremiumManagementPage = () => {
         }
     };
 
-    // --- FORM SUBMISSION ---
     const handleNextStep = () => {
         if (!formData.policyName || !formData.premiumAmount || !formData.dueDate || !formData.insurer) {
             showToast("Please fill all required fields.", "error");
@@ -220,11 +203,9 @@ const PremiumManagementPage = () => {
 
     const handleSubmit = async () => {
         try {
-            // 1. Save Policy (Backend sends email if checked)
             await axiosInstance.post('/api/policies', formData);
             showToast("Policy saved! Email reminder set.", "success");
 
-            // 2. Sync to Google Calendar (if checked)
             if (formData.reminderSettings.googleCalendar) {
                 try {
                     await axiosInstance.post('/api/reminders/google-calendar', { 
@@ -233,7 +214,7 @@ const PremiumManagementPage = () => {
                         dueDate: formData.dueDate 
                     });
                     setTimeout(() => showToast("Synced with Google Calendar!", "success"), 800);
-                    setTimeout(() => fetchGoogleEvents(), 2000); // Refresh calendar dots
+                    setTimeout(() => fetchGoogleEvents(), 2000); 
                 } catch (calError) {
                     console.error(calError);
                     showToast("Policy saved, but Calendar Sync failed.", "error");
@@ -241,7 +222,7 @@ const PremiumManagementPage = () => {
             }
             
             closeFormModal();
-            fetchPolicies(); // Refresh list
+            fetchPolicies(); 
         } catch (error) {
             console.error(error);
             showToast("Failed to save policy.", "error");
@@ -259,14 +240,12 @@ const PremiumManagementPage = () => {
 
     return (
         <div className="premium-container">
-            {/* Toast Container */}
             {toast && (
                 <div className="toast-container">
                     <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />
                 </div>
             )}
 
-            {/* Custom Confirmation Modal */}
             <ConfirmationModal 
                 isOpen={deleteModal.show}
                 message="Are you sure you want to delete this policy reminder?"
@@ -274,12 +253,19 @@ const PremiumManagementPage = () => {
                 onCancel={() => setDeleteModal({ show: false, policyId: null })}
             />
 
-            {/* --- HEADER --- */}
-            <div className="header-section">
-                <div className="header-title">
+            {/* --- HEADER CARD (Matches InsuranceDiscovery) --- */}
+            <div className="pm-header-card">
+                <div>
                     <h1>Premium & Renewal Reminders</h1>
                     <p>Track your insurance due dates & never miss a payment.</p>
                 </div>
+                <div className="pm-header-icon">
+                    <FaBell />
+                </div>
+            </div>
+
+            {/* --- CONTROLS AREA (Button moved here) --- */}
+            <div className="pm-controls">
                 <button className="add-btn" onClick={() => setShowFormModal(true)}>
                     <FaPlus /> Add New Policy
                 </button>
@@ -346,7 +332,7 @@ const PremiumManagementPage = () => {
                         value={date} 
                         tileContent={getTileContent}
                     />
-                    <div className="calendar-legend" style={{marginTop:'1rem', display:'flex', gap:'1rem', fontSize:'0.8rem', color:'#a0a0a0'}}>
+                    <div className="calendar-legend">
                         <div style={{display:'flex', alignItems:'center', gap:'5px'}}><span className="dot red"></span> Policy Due</div>
                         <div style={{display:'flex', alignItems:'center', gap:'5px'}}><span className="dot blue"></span> Google Event</div>
                     </div>
